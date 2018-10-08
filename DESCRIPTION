@@ -1,0 +1,24 @@
+Package: CellaRepertorium
+Type: Package
+Title: Methods for clustering and analyzing high-throughput single cell immune cell repertoires (RepSeq)
+Version: 0.1.0
+Author: Andrew McDavid
+Maintainer: Andrew McDavid <Andrew_McDavid@urmc.rochester.edu>
+Description: Methods to cluster and analyze high-throughput single cell immune cell repertoires,
+    especially from the 10X Genomics VDJ solution. Tests for specific expansion, as well as omnibus oligoclonality under hypergeometric models.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Imports:
+   httr,
+   readr,
+   dplyr,
+   tibble,
+   stringr,
+   Biostrings,
+   progress,
+   Rcpp
+Suggests: testthat
+RoxygenNote: 6.1.0
+LinkingTo: Rcpp
+NeedsCompilation: yes
