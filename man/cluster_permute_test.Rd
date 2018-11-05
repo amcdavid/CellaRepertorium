@@ -35,6 +35,5 @@ singletons
 }
 
 clusters = c(1, 1, 1, 2, 2, 3, 3)
-cluster_permute_test
 
 }

@@ -1,5 +1,24 @@
 context("cdhit-methods")
+library(Biostrings)
+seqs = AAStringSet(c('CASSPGRGAYEQYF', 'CASSPGRGAYEQYF', 'CASSSGRGAYEQYF', 'CASSPGRGAYEQY', 'CASSPF', 'CASSP'))
+test_that("cdhit returns appropriate lengths", {
+    expect_equal(length(cdhit(seqs, min_length = 5, kmerSize = 3, only_index = TRUE)), length(seqs))
+    expect_error(cdhit(seqs, min_length = 7, kmerSize = 3))
+})
 
-test_that("multiplication works", {
-  expect_equal(2 * 2, 4)
+test_that("cdhit only clusters identical sequences with identity = 1, G= 0, aL = 1, aS = 1", {
+    # Total equality
+    res = cdhit(seqs = seqs, kmerSize = 3, min_length = 5, only_index = TRUE, identity = 1, G = 0, aL = 1, aS = 1)
+    expect_equal(res, c(1, 1, 2, 3, 4, 5))
+    # Equality except for 90% differences in ends
+    res = cdhit(seqs = seqs, kmerSize = 3, min_length = 5, only_index = TRUE, identity = 1, G = 0, aL = .9, aS = .9)
+    expect_equal(res, c(1, 1, 2, 1, 3, 4))
+    # 90% equality, same length
+    res = cdhit(seqs = seqs, kmerSize = 3, min_length = 5, only_index = TRUE, identity = .9, G = 0, aL = 1, aS = 1)
+    expect_equal(res, c(1, 1, 1, 2, 3, 4))
+})
+
+test_that("Don't need to be sorted", {
+    seqs_scramble = seqs[sample(length(seqs))]
+    res = cdhit(seqs_scramble, identity = 1, only_index = TRUE)
 })

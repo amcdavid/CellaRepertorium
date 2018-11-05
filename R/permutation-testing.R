@@ -22,7 +22,6 @@
 #' }
 #'
 #' clusters = c(1, 1, 1, 2, 2, 3, 3)
-#' cluster_permute_test
 #'
 cluster_permute_test = function(clusters, labels, statistic, n_perm = 1e3, ...){
     permp= rep(NA, n_perm)

@@ -37,7 +37,7 @@ v2 = gl(2, 4)
 v4 = gl(4, 4)
 stopifnot(entropy(v2) < entropy(v4))
 v_empty = v2[1:4] #empty level 2
-stopifnot(is.finite(entropy(v_empty)) # pseudo_count
+stopifnot(is.finite(entropy(v_empty))) # pseudo_count
 
 np(v4, p = .2, pseudo_count = 0)
 np(v4, p = .25, pseudo_count = 0)
@@ -45,4 +45,5 @@ np(v4, p = .25, pseudo_count = .0001)
 
 modal_category(v4)
 modal_category(v4[-1])
+
 }

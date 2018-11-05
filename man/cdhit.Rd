@@ -2,27 +2,46 @@
 % Please edit documentation in R/cdhit-methods.R
 \name{cdhit}
 \alias{cdhit}
-\title{CDHIT}
+\title{R interface to CDHIT/CDHITest}
 \usage{
-cdhit(seqs, identity = 0.9, kmerSize = 5, name = "CD-Hit",
-  showProgress = interactive(), ...)
+cdhit(seqs, identity = 0.9, kmerSize = 5, min_length = 6,
+  name = "CD-Hit", only_index = FALSE, showProgress = interactive(),
+  ...)
 }
 \arguments{
 \item{seqs}{\code{AAseq} or \code{DNAseq} (untested..)}
 
 \item{identity}{minimum proportion identity}
 
-\item{kmerSize}{word size.  5 for 70%-90% identity}
+\item{kmerSize}{word size.  Set to 5 for 70\%-90\% identity.  Lower for lesser identity.}
+
+\item{min_length}{Minimum length for sequences to be clustered.  An error if something smaller is passed.}
 
 \item{name}{program name (?)}
 
+\item{only_index}{if TRUE only return the integer cluster indices, otherwise return a tibble.}
+
 \item{showProgress}{show a status bar}
 
-\item{...}{other arguments passed to cdhit, see https://github.com/weizhongli/cdhit/wiki/3.-User's-Guide#CDHIT for details}
+\item{...}{other arguments that can be passed to cdhit, see https://github.com/weizhongli/cdhit/wiki/3.-User's-Guide#CDHIT for details}
 }
 \value{
-vector of \code{integer} of length \code{seqs} providing the cluster ID for each sequence
+vector of \code{integer} of length \code{seqs} providing the cluster ID for each sequence, or a tibble.  See details.
 }
 \description{
-CDHIT
+CDHIT is a greedy algorithm to cluster amino acid or DNA sequences
+by Fu, Niu, Zhu, Wu and Li (2012).  The R interface is originally by
+Thomas Lin Pedersen and was transcribed here because it is not exported from the package FindMyFriends, which is orphaned.
+}
+\examples{
+fasta_path = system.file('extdata', 'demo.fasta', package='CellaRepertorium')
+aaseq = Biostrings::readAAStringSet(fasta_path)
+# 100\% identity, global alignment
+cdhit(aaseq, identity = 1, only_index = TRUE)[1:10]
+# 100\% identity, local alignment with no padding of endpoints
+cdhit(aaseq,identity = 1, G = 0, aL = 1, aS = 1,  only_index = TRUE)[1:10]
+# 100\% identity, local alignment with .9 padding of endpoints
+cdhit(aaseq,identity = 1, G = 0, aL = .9, aS = .9,  only_index = TRUE)[1:10]
+# a tibble
+tbl = cdhit(aaseq, identity = 1, G = 0, aL = .9, aS = .9, only_index = FALSE)
 }

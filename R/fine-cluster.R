@@ -30,41 +30,40 @@ fine_cluster = function(seqs, type = 'AA', big_memory_brute = FALSE, substitutio
         }
         if(is.character(seqs)){
             ss = AAStringSet(seqs)
-        } else if(inherits(seq, 'AAStringSet')){
-            ss = seq
+        } else if(inherits(seqs, 'AAStringSet')){
+            ss = seqs
         } else{
             stop("Must be character or AAStringSet")
         }
-        sd = as.matrix(stringDist(ss, method = 'substitutionMatrix', substitutionMatrix = substitution_matrix))
+        sd = as.matrix(Biostrings::stringDist(ss, method = 'substitutionMatrix', substitutionMatrix = substitution_matrix))
         # alignment score along diagonal
-        pw = pairwiseAlignment(ss, ss, substitutionMatrix = substitution_matrix, scoreOnly = TRUE)
+        pw = Biostrings::pairwiseAlignment(ss, ss, substitutionMatrix = substitution_matrix, scoreOnly = TRUE)
         diag(sd) = pw
 
-        if(length(ss)>1) sd = as.dist((1 - sd/diag(sd))*median(nchar(ss)))
+        sd  = if(length(ss)>1) (diag(sd) - sd) else matrix(0, nrow = 1, ncol = 1)
     } else{
         if(is.character(seqs)){
-            ss = DNAStringSet(seqs)
+            ss = Biostrings::DNAStringSet(seqs)
         } else if(inherits(seq, 'DNAStringSet')){
             ss = seq
         } else{
             stop("Must be character or DNAStringSet")
         }
-        sd = stringDist(ss, method = 'levenshtein')
-        if(length(ss)>1) sd = sd/max(sd)*median(nchar(ss))
+        sd = Biostrings::stringDist(ss, method = 'levenshtein')
+        if(length(ss)>1) sd = sd/max(sd)*median(Biostrings::nchar(ss))
     }
 
-    if(cluster == 'hclust'){
-        if(length(seqs)>1){
-    hc <- stats::hclust(sd, method = cluster_method)
-    hc$labels = names(ss)
-    return(hc)
-        } else{
-         return(NA)
-        }
-    } else if(cluster =='none'){
-     return(sd)
+    if(length(seqs)>1){
+        hc = stats::hclust(as.dist(sd), method = cluster_method)
+        hc$labels = names(ss)
+    } else{
+        hc = NULL
     }
+    medoid = which.min(colMeans(as.matrix(sd)))
+    homology = sd[medoid,]
+    new('FineCluster', cluster = hc, distance = sd, homology, medoid)
 }
+
 
 #' Calculate the entropy of a vector
 #'
@@ -80,7 +79,7 @@ fine_cluster = function(seqs, type = 'AA', big_memory_brute = FALSE, substitutio
 #' v4 = gl(4, 4)
 #' stopifnot(entropy(v2) < entropy(v4))
 #' v_empty = v2[1:4] #empty level 2
-#' stopifnot(is.finite(entropy(v_empty)) # pseudo_count
+#' stopifnot(is.finite(entropy(v_empty))) # pseudo_count
 #'
 #' np(v4, p = .2, pseudo_count = 0)
 #' np(v4, p = .25, pseudo_count = 0)
@@ -88,6 +87,7 @@ fine_cluster = function(seqs, type = 'AA', big_memory_brute = FALSE, substitutio
 #'
 #' modal_category(v4)
 #' modal_category(v4[-1])
+#'
 entropy = function(v, pseudo_count = length(v)/1000, na.action = na.fail){
     v = na.action(v)
     pr = table(v)/length(v) + pseudo_count
