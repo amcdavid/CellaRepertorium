@@ -4,21 +4,26 @@
 \alias{cluster_permute_test}
 \title{Tests for independence between clusters and labels using permutation}
 \usage{
-cluster_permute_test(clusters, labels, statistic, n_perm = 1000, ...)
+cluster_permute_test(clusters, labels, covariates, statistic,
+  n_perm = 1000, alternative = c("two.sided", "less", "greater"), ...)
 }
 \arguments{
 \item{clusters}{\code{factor} of length n}
 
 \item{labels}{\code{factor} of length n}
 
-\item{statistic}{function of \code{clusters} and \code{labels} that returns a \code{numeric} of length 1.  Currently, a two-tailed test is always run.}
+\item{covariates}{optional \code{factor} of length n.}
+
+\item{statistic}{function of \code{clusters}, \code{labels} and optionally \code{covariates} that returns a \code{numeric} of length 1.}
 
 \item{n_perm}{number of permutations.}
+
+\item{alternative}{`character` naming the direction `statistic` should be fall under the alternative hypothesis}
 
 \item{...}{passed to \code{statistic}}
 }
 \value{
-a list containing the observed value of the statistic, its expectation (under independence), a two-sided p-value, and the monte carlo standard error (of the expected value).
+a list containing the observed value of the statistic, its expectation (under independence), a p-value, and the monte carlo standard error (of the expected value).
 }
 \description{
 This tests a statistic for association between clusters and labels by permuting the link between the two
@@ -28,12 +33,15 @@ For example, \code{clusters} could be a clonal ID, while \code{labels} is a subj
 }
 \examples{
 library(dplyr)
-purity = function(clusters, labels){
-n_label_cluster = data_frame(labels = labels, clusters = clusters) \%>\% group_by(clusters, si) \%>\% summarize(n = n()) \%>\% ungroup()
+purity = function(clusters, labels, covariates){
+n_label_cluster = data_frame(labels = labels, clusters = clusters) \%>\% group_by(clusters, labels) \%>\% summarize(n = n()) \%>\% ungroup()
 singletons = mean(n_label_cluster$n == 1)
 singletons
 }
 
 clusters = c(1, 1, 1, 2, 2, 3, 3)
+labels = c('A', 'A', 'B', 'B', 'B', 'C', 'C')
+covariates = c('X', 'X', 'Y', 'Y', 'Y', 'Y', 'Y')
+cluster_permute_test(clusters, labels, statistic = purity, n_perm  = 50)
 
 }

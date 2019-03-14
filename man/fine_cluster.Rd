@@ -5,8 +5,8 @@
 \title{Calculate distances and perform hierarchical clustering on a set of sequences}
 \usage{
 fine_cluster(seqs, type = "AA", big_memory_brute = FALSE,
-  substitution_matrix = "BLOSUM100", cluster = "hclust",
-  cluster_method = "complete")
+  method = "levenshtein", substitution_matrix = "BLOSUM100",
+  cluster = "hclust", cluster_method = "complete")
 }
 \arguments{
 \item{seqs}{character vector, DNAStringSet or AAStringSet}
@@ -15,7 +15,9 @@ fine_cluster(seqs, type = "AA", big_memory_brute = FALSE,
 
 \item{big_memory_brute}{attempt to cluster more than 4000 sequences?  Clustering is quadratic, so this will take a long time and might exhaust memory}
 
-\item{substitution_matrix}{a character vector naming a substition matrix used to weight}
+\item{method}{one of 'substitutionMatrix' or 'levenshtein'}
+
+\item{substitution_matrix}{a character vector naming a substition matrix available in Biostrings, or a substitution matrix itself}
 
 \item{cluster_method}{character passed to `hclust`}
 }
@@ -30,7 +32,7 @@ The distances between nucleotide sequences is defined to be edit_distance/max(ed
 fasta_path = system.file('extdata', 'demo.fasta', package='CellaRepertorium')
 aaseq = Biostrings::readAAStringSet(fasta_path)[1:100]
 cls = fine_cluster(aaseq)
-plot(cls)
+plot(cls$cluster)
 }
 \seealso{
 hclust, stringDist
