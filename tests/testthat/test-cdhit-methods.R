@@ -19,6 +19,10 @@ test_that("cdhit only clusters identical sequences with identity = 1, G= 0, aL =
 })
 
 test_that("Don't need to be sorted", {
-    seqs_scramble = seqs[sample(length(seqs))]
-    res = cdhit(seqs_scramble, identity = 1, only_index = TRUE)
+    # if this gets too wild, the results are equivalent but re-numbered
+    scram = c(2, 1, 3, 4, 5, 6)
+    seqs_scramble = seqs[scram]
+    res = cdhit(seqs, identity = 1, kmerSize = 3, min_length = 5, only_index = TRUE)
+    res_scram = cdhit(seqs_scramble, identity = 1, kmerSize = 3, min_length = 5, only_index = TRUE)
+    expect_equal(res_scram, res[scram])
 })
