@@ -1,1 +1,1 @@
-setClass('FineCluster', contains = 'list', representation = c(cluster = 'ANY', distance = 'dist', medoid = 'integer', homology = 'numeric'))
+setClass('FineCluster', contains = 'list', representation = c(cluster = 'ANY', distance = 'matrix', medoid = 'integer', homology = 'numeric'))
