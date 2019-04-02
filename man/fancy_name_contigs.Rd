@@ -21,6 +21,7 @@ Generate a legible name for a series of contigs
 library(dplyr)
 contig_anno_path = system.file('extdata', 'cellranger_contig_annotation.csv', package = 'CellaRepertorium')
 contig_anno = readr::read_csv(contig_anno_path)
-contig_anno = contig_anno \%>\% mutate(fancy_name = fancy_name_contigs(., prefix = paste(sample, pop, sep = '_')))
+contig_anno = contig_anno \%>\% mutate(fancy_name =
+    fancy_name_contigs(., prefix = paste(sample, pop, sep = '_')))
 stopifnot(!any(duplicated(contig_anno$fancy_name)))
 }

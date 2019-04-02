@@ -18,6 +18,8 @@ modal_category(v, na.action = na.fail)
 \item{pseudo_count}{number of pseudo counts to add on, to stablize empty categories}
 
 \item{na.action}{how to handle NA values}
+
+\item{p}{proportion threshold}
 }
 \value{
 the sample entropy
