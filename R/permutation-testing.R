@@ -19,7 +19,8 @@
 #' @examples
 #' library(dplyr)
 #' purity = function(clusters, labels, covariates){
-#' n_label_cluster = data_frame(labels = labels, clusters = clusters) %>% group_by(clusters, labels) %>% summarize(n = n()) %>% ungroup()
+#' n_label_cluster = data_frame(labels = labels, clusters = clusters) %>%
+#'     group_by(clusters, labels) %>% summarize(n = n()) %>% ungroup()
 #' singletons = mean(n_label_cluster$n == 1)
 #' singletons
 #' }
