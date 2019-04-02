@@ -11,7 +11,7 @@ test_that("cdhit only clusters identical sequences with identity = 1, G= 0, aL =
     res = cdhit(seqs = seqs, kmerSize = 3, min_length = 5, only_index = TRUE, identity = 1, G = 0, aL = 1, aS = 1)
     expect_equal(res, c(1, 1, 2, 3, 4, 5))
     # Equality except for 90% differences in ends
-    res = cdhit(seqs = seqs, kmerSize = 3, min_length = 5, only_index = TRUE, identity = 1, G = 0, aL = .9, aS = .9)
+    res = cdhit(seqs = seqs, kmerSize = 3, min_length = 5, only_index = TRUE, identity = 1, G = 0, aL = .9, aS = .9, s = 0 )
     expect_equal(res, c(1, 1, 2, 1, 3, 4))
     # 90% equality, same length
     res = cdhit(seqs = seqs, kmerSize = 3, min_length = 5, only_index = TRUE, identity = .9, G = 0, aL = 1, aS = 1)
