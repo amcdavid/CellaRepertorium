@@ -1,6 +1,6 @@
 #' Generate a legible name for a series of contigs
 #'
-#' @param contig_frame An `all_contig_annotations.csv` file, output from VDJ Cell ranger.  Importantly, this should contain columns `chain`, `v_gene`, `d_gene`, `j_gene`
+#' @param contig_tbl An `all_contig_annotations.csv` file, output from VDJ Cell ranger.  Importantly, this should contain columns `chain`, `v_gene`, `d_gene`, `j_gene`
 #' @param prefix an optional prefix added to each contig, eg, possibly a sample id.
 #' @return \code{character}
 #' @importFrom dplyr %>%

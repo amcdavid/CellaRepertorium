@@ -123,8 +123,6 @@ good_cluster_cells = good_cluster %>% group_by(dataset, barcode, chain) %>% arra
 ```
 Checking to see how many CDR3 sequences are present in expanded clonotypes. Expect only 1.
 
-<!-- There are `r nrow(oligo_clusters)` cells that appear in clones that occur more than `r MIN_OLIGO` times. -->
-
 ***
 
 ```{r, eval = FALSE}

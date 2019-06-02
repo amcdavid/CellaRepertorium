@@ -57,6 +57,7 @@ setClass("ContigCellDB", slots = c(contig_tbl = 'data.frame', contig_pk = 'chara
 #' @return \code{ContigCellDB}
 #' @export
 #' @importFrom S4Vectors List SimpleList
+#' @importFrom tibble as_tibble
 #' @rdname ContigCellDB-fun
 #'
 #' @examples
