@@ -6,7 +6,7 @@
 \usage{
 fine_cluster(seqs, type = "AA", big_memory_brute = FALSE,
   method = "levenshtein", substitution_matrix = "BLOSUM100",
-  cluster = "hclust", cluster_method = "complete")
+  cluster_fun = "hclust", cluster_method = "complete")
 }
 \arguments{
 \item{seqs}{character vector, DNAStringSet or AAStringSet}
@@ -18,6 +18,8 @@ fine_cluster(seqs, type = "AA", big_memory_brute = FALSE,
 \item{method}{one of 'substitutionMatrix' or 'levenshtein'}
 
 \item{substitution_matrix}{a character vector naming a substition matrix available in Biostrings, or a substitution matrix itself}
+
+\item{cluster_fun}{`character`, one of "hclust" or "none", determining if distance matrices should also be clustered with `hclust`}
 
 \item{cluster_method}{character passed to `hclust`}
 }

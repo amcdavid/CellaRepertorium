@@ -65,7 +65,8 @@ cluster_tbl2 = bind_rows(cluster_tbl, cluster_tbl \%>\% mutate(cell_idx = rep(4:
 #all pairs found twice
 pt3 = pairing_tables(cluster_tbl2, 'cell_idx', 'clust_idx', canonicalize_by_prevalence, min_expansion = 1)
 pt3$cell_tbl
-# canonicalize_by_chain by default expects fields umis, reads to break ties, could wrap the function to change this
+# `canonicalize_by_chain` expects fields `umis`, `reads`
+# to break ties,  wrap the function to change this
 cluster_tbl3 = cluster_tbl2 \%>\%
     mutate(umis = 1, reads = 1, chain = rep(c('TRA', 'TRB'), times = 6))
 pt4 = pairing_tables(cluster_tbl3, 'cell_idx', 'clust_idx',

@@ -1,3 +1,5 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 extdata/.*\.json$
+^data-raw$
+extdata/refdata-cellranger-vdj-GRCh38-alts-ensembl-2.0.0/

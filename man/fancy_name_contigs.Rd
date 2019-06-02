@@ -4,12 +4,12 @@
 \alias{fancy_name_contigs}
 \title{Generate a legible name for a series of contigs}
 \usage{
-fancy_name_contigs(contig_frame, prefix)
+fancy_name_contigs(contig_tbl, prefix)
 }
 \arguments{
-\item{contig_frame}{An `all_contig_annotations.csv` file, output from VDJ Cell ranger.  Importantly, this should contain columns `chain`, `v_gene`, `d_gene`, `j_gene`}
-
 \item{prefix}{an optional prefix added to each contig, eg, possibly a sample id.}
+
+\item{contig_frame}{An `all_contig_annotations.csv` file, output from VDJ Cell ranger.  Importantly, this should contain columns `chain`, `v_gene`, `d_gene`, `j_gene`}
 }
 \value{
 \code{character}
@@ -19,9 +19,10 @@ Generate a legible name for a series of contigs
 }
 \examples{
 library(dplyr)
-contig_anno_path = system.file('extdata', 'cellranger_contig_annotation.csv', package = 'CellaRepertorium')
+contig_anno_path = system.file('extdata', 'all_contig_annotations_balbc_1.csv.xz',
+    package = 'CellaRepertorium')
 contig_anno = readr::read_csv(contig_anno_path)
 contig_anno = contig_anno \%>\% mutate(fancy_name =
-    fancy_name_contigs(., prefix = paste(sample, pop, sep = '_')))
+    fancy_name_contigs(., prefix = 'b6_1'))
 stopifnot(!any(duplicated(contig_anno$fancy_name)))
 }

@@ -1,7 +1,7 @@
 Package: CellaRepertorium
 Type: Package
 Title: Methods for clustering and analyzing high-throughput single cell immune cell repertoires (RepSeq)
-Version: 0.2.1
+Version: 0.2.2
 Author: Andrew McDavid
 Maintainer: Andrew McDavid <Andrew_McDavid@urmc.rochester.edu>
 Description: Methods to cluster and analyze high-throughput single cell immune cell repertoires,
@@ -11,6 +11,7 @@ Description: Methods to cluster and analyze high-throughput single cell immune c
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
+Depends: R (>= 3.5.0)
 Imports:
    dplyr,
    tibble,
@@ -21,10 +22,17 @@ Imports:
    methods,
    rlang,
    purrr,
-   Matrix
+   Matrix,
+   S4Vectors
 Suggests: 
-   testthat,
-   readr
-RoxygenNote: 6.1.0
+    testthat,
+    readr,
+    knitr,
+    rmarkdown,
+    ggplot2,
+    BiocStyle,
+    tidyr
+RoxygenNote: 6.1.1
 LinkingTo: Rcpp
 NeedsCompilation: yes
+VignetteBuilder: knitr

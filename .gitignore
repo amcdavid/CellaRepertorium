@@ -3,3 +3,6 @@
 .DS_Store
 *.so
 .Rproj.user
+data-raw/*.csv
+data-raw/*.json
+inst/doc
