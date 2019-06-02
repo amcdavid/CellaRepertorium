@@ -1,0 +1,222 @@
+---
+title: "Clustering repertoire via CDR3 sequences"
+output: BiocStyle::html_document
+vignette: >
+  %\VignetteIndexEntry{Clustering repertoire via CDR3 sequences}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>")
+```
+
+```{r setup}
+#load_all()
+library(CellaRepertorium)
+library(dplyr)
+library(ggplot2)
+library(readr)
+library(tidyr)
+library(stringr)
+```
+
+# Load filtered contig files
+
+```{r}
+data(contigs_qc)
+MIN_CDR3_AA = 6
+
+
+cdb = ContigCellDB_10XVDJ(contigs_qc, contig_pk = c('barcode', 'pop', 'sample', 'contig_id'), cell_pk = c('barcode', 'pop', 'sample'))
+
+cdb$contig_tbl = dplyr::filter(cdb$contig_tbl, full_length, productive == 'True', high_confidence, chain != 'Multi', str_length(cdr3) > MIN_CDR3_AA) %>% mutate( fancy_name = fancy_name_contigs(., str_c(pop, '_', sample)))
+```
+
+
+```{r results = 'asis'}
+knitr::kable(with(cdb$contig_tbl, table(sample, chain)))
+```
+`r nrow(cdb)` good chains (either TRA or TRB); each cell can appear more than once.
+
+
+# Chain pairings
+
+```{r}
+paired_chain = cdb$contig_tbl %>% group_by(barcode, sample, pop) %>% summarize(raw_chain_type = paste(sort(chain), collapse = '_'), n_chains = n())
+
+chain_recode = tribble(~chain_type, ~raw_chain_type,
+                       'TRA(2)', 'TRA_TRA',
+                       'TRA+_TRB+', 'TRA_TRA_TRA_TRB',
+                       'TRA(2)_TRB', 'TRA_TRA_TRB',
+                       'TRA(2)_TRB(2)', 'TRA_TRA_TRB_TRB',
+                       'TRA_TRB(2)', 'TRA_TRB_TRB',
+                       'TRA+_TRB+', 'TRA_TRB_TRB_TRB',
+                       'TRB(2)', 'TRB_TRB')
+
+paired_chain = paired_chain %>% left_join(chain_recode) %>% mutate(chain_type = ifelse(is.na(chain_type), raw_chain_type, chain_type))
+
+
+
+paired_table = paired_chain %>% group_by(sample, pop, chain_type) %>% summarize(ncells = n()) %>% spread(key = chain_type, value = ncells, fill = 0)
+
+ggplot(left_join(paired_chain, cdb$contig_tbl %>% select(barcode, sample, pop)), aes(x = sample, fill = chain_type)) + geom_bar() + facet_wrap(~pop) + coord_flip() + theme_minimal()
+
+```
+
+
+# Cluster CDR3 protein sequences
+
+```{r}
+
+cdb = CellaRepertorium:::cdhit_ccdb(cdb, 'cdr3', type = 'AA', cluster_tbl_name = 'AA100')
+
+
+```
+
+We cluster the CDR3 translated amino acid residues with the program [CD-HIT](http://weizhongli-lab.org/cdhit_suite/cgi-bin/index.cgi?cmd=cd-hit).  A sequence is included in a cluster if it matches by 100% similiarity and has the same CDR3 length.  Note that this can and should be relaxed -- especially in the beta chain we see "near clones" that only differ by a residue or two, seemingly in stylized places.
+
+
+# Cluster CDR3 DNA sequences
+
+```{r, eval = FALSE, results = 'hide'}
+cdb = CellaRepertorium:::cdhit_ccdb(cdb, 'cdr3_nt', type = 'DNA', 'DNA97', identity = .965, min_length = MIN_CDR3_AA*3-1, G = 1)
+
+cdb = CellaRepertorium:::cluster_germline(cdb, segment_identifiers = c('v_gene', 'j_gene', 'chain'))
+
+#%>% group_by(cluster_idx, germline_idx) %>% mutate(full_idx = paste0(cluster_idx, ':', germline_idx)) %>% dplyr::rename(cdr_idx = cluster_idx, cluster_idx = full_idx)  %>% group_by(cluster_idx) %>% mutate(n_cluster = n())
+                 
+```
+
+```{r, eval = FALSE}
+MIN_OLIGO = 4
+
+cluster_id = cdhit_res %>% group_by(cluster_idx) %>% summarize(cdr3_representative = get_canonical_representative(cdr3, warn_if_distinct = TRUE)) 
+
+aa_oligo = left_join(ungroup(cdhit_res), cluster_id) %>% ungroup() %>% mutate(cdr3_representative = fct_reorder(cdr3_representative, n_cluster))
+
+aa_oligo %>% filter(n_cluster > MIN_OLIGO) %>% ungroup() %>% group_by(cluster_idx, chain, cdr3_nt) %>% summarize(`n cells observed` = n(), `n subjects observed` = length(unique(sample))) %>% DT::datatable()
+
+
+```
+
+# Some way to compare cluster stringency (a cluster clustering or tanglegram?)
+
+0. 90% AA
+1. 100% AA 
+2. 100% DNA
+3. 100% DNA, same VDJ
+
+# Oligo clones
+
+```{r, eval = FALSE}
+cluster_id = good_cluster %>% group_by(cluster_idx) %>% summarize(cdr3_representative = get_canonical_representative(cdr3, warn_if_distinct = FALSE))
+
+oligo_clusters_all =  left_join(ungroup(good_cluster), cluster_id, by = 'cluster_idx') %>% mutate(cdr3_representative = fct_reorder(cdr3_representative, n_cluster))
+
+oligo_clusters = filter(oligo_clusters_all , n_cluster > MIN_OLIGO) %>% arrange(desc(cdr3_representative))
+oligo_clusters %>% group_by(cluster_idx, chain, cdr3_representative) %>% summarize(`n cells observed` = n(), `n subjects observed` = length(unique(sample))) %>% DT::datatable()
+
+good_cluster_cells = good_cluster %>% group_by(dataset, barcode, chain) %>% arrange(desc(umis, reads)) %>% do(head(., 1))
+```
+Checking to see how many CDR3 sequences are present in expanded clonotypes. Expect only 1.
+
+<!-- There are `r nrow(oligo_clusters)` cells that appear in clones that occur more than `r MIN_OLIGO` times. -->
+
+***
+
+```{r, eval = FALSE}
+oligo_plot = ggplot(oligo_clusters, aes(x = str_c(cdr3_representative, '; ', v_gene, ':', j_gene), fill = chain)) + geom_bar() + coord_flip() + scale_fill_brewer(type = 'qual') + theme_minimal()
+oligo_plot
+```
+
+These always come from a single chain.
+
+***
+
+```{r, eval = FALSE}
+oligo_plot + aes(fill =   sample) + facet_wrap(~pop)
+
+```
+
+But come from multiple populations and samples.
+
+# Formal testing for frequency differences
+
+```{r, eval = FALSE, results = 'hide'}
+library(lme4)
+library(broom)
+per_chain_sample = good_cluster_cells %>% group_by(sample, pop, chain) %>% summarize(total_cells = n(), weeks_premature = weeks_premature[1])
+
+oligo_cluster_stat = semi_join(oligo_clusters, good_cluster_cells %>% select(dataset, contig_id)) %>% group_by(sample, pop, chain, cluster_idx) %>% summarize(n_cluster = n())%>% ungroup() %>% complete(sample, pop, nesting(cluster_idx, chain), fill = list(n_cluster = 0))
+
+oligo_cluster_stat = left_join(oligo_cluster_stat, per_chain_sample, by = c('sample', 'pop', 'chain')) 
+
+stopifnot( all(colSums(with(oligo_cluster_stat, table(chain, cluster_idx)) > 0) == 1))
+
+mm_out = suppressWarnings(oligo_cluster_stat %>% group_by(cluster_idx, chain) %>% do( glmer(cbind(n_cluster, total_cells) ~ pop + weeks_premature + (1|sample), data = ., family = 'binomial') %>% tidy(conf.int = TRUE)))
+```
+
+```{r  per_iso_tests, eval = FALSE}
+mm_outj = filter(left_join(ungroup(mm_out), unique(oligo_clusters_all %>% select(cdr3_representative, cluster_idx))), term %in% c('popCD31Pos', 'weeks_premature')) %>% mutate(ci_lo = AMmisc::clamp(conf.low), ci_hi = AMmisc::clamp(conf.high)) %>% arrange(desc(cdr3_representative))
+
+ggplot(mm_outj, aes(x = cdr3_representative, ymin = ci_lo, ymax = ci_hi, y = clamp(estimate))) + geom_pointrange() + facet_wrap(~term, scales = 'free') + coord_flip() + theme_minimal() + geom_hline(yintercept = 0, lty = 2) + xlab("Isomorph") + ylab("log odds of isomorph")
+```
+
+We test if the binomial rate of clone expression differs between CD31+/- or term, for each clone.
+
+# Clonal pairs
+
+```{r expanded_clones, eval = FALSE}
+class_colors = data_frame(chain =  unique(oligo_clusters_all$chain)) %>% mutate(class_color =  brewer.pal(length(chain),"Set1")[-1])
+
+feature_tbl = oligo_clusters_all %>% group_by(cdr3_representative) %>% summarize(chain = chain[1], v_gene = v_gene[1], d_gene = d_gene[1]) %>% left_join(class_colors)
+
+
+
+pairing_list = pairing_tables(oligo_clusters_all %>% select(cdr3_representative, dataset, barcode, chain, umis, reads), cluster_idx = 'cdr3_representative', cell_identifiers = c('dataset', 'barcode'), table_order = 2, orphan_level = 1, min_expansion = 2, feature_tbl = feature_tbl, cell_tbl = good_cells)
+
+```
+
+
+```{r plot_expanded, eval = FALSE}
+pairs_plt = ggplot(pairing_list$cell_tbl, aes(x = cluster_idx.1_fct, y = cluster_idx.2_fct, color = sample, shape = pop)) + geom_jitter(width = .3, height = .3) + theme_minimal()
+
+ylab = data_frame(cdr3_representative =  ggplot_build(pairs_plt)$layout$panel_params[[1]]$y.label) %>% left_join(feature_tbl) %>% mutate(class_color = ifelse(is.na(class_color), '#E41A1C', class_color))
+
+xlab = data_frame(cdr3_representative =  ggplot_build(pairs_plt)$layout$panel_params[[1]]$x.label) %>% left_join(feature_tbl) %>% mutate(class_color = ifelse(is.na(class_color), '#E41A1C', class_color))
+
+pairs_plt = pairs_plt + theme(axis.text.x = element_text(angle = 90, color = xlab$class_color, size = 8), axis.text.y = element_text(color = ylab$class_color, size = 8))
+
+pairs_plt
+
+```
+
+## Expanded clones
+
+```{r, eval = FALSE}
+pairing_list = pairing_tables(oligo_clusters_all %>% select(cdr3_representative, dataset, barcode, chain, umis, reads), cluster_idx = 'cdr3_representative', cell_identifiers = c('dataset', 'barcode'), canonicalize_fun = canonicalize_by_prevalence, table_order = 2, orphan_level = 1, min_expansion = 4, feature_tbl = feature_tbl, cell_tbl = good_cells, cluster_whitelist = filter(oligo_clusters, n_cluster>8) %>% dplyr::select(cluster_idx.1 = cdr3_representative) %>% unique())
+<<plot_expanded>>
+```
+
+# Length of CDR3
+
+
+```{r eval = FALSE}
+
+ggplot(good_cluster_cells, aes(color = pop, fill = pop, x= cdr3_length)) + geom_histogram(binwidth = 1, position = 'dodge', mapping = aes(y = ..density..)) + theme_minimal() + scale_fill_brewer(type = 'qual') + scale_color_brewer(type = 'qual')  + facet_grid(sample ~chain) + theme(strip.text.y = element_text(angle = 0)) + coord_cartesian(xlim = c(25, 55))
+
+cdr_len = cdb %>% group_by(chain) %>% do(tidy(lmer(cdr3_length ~ (pop+Gender+weeks_premature) + (1|sample), data = .), conf.int = TRUE))
+```
+
+
+```{r cdr3_len, fig.width = 3, fig.height = 3, eval = FALSE}
+ggplot(cdr_len %>% filter(group == 'fixed', term != '(Intercept)'), aes(x = interaction(chain, term), y = estimate, ymin = conf.low, ymax = conf.high)) + geom_pointrange() + theme_minimal() + coord_flip() + ylab('Length(CDR3 Nt)') + xlab('Term/Chain')
+
+```
+
+
+
+

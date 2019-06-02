@@ -1,0 +1,134 @@
+---
+title: "Quality control and Exploration of UMI-based repertoire data"
+output: BiocStyle::html_document
+vignette: >
+  %\VignetteIndexEntry{Quality control and Exploration of UMI-based repertoire data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>")
+```
+
+```{r setup}
+#load_all()
+library(CellaRepertorium)
+library(dplyr)
+library(ggplot2)
+library(readr)
+library(tidyr)
+library(stringr)
+```
+
+# General questions
+
+1. Can/should elements of this script be included as package functionality (cell calling/filtering?)
+2. Can the QC be made more statistically principaled?
+
+# Load contig files
+
+```{r}
+files = list.files(system.file('extdata', package = 'CellaRepertorium'), pattern = "all_contig_annotations_.+?.csv.xz", recursive = TRUE, full.names = TRUE)
+# Pull out sample and population names
+samp_map = tibble(anno_file = files, pop = str_match(files, 'b6|balbc')[,1], sample = str_match(files, '_([0-9])\\.')[,2])
+
+knitr::kable(samp_map)
+```
+
+PBMC pooled from Balb/C and C57BL/6 mice [were assayed on 10X genomics V3 chemistry](https://support.10xgenomics.com/single-cell-vdj/datasets/3.0.0/vdj_v1_mm_c57bl6_pbmc_t) and a library enriched for TCR were run.  For the purposes of illustrating functionality in this package, cell barcodes were subsampled 3 times for each of the Balb/C and Black6 pools to generate distinct `samples`, which is reflected in the `sample` column. More details are available in the scripts in the `data-raw` directory of this package.
+
+```{r}
+# read in CSV
+all_anno = samp_map %>% rowwise() %>% mutate(anno = list(read_csv(anno_file, col_types = cols(
+  barcode = col_character(),
+  is_cell = col_logical(),
+  contig_id = col_character(),
+  high_confidence = col_logical(),
+  length = col_double(),
+  chain = col_character(),
+  v_gene = col_character(),
+  d_gene = col_character(),
+  j_gene = col_character(),
+  c_gene = col_character(),
+  full_length = col_logical(),
+  productive = col_character(),
+  cdr3 = col_character(),
+  cdr3_nt = col_character(),
+  reads = col_double(),
+  umis = col_double(),
+  raw_clonotype_id = col_character(),
+  raw_consensus_id = col_character()
+))))
+
+all_anno = all_anno %>% unnest() %>% 
+    # write a column specifying what cell type the contig belonged to
+    mutate(celltype = case_when(chain %in% c('TRA', 'TRB') ~ "T_ab", chain %in% c('TRD', 'TRG') ~ 'T_gd', chain == 'Multi' ~ 'Multi', chain %in% c('IGH','IGK', 'IGL') ~ 'B', TRUE ~ NA_character_))
+```
+
+The pipeline for assembling reads into contigs, and mapping them to UMIs and cells is described in [the 10X genomics documentation](https://support.10xgenomics.com/single-cell-vdj/software/pipelines/latest/algorithms/overview), and its source code is available [here](https://github.com/10XGenomics/cellranger/tree/5f5a6293bbc067e1965e50f0277286914b96c908).
+
+[Comment in greater depth on what output we are using, maybe make a schematic?]
+
+We read in the contig annotation file for each of the samples, and annotate the contig as a alpha-beta T cell, gamma-delta T cell, B cell or chimeric "multi" cell type based on where various 
+
+# High confidence UMIs belonging to T cells per cell
+
+```{r}
+total_umi = all_anno  %>% group_by(sample, pop, barcode, is_cell, high_confidence, celltype == 'T_ab') %>% summarize(total_umi = sum(umis)) %>% rename(is_T = `celltype == "T_ab"`)
+
+ggplot(filter(total_umi, high_confidence, is_T), aes(color = factor(is_cell), x = total_umi, group = interaction(is_cell, sample, pop))) + stat_ecdf() + coord_cartesian(xlim = c(0, 10)) + ylab('Fraction of barcodes') + theme_minimal() + scale_color_discrete('10X called cell?')
+```
+
+10X defines [a procedure](https://support.10xgenomics.com/single-cell-vdj/software/pipelines/latest/algorithms/cell-calling)  to separate cells from background that fits a Gaussian mixture model to the UMI distributions for each sample.  However in saome cases, it may be desirable to implement a common QC threshold with a different stringency, such as:
+
+*  Comparing across multiple samples
+*  When a sample has been enriched for a particular cell type (eg with pre-sequencing flow cytometry).
+
+When we consider only high confidence UMIs that unambiguous map to T cells, most "non cells" have 1 or fewer, while most putative cells have >5.  However, we might want to adopt a different UMI-based cell filter, as was done below.  Is there a way to evaluate a sensitivity/specificity in distinguishing cells from debris, or T cells from other cell types?
+
+# Reads / UMIs
+
+```{r}
+qual_plot = ggplot(all_anno, aes(x = celltype, y= umis)) + geom_violin() + geom_jitter() + facet_wrap(~sample + pop) + scale_y_log10() + xlab("Annotated cell type")
+
+qual_plot 
+qual_plot + aes(y = reads)
+```
+
+The number of UMIs and reads by sample and annotated cell type.
+
+# Apply T-cell contig UMI filter
+
+```{r, results = 'asis'}
+# At least 2 UMI mapping to high confidence T cell contigs.
+good_bc = total_umi %>% ungroup() %>% filter(is_cell) %>% filter(total_umi >= 2, is_T) %>% filter(high_confidence)
+total_cells = good_bc %>% group_by(sample, pop) %>% summarize(good_bc = n())
+knitr::kable(total_cells)
+```
+
+Apply a filter on UMIs.
+
+```{r}
+contigs_qc = semi_join(all_anno, good_bc %>% select(sample, pop, barcode)) %>% 
+  filter(full_length, productive == 'True', high_confidence, chain != 'Multi')
+```
+
+And take only high confidence, full length, productive $\alpha-\beta$ T cell contigs.
+
+# "Multi-chain" T cells
+
+```{r}
+
+n_productive = contigs_qc %>% group_by(sample, pop, barcode) %>% summarize(n_productive = n())
+
+ggplot(n_productive, aes(x = interaction(sample,pop), fill = factor(n_productive))) + geom_bar(position = position_stack()) + theme_minimal() + xlab("Replicate") + ylab("Number of cell barcodes")
+
+```
+
+Number of productive chains per replicate.
+
+# Add a plot showing chain breakdowns alpha-alpha/alpha-beta, alpha-alpha-beta, etc
+
