@@ -1,6 +1,9 @@
-cluster_germline = function(tbl, segment_identifiers = c('v_gene', 'j_gene', 'chain')){
-    seg_types = tbl %>% group_by(!!!syms(segment_identifiers)) %>% summarize() %>% ungroup() %>% mutate(germline_idx = seq_len(nrow(.)))
-    tbl %>% left_join(seg_types, by = segment_identifiers)
+
+cluster_germline = function(ccdb, segment_identifiers = c('v_gene', 'j_gene', 'chain'), cluster_tbl_name = length(cluster_tbls(ccdb)) + 1){
+    tbl = ccdb$contig_tbl
+    seg_types = tbl %>% group_by(!!!syms(segment_identifiers)) %>% summarize() %>% ungroup() %>% mutate(cluster_idx = seq_len(nrow(.)))
+    cluster_tbls(ccdb,cluster_tbl_name) = tbl %>% select(!!!syms(union(ccdb$contig_pk, segment_identifiers))) %>% left_join(seg_types, by = segment_identifiers)
+    ccdb
 }
 
 fine_cluster_by = function(seqs, by, max_dist = NULL, ...){
