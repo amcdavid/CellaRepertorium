@@ -2,11 +2,15 @@
 % Please edit documentation in R/cdhit-methods.R
 \name{cdhit}
 \alias{cdhit}
+\alias{cdhit_ccdb}
 \title{R interface to CDHIT/CDHITest}
 \usage{
 cdhit(seqs, identity = NULL, kmerSize = NULL, min_length = 6,
   s = 1, name = "CD-Hit", only_index = FALSE,
   showProgress = interactive(), ...)
+
+cdhit_ccdb(object, sequence_col, type = c("DNA", "AA"),
+  cluster_tbl_name = length(cluster_tbls(object)) + 1, ...)
 }
 \arguments{
 \item{seqs}{\code{AAseq} or \code{DNAseq}}
@@ -27,6 +31,12 @@ You may need to lower it below 5 for AAseq with identity less than .7.}
 \item{showProgress}{show a status bar}
 
 \item{...}{other arguments that can be passed to cdhit, see https://github.com/weizhongli/cdhit/wiki/3.-User's-Guide#CDHIT for details.  These will override any default values.}
+
+\item{sequence_col}{`character` naming the column in the `contig_tbl` containing the sequence to be clustered}
+
+\item{type}{one of 'DNA' or 'AA'}
+
+\item{cluster_tbl_name}{What index should the clustering be stored in?  By default, a new, unnamed cluster is added.}
 }
 \value{
 vector of \code{integer} of length \code{seqs} providing the cluster ID for each sequence, or a `tibble`.  See details.
@@ -45,6 +55,11 @@ In this case, you must also set the alignment coverage controls `aL`, `AL`, `aS`
 CDHit is by Fu, Niu, Zhu, Wu and Li (2012).  The R interface is originally by
 Thomas Lin Pedersen and was transcribed here because it is not exported from the package FindMyFriends, which is orphaned.
 }
+\section{Functions}{
+\itemize{
+\item \code{cdhit_ccdb}: Run `cdhit` on `ClusterContigDB` object
+}}
+
 \examples{
 fasta_path = system.file('extdata', 'demo.fasta', package='CellaRepertorium')
 aaseq = Biostrings::readAAStringSet(fasta_path)
