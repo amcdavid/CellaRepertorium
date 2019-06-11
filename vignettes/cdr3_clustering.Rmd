@@ -21,6 +21,7 @@ library(ggplot2)
 library(readr)
 library(tidyr)
 library(stringr)
+library(purrr)
 ```
 
 # Load filtered contig files
@@ -33,46 +34,38 @@ MIN_CDR3_AA = 6
 cdb = ContigCellDB_10XVDJ(contigs_qc, contig_pk = c('barcode', 'pop', 'sample', 'contig_id'), cell_pk = c('barcode', 'pop', 'sample'))
 
 cdb$contig_tbl = dplyr::filter(cdb$contig_tbl, full_length, productive == 'True', high_confidence, chain != 'Multi', str_length(cdr3) > MIN_CDR3_AA) %>% mutate( fancy_name = fancy_name_contigs(., str_c(pop, '_', sample)))
+
 ```
 
-
-```{r results = 'asis'}
-knitr::kable(with(cdb$contig_tbl, table(sample, chain)))
-```
 `r nrow(cdb)` good chains (either TRA or TRB); each cell can appear more than once.
 
 
 # Chain pairings
 
 ```{r}
-paired_chain = cdb$contig_tbl %>% group_by(barcode, sample, pop) %>% summarize(raw_chain_type = paste(sort(chain), collapse = '_'), n_chains = n())
+paired_chain = enumerate_pairing(cdb, chain_recode_fun = 'guess')
 
-chain_recode = tribble(~chain_type, ~raw_chain_type,
-                       'TRA(2)', 'TRA_TRA',
-                       'TRA+_TRB+', 'TRA_TRA_TRA_TRB',
-                       'TRA(2)_TRB', 'TRA_TRA_TRB',
-                       'TRA(2)_TRB(2)', 'TRA_TRA_TRB_TRB',
-                       'TRA_TRB(2)', 'TRA_TRB_TRB',
-                       'TRA+_TRB+', 'TRA_TRB_TRB_TRB',
-                       'TRB(2)', 'TRB_TRB')
-
-paired_chain = paired_chain %>% left_join(chain_recode) %>% mutate(chain_type = ifelse(is.na(chain_type), raw_chain_type, chain_type))
-
-
-
-paired_table = paired_chain %>% group_by(sample, pop, chain_type) %>% summarize(ncells = n()) %>% spread(key = chain_type, value = ncells, fill = 0)
-
-ggplot(left_join(paired_chain, cdb$contig_tbl %>% select(barcode, sample, pop)), aes(x = sample, fill = chain_type)) + geom_bar() + facet_wrap(~pop) + coord_flip() + theme_minimal()
+ggplot(paired_chain, aes(x = interaction(sample, pop), fill = pairing)) + geom_bar() + facet_wrap(~canonical, scale = 'free_x') + coord_flip() + theme_minimal()
 
 ```
 
 
 # Cluster CDR3 protein sequences
 
+
 ```{r}
 
 cdb = CellaRepertorium:::cdhit_ccdb(cdb, 'cdr3', type = 'AA', cluster_tbl_name = 'AA100')
 
+## Note that I'm not confident that the `Clustering` should be an element of the ContigCellDB anymore becase I think that only certain outputs of the clustering may belong in the contig_tbl or cell_tbl
+# And because I think that these will be common steps
+aa100 = cluster_tbls(cdb)$AA100
+aa100 = fine_clustering(aa100)
+
+# This maybe should be a turned into a function 
+# Other plots should be considered:
+# That show how clusters are split between samples, chains, etc
+ggplot(aa100$cluster_tbl %>% filter(n_cluster>1) %>% gather(key, value, -cluster_idx) , aes(x = value))+ facet_wrap(~key, scales = 'free') + geom_histogram() + scale_y_sqrt()
 
 ```
 
@@ -81,13 +74,43 @@ We cluster the CDR3 translated amino acid residues with the program [CD-HIT](htt
 
 # Cluster CDR3 DNA sequences
 
-```{r, eval = FALSE, results = 'hide'}
-cdb = CellaRepertorium:::cdhit_ccdb(cdb, 'cdr3_nt', type = 'DNA', 'DNA97', identity = .965, min_length = MIN_CDR3_AA*3-1, G = 1)
+```{r, results = 'hide'}
+cdb = CellaRepertorium:::cdhit_ccdb(cdb, 'cdr3_nt', type = 'DNA', cluster_tbl_name = 'DNA97', identity = .965, min_length = MIN_CDR3_AA*3-1, G = 1)
 
-cdb = CellaRepertorium:::cluster_germline(cdb, segment_identifiers = c('v_gene', 'j_gene', 'chain'))
+dna97 = cluster_tbls(cdb)$DNA97
+dna97 = fine_clustering(dna97, keep_clustering_details = TRUE)
 
-#%>% group_by(cluster_idx, germline_idx) %>% mutate(full_idx = paste0(cluster_idx, ':', germline_idx)) %>% dplyr::rename(cdr_idx = cluster_idx, cluster_idx = full_idx)  %>% group_by(cluster_idx) %>% mutate(n_cluster = n())
-                 
+ggplot(dna97$cluster_tbl %>% filter(n_cluster>1) %>% gather(key, value, -cluster_idx) , aes(x = value))+ facet_wrap(~key, scales = 'free') + geom_histogram() + scale_y_sqrt()
+
+cdb = CellaRepertorium:::cluster_germline(cdb, segment_keys = c('v_gene', 'j_gene', 'chain'))
+
+# Need methods to take intersections/unions or manually reassign contigs into clusters
+
+# Some way to compare cluster stringency (a cluster clustering or tanglegram?)
+
+# Also methods that pull the clustering into the contig or cell tbls
+```
+
+```{r}
+library(ggdendro)
+
+# This should be turned into a function in the package somehow
+# But plot arguments will be super-variable
+# Maybe just return the `hc` object?
+dendro_plot = function(clustering, idx, ccdb, method = 'complete'){
+    h = filter(clustering$cluster_tbl, !!sym(clustering$cluster_pk) == idx) %>% pull(fc) %>% .[[1]]
+    quer = filter(clustering$contig_tbl, !!sym(clustering$cluster_pk) == idx)
+    ann = left_join(quer, ccdb$contig_tbl, by = ccdb$contig_pk)
+    hc = hclust(as.dist(h$distance), method = method) %>% dendro_data(type = "rectangle")
+    hc$labels = cbind(hc$labels, ann)
+   ggplot(hc$segments, aes(x=x, y=y)) + geom_segment(aes(xend=xend, yend=yend)) + 
+  theme_classic() + geom_text(data = hc$labels, aes(color = sample, label = fancy_name), size = 3, angle = 90, vjust = 0) + scale_x_continuous(breaks = NULL) + ylab('AA Distance') + xlab('')
+}
+
+
+to_plot = filter(dna97$cluster_tbl, n_cluster > 3)
+map(to_plot$cluster_idx, ~ dendro_plot(dna97, ., cdb) + ylab("DNA Distance"))
+
 ```
 
 ```{r, eval = FALSE}
@@ -102,12 +125,6 @@ aa_oligo %>% filter(n_cluster > MIN_OLIGO) %>% ungroup() %>% group_by(cluster_id
 
 ```
 
-# Some way to compare cluster stringency (a cluster clustering or tanglegram?)
-
-0. 90% AA
-1. 100% AA 
-2. 100% DNA
-3. 100% DNA, same VDJ
 
 # Oligo clones
 
