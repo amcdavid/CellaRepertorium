@@ -12,6 +12,6 @@ contigs_qc
 }
 \description{
 The details of how these are generated are shown in the vignette mouse_tcell_qc
-and are serialied to serve as an examples for other vignettes and documentation.
+and are serialized to serve as an examples for other vignettes and documentation.
 }
 \keyword{datasets}

@@ -9,7 +9,7 @@ cdhit(seqs, identity = NULL, kmerSize = NULL, min_length = 6,
   s = 1, name = "CD-Hit", only_index = FALSE,
   showProgress = interactive(), ...)
 
-cdhit_ccdb(object, sequence_col, type = c("DNA", "AA"),
+cdhit_ccdb(object, sequence_key, type = c("DNA", "AA"),
   cluster_tbl_name = length(cluster_tbls(object)) + 1, ...)
 }
 \arguments{
@@ -32,7 +32,9 @@ You may need to lower it below 5 for AAseq with identity less than .7.}
 
 \item{...}{other arguments that can be passed to cdhit, see https://github.com/weizhongli/cdhit/wiki/3.-User's-Guide#CDHIT for details.  These will override any default values.}
 
-\item{sequence_col}{`character` naming the column in the `contig_tbl` containing the sequence to be clustered}
+\item{object}{An object of class `ClusterContigDB`}
+
+\item{sequence_key}{`character` naming the column in the `contig_tbl` containing the sequence to be clustered}
 
 \item{type}{one of 'DNA' or 'AA'}
 

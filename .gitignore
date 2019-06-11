@@ -6,3 +6,5 @@
 data-raw/*.csv
 data-raw/*.json
 inst/doc
+doc
+Meta

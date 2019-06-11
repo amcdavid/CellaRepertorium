@@ -46,26 +46,24 @@ cluster_germline = function(ccdb, segment_keys = c('v_gene', 'j_gene', 'chain'),
 
 #' Perform additional clustering of sequences within groups
 #'
-#' @param clustering `Clustering`
-#' @param sequence_key 
+#' @param clustering `Clustering` object
+#' @param sequence_key `character` naming column in `contig_tbl` with sequence
 #' @param type 'AA' or 'DNA'
-#' @param max_affinity 
-#' @param keep_clustering_details 
-#' @param ... passed to `clustering``
+#' @param max_affinity `numeric` naming the maximal affinity for the sparse affinity matrix that is constructed.  Not currently used.
+#' @param keep_clustering_details `logical` -- should output of `fine_cluster_seqs` be kept as a list column
+#' @param ... passed to `fine_cluster_seqs`
 #'
-#' @return
+#' @return `Clustering` object with updated `contig_tbl` and `cluster_tbl`
 #' @export
-#'
-#' @examples
 fine_clustering = function(clustering, sequence_key = 'seq', type = clustering$type, max_affinity = NULL, keep_clustering_details = FALSE, ...){
     cctb = clustering$contig_tbl
     message('Calculating intradistances on ', nrow(clustering$cluster_tbl), ' clusters.')
-    # run `fine_cluster` within each cluster_pk
-    cluster_tbl = cctb %>% group_by(!!!syms(clustering$cluster_pk)) %>% summarize(fc = list(fine_cluster(!!sym(sequence_key), type = type, ...)), n_cluster = n())
+    # run `fine_cluster_seqs` within each cluster_pk
+    cluster_tbl = cctb %>% group_by(!!!syms(clustering$cluster_pk)) %>% summarize(fc = list(fine_cluster_seqs(!!sym(sequence_key), type = type, ...)), n_cluster = n())
     message('Summarizing')
-    contig_by_cluster = cctb[union(clustering$contig_pk, clustering$cluster_pk)] %>% nest(!!!syms(clustering$contig_pk)) %>% 
+    contig_by_cluster = cctb[union(clustering$contig_pk, clustering$cluster_pk)] %>% nest(!!!syms(clustering$contig_pk)) %>%
         right_join(cluster_tbl %>% select(!!!syms(clustering$cluster_pk)), by=clustering$cluster_pk) # need to make sure these are in the same order!
-    
+
     if(is.null(max_affinity)){
         max_max = max(purrr::map_dbl(cluster_tbl$fc, 'max_dist'))
     } else {
@@ -100,15 +98,15 @@ fine_clustering = function(clustering, sequence_key = 'seq', type = clustering$t
 #' @param cluster_method character passed to `hclust`
 #'
 #' @seealso hclust, stringDist
-#' @return dendrogram of class `hclust`
+#' @return `list` containing
 #' @export
 #' @import Biostrings
 #' @examples
 #' fasta_path = system.file('extdata', 'demo.fasta', package='CellaRepertorium')
 #' aaseq = Biostrings::readAAStringSet(fasta_path)[1:100]
-#' cls = fine_cluster(aaseq)
+#' cls = fine_cluster_seqs(aaseq)
 #' plot(cls$cluster)
-fine_cluster = function(seqs, type = 'AA', big_memory_brute = FALSE, method = 'levenshtein', substitution_matrix = 'BLOSUM100', cluster_fun = 'hclust', cluster_method = 'complete'){
+fine_cluster_seqs = function(seqs, type = 'AA', big_memory_brute = FALSE, method = 'levenshtein', substitution_matrix = 'BLOSUM100', cluster_fun = 'hclust', cluster_method = 'complete'){
     if(length(seqs) > 4000 & !big_memory_brute) stop("Won't try to cluster ", length(seqs), " sequences unless `big_memory_brute` = TRUE.  (Make sure you actually have lots of memory!)")
     type = match.arg(type, choices = c('AA', 'DNA'))
     cluster_fun = match.arg(cluster_fun, c('hclust', 'none'))
