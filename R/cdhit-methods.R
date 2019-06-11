@@ -80,22 +80,21 @@ cdhit = function(seqs, identity = NULL, kmerSize = NULL, min_length = 6, s = 1, 
 
 ##' @describeIn cdhit Run `cdhit` on `ClusterContigDB` object
 ##' @param object An object of class `ClusterContigDB`
-##' @param sequence_col `character` naming the column in the `contig_tbl` containing the sequence to be clustered
+##' @param sequence_key `character` naming the column in the `contig_tbl` containing the sequence to be clustered
 ##' @param type one of 'DNA' or 'AA'
 ##' @param cluster_tbl_name What index should the clustering be stored in?  By default, a new, unnamed cluster is added.
 ##' @export
-cdhit_ccdb = function(object, sequence_col, type = c('DNA', 'AA'), cluster_tbl_name = length(cluster_tbls(object)) + 1, ...){
-    seqs = object$contig_tbl[[sequence_col]]
+cdhit_ccdb = function(object, sequence_key, type = c('DNA', 'AA'), cluster_tbl_name = length(cluster_tbls(object)) + 1, ...){
+    seqs = object$contig_tbl[[sequence_key]]
     if(length(seqs) < 1) stop("No sequences were provided")
     type = match.arg(type, c('DNA', 'AA'))
     if(type == 'DNA'){
-        seqs = DNAStringSet(seqs)
+        seqset = DNAStringSet(seqs)
     } else {
-        seqs = AAStringSet(seqs)
+        seqset = AAStringSet(seqs)
     }
-    cluster_idx = cdhit(seqs, ..., only_index = TRUE)
-    cluster_tbl = dplyr::mutate(object$contig_tbl[object$contig_pk], cluster_idx = cluster_idx)  %>%
-        dplyr::group_by(cluster_idx) %>% dplyr::mutate(n_cluster = dplyr::n()) %>% ungroup()
-    cluster_tbls(object, cluster_tbl_name) = cluster_tbl
+    cluster_idx = cdhit(seqset, ..., only_index = TRUE)
+    cl_con_tbl = dplyr::mutate(object$contig_tbl[object$contig_pk], cluster_idx = cluster_idx, seq = seqs)
+    cluster_tbls(object,cluster_tbl_name) = Clustering(cl_con_tbl, object$contig_pk, cluster_pk = 'cluster_idx', type = type)
     object
 }

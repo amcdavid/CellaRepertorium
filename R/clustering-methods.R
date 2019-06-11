@@ -1,24 +1,89 @@
+Clustering = function(contig_tbl, contig_pk, cluster_tbl, cluster_pk, type = character()){
+    valid_KeyedTbl(contig_tbl, contig_pk)
+    if(missing(cluster_tbl)){
+        if(missing(cluster_pk) || !is.character(cluster_pk)) stop("If `cluster_tbl` missing then `cluster_pk` must name columns in `contig_tbl` that identify clusters")
+        cluster_tbl = as_tibble(unique(contig_tbl[cluster_pk]))
+    } else{
+        valid_KeyedTbl(cluster_tbl, cluster_pk)
+    }
+    obj = new('Clustering', contig_tbl = contig_tbl, contig_pk = contig_pk, cluster_tbl = cluster_tbl, cluster_pk = cluster_pk, type = type)
+}
 
-cluster_germline = function(ccdb, segment_identifiers = c('v_gene', 'j_gene', 'chain'), cluster_tbl_name = length(cluster_tbls(ccdb)) + 1){
+setMethod("$", signature = c(x = 'Clustering'), function(x, name){
+    if(name %in% c('contig_tbl', 'contig_pk', 'cluster_tbl', 'cluster_pk', 'type')){
+        slot(x, name)
+    } else{
+        stop("Cannot access member", name)
+    }
+})
+
+setReplaceMethod("$", signature = c(x = 'Clustering'), function(x, name, value){
+    if(name %in% c('contig_tbl', 'contig_pk', 'cluster_tbl', 'cluster_pk', 'type')){
+        slot(x, name) = value
+    } else{
+        stop("Cannot access member", name)
+    }
+    if(name == 'contig_tbl') valid_KeyedTbl(x$contig_tbl, x$contig_pk)
+    if(name == 'cluster_tbl') valid_KeyedTbl(x$cluster_tbl, x$cluster_pk)
+    invisible(x)
+})
+
+setMethod('show', signature = c(object = 'Clustering'), function(object){
+    cat(class(object), "of", nrow(object$contig_tbl), "contigs")
+    if((ncluster <- nrow(object$cluster_tbl)) > 0) cat(";", ncluster, "clusters.\n")
+    cat('Contigs keyed by ', paste(object@contig_pk, collapse = ', '), '; clusters keyed by ', sep = '')
+    cat(paste(object@cluster_pk, collapse = ', '), '.\n', sep = '')
+})
+
+
+cluster_germline = function(ccdb, segment_keys = c('v_gene', 'j_gene', 'chain'), cluster_tbl_name = length(cluster_tbls(ccdb)) + 1){
     tbl = ccdb$contig_tbl
-    seg_types = tbl %>% group_by(!!!syms(segment_identifiers)) %>% summarize() %>% ungroup() %>% mutate(cluster_idx = seq_len(nrow(.)))
-    cluster_tbls(ccdb,cluster_tbl_name) = tbl %>% select(!!!syms(union(ccdb$contig_pk, segment_identifiers))) %>% left_join(seg_types, by = segment_identifiers)
+    seg_types = tbl %>% group_by(!!!syms(segment_keys)) %>% summarize() %>% ungroup() %>% mutate(cluster_idx = seq_len(nrow(.)))
+    cl_con_tbl = tbl %>% select(!!!syms(union(ccdb$contig_pk, segment_keys))) %>% left_join(seg_types, by = segment_keys)
+    cluster_tbls(ccdb,cluster_tbl_name) = Clustering(cl_con_tbl, ccdb$contig_pk, cluster_pk = c('cluster_idx', segment_keys), type = 'segment')
     ccdb
 }
 
-fine_cluster_by = function(seqs, by, max_dist = NULL, ...){
-    seq_list = split(seqs, by)
-    fc_list = lapply(seq_list, fine_cluster, ...)
-    if(is.null(max_dist)){
-        max_max = max(purrr::map_dbl(fc_list, 'max_dist'))
+#' Perform additional clustering of sequences within groups
+#'
+#' @param clustering `Clustering`
+#' @param sequence_key 
+#' @param type 'AA' or 'DNA'
+#' @param max_affinity 
+#' @param keep_clustering_details 
+#' @param ... passed to `clustering``
+#'
+#' @return
+#' @export
+#'
+#' @examples
+fine_clustering = function(clustering, sequence_key = 'seq', type = clustering$type, max_affinity = NULL, keep_clustering_details = FALSE, ...){
+    cctb = clustering$contig_tbl
+    message('Calculating intradistances on ', nrow(clustering$cluster_tbl), ' clusters.')
+    # run `fine_cluster` within each cluster_pk
+    cluster_tbl = cctb %>% group_by(!!!syms(clustering$cluster_pk)) %>% summarize(fc = list(fine_cluster(!!sym(sequence_key), type = type, ...)), n_cluster = n())
+    message('Summarizing')
+    contig_by_cluster = cctb[union(clustering$contig_pk, clustering$cluster_pk)] %>% nest(!!!syms(clustering$contig_pk)) %>% 
+        right_join(cluster_tbl %>% select(!!!syms(clustering$cluster_pk)), by=clustering$cluster_pk) # need to make sure these are in the same order!
+    
+    if(is.null(max_affinity)){
+        max_max = max(purrr::map_dbl(cluster_tbl$fc, 'max_dist'))
     } else {
-        max_max = max_dist
+        max_max = max_affinity
     }
-    affinities = purrr::map(fc_list, ~ max_max - .[['distance']])
+    affinities = purrr::map(cluster_tbl$fc, ~ max_max - .[['distance']])
     aff_matrix = Matrix::.bdiag(affinities)
-    homologies = unlist(purrr::map(fc_list, 'homology'), use.names = FALSE)
-    medoid = purrr::map_dbl(fc_list, 'medoid')
-    list(affinities, aff_matrix, homologies, medoid)
+    d_medoid = purrr::map2_dfr(cluster_tbl$fc, contig_by_cluster$data, function(.x, .y){
+        is_medoid = seq_len(nrow(.y)) == .x$medoid
+        bind_cols(.y, `d(medoid)` = .x$homology, is_medoid = is_medoid)
+    })
+    cctb = left_join(d_medoid, cctb, by = clustering$contig_pk)
+    avg_homology = cctb %>% group_by(!!!syms(clustering$cluster_pk)) %>% summarize(avg_homology = mean(`d(medoid)`))
+    cluster_tbl = cluster_tbl %>% left_join(avg_homology, by = clustering$cluster_pk)
+    if(!keep_clustering_details) cluster_tbl = cluster_tbl %>% select(-fc)
+    clustering$cluster_tbl = cluster_tbl
+    clustering$contig_tbl = cctb
+    clustering
 }
 
 #' Calculate distances and perform hierarchical clustering on a set of sequences
