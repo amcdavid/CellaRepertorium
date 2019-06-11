@@ -1,10 +1,12 @@
-# Todo
-# Missing methods
-# primary_keys, primary_keys<-
-# canonicalize contigs on cells, canonicalize contigs on clusters
+# To Document
+# primary_keys, primary_keys<- -- use `$` to access/replace. Table not checked for validity, but I think should be?
+# canonicalize contigs on cells
 # subset (subset a table, then equalize...)
-# combine
 
+
+# Todo
+# canonicalize contigs on clusters
+# combine methods
 
 valid_KeyedTbl = function(tbl, keys){
     tbl_nm = deparse(substitute(tbl))
@@ -48,7 +50,7 @@ ContigCellDB = function(contig_tbl, contig_pk, cell_tbl, cell_pk, cluster_tbls =
     } else{
         valid_KeyedTbl(cell_tbl, cell_pk)
     }
-    obj = new('ContigCellDB', contig_tbl = contig_tbl, contig_pk = contig_pk, cell_tbl = cell_tbl, cell_pk = cell_pk, cluster_tbls = cluster_tbls, cluster_pk = cluster_pk, equalized = equalized)
+    obj = new('ContigCellDB', contig_tbl = contig_tbl, contig_pk = contig_pk, cell_tbl = cell_tbl, cell_pk = cell_pk, cluster_tbls = cluster_tbls, equalized = equalized)
     if(!equalized) equalize_ccdb(obj) else obj
 }
 
@@ -62,7 +64,7 @@ setMethod("$", signature = c(x = 'ContigCellDB'), function(x, name){
     if(name %in% c('contig_tbl', 'cell_tbl', 'contig_pk', 'cell_pk')){
         slot(x, name)
     } else{
-        stop("Cannot access member", name)
+        stop("Cannot access member ", name)
     }
 })
 
@@ -71,7 +73,15 @@ setReplaceMethod("$", signature = c(x = 'ContigCellDB'), function(x, name, value
         slot(x, name) <- value
         x@equalized = FALSE
     } else{
-        stop("Cannot access member", name)
+        stop("Cannot access member ", name)
+    }
+    if(name == 'contig_tbl'){
+        valid_KeyedTbl(x$contig_tbl, x$contig_pk)
+        x = equalize_ccdb(x)
+    }
+    if(name == 'cell_tbl'){
+        valid_KeyedTbl(x$cell_tbl, x$cell_pk)
+        x = equalize_ccdb(x)
     }
     invisible(x)
 })
