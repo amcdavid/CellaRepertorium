@@ -207,3 +207,62 @@ plot_pairing = function(pairing_list, color_labels_by){
 
 }
 
+
+ig_chain_recode = function(tbl){
+    pairing = case_when(tbl$IGH>0 & (tbl$IGK>0 | tbl$IGL>0) ~ 'paired',
+                        tbl$IGH>0 ~ 'heavy',
+                        (tbl$IGK>0 | tbl$IGL>0) ~ 'light')
+    canonical = case_when(tbl$IGH<2 & (tbl$IGK==2 | tbl$IGL==2) ~ 'double-light',
+                          tbl$IGH<2 & ((tbl$IGK + tbl$IGL)>1) ~ 'multi-light',
+                          tbl$IGH<2 & (tbl$IGK + tbl$IGL)<2 ~ 'classical',
+                          tbl$IGH>1 ~ 'multi-heavy',
+                          TRUE ~ 'other')
+    dplyr::bind_cols(tbl, tibble(pairing, canonical))
+}
+
+tcr_chain_recode = function(tbl){
+    pairing = case_when(tbl$TRA>0 & tbl$TRB>0 ~ 'paired',
+                        tbl$TRB>0 ~ 'beta',
+                        tbl$TRA>0 ~ 'alpha')
+    canonical = case_when(tbl$TRB==2 ~ 'double-beta',
+                          tbl$TRA==2  ~ 'double-alpha',
+                          (tbl$TRB + tbl$TRA) > 1 ~ 'other',
+                          TRUE ~ 'classical')
+    dplyr::bind_cols(tbl, tibble(pairing, canonical))
+}
+
+#' Categorize the pairing present in a cell
+#'
+#' For each cell (defined by `ccdb$cell_pk`) count the number of each level of `chain_key` occurs, and cross tabulate.
+#' Also for each cell, paste together all values `chain_key`.
+#' Return a tibble, keyed by cells that includes the counts of the chains, the `raw_chain_type` and any additional output from running `chain_recode_fun`.
+#' @param ccdb `ContigCellDB`
+#' @param chain_key `character` naming the field in the `contig_tbl` identifying chain
+#' @param chain_recode_fun a function that operates on the output of this function that further reduces the chain combinations to some other summary.  Set to 'guess' to apply functions that may work for 10X data or `NULL` to skip.  See `CellaRepertorium:::tcr_chain_recode` for an example.
+#'
+#' @return a `tibble` keyed by cells.
+#' @export
+#'
+#' @examples
+#' data(ccdb_ex)
+#' enumerate_pairing(ccdb_ex)
+#' enumerate_pairing(ccdb_ex, chain_recode_fun = 'guess')
+enumerate_pairing = function(ccdb, chain_key = 'chain', chain_recode_fun = NULL){
+    if(!is.null(chain_recode_fun) && chain_recode_fun == 'guess'){
+        top_chain = names(sort(table(ccdb$contig_tbl[[chain_key]]), decreasing = TRUE))[1]
+        if(top_chain %in% c('TRA', 'TRB')){
+            chain_recode_fun = tcr_chain_recode
+        } else if(top_chain %in% c('IGH', 'IGK', 'IGL')){
+            chain_recode_fun = ig_chain_recode
+        }
+    } else if(is.null(chain_recode_fun)){
+        chain_recode_fun = function(x) x
+    }
+    if(!is.function(chain_recode_fun)) stop("`chain_recode_fun` must be a function, NULL, or 'guess'")
+
+    chain_keys = union(chain_key, ccdb$cell_pk)
+    chain_count = ccdb$contig_tbl %>% group_by(!!!syms(chain_keys)) %>% summarize(n_chains = n()) %>% spread(chain_key, 'n_chains', fill = 0)
+    chain_type = ccdb$contig_tbl %>% group_by(!!!syms(ccdb$cell_pk)) %>% summarize(raw_chain_type = paste(sort(!!sym(chain_key)), collapse = '_'))
+    chain_summary = left_join(chain_type, chain_count, by = ccdb$cell_pk) %>% ungroup()
+    chain_recode_fun(chain_summary)
+}

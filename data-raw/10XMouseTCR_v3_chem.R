@@ -71,5 +71,7 @@ jsn_ss %>% rowwise() %>% do({
 
 knitr::purl('vignettes/mouse_tcell_qc.Rmd', output = 'data-raw/mouse_tcells.R')
 source('data-raw/mouse_tcell_qc.R')
+ccdb_ex = ContigCellDB_10XVDJ(contigs_qc, contig_pk = c('pop',   'sample', 'barcode', 'contig_id'), cell_pk = c('pop',   'sample', 'barcode'))
 use_data(contigs_qc)
+use_data(ccdb_ex)
 unlink('data-raw/mouse_tcell_qc.R')
