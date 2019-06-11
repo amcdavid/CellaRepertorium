@@ -35,6 +35,7 @@ valid_KeyedTbl = function(tbl, keys){
 #' @export
 #' @importFrom S4Vectors List SimpleList
 #' @importFrom tibble as_tibble
+#' @importFrom methods new slot slot<-
 #' @rdname ContigCellDB-fun
 #'
 #' @examples
@@ -96,8 +97,9 @@ setMethod('show', signature = c(object = 'ContigCellDB'), function(object){
 })
 
 equalize_ccdb = function(x){
-    x$cell_tbl = semi_join(x$cell_tbl, x$contig_tbl, by = x$cell_pk)
-    x$contig_tbl = semi_join(x$contig_tbl, x$cell_tbl, by = x$cell_pk)
+    # Must use @ to avoid infinite loop!
+    x@cell_tbl = semi_join(x$cell_tbl, x$contig_tbl, by = x$cell_pk)
+    x@contig_tbl = semi_join(x$contig_tbl, x$cell_tbl, by = x$cell_pk)
     x@equalized = TRUE
     x
 }
