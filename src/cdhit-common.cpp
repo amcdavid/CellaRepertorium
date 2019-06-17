@@ -29,7 +29,7 @@
 //                    Center for Biological Sequencing (CBS), DTU
 //                    2300 Kongens Lyngby, Denmark
 //                    Email: thomasp85@gmail.com
-//                    
+//
 // =============================================================================
 
 
@@ -60,6 +60,12 @@
 //class function definition
 const char aa[] = {"ARNDCQEGHILKMFPSTWYVBZX"};
 //{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,2,6,20};
+
+
+// Reset aa2idx because it gets stomped on by setaa_to_na
+const int aa2idx_orig[] = {0, 2, 4, 3, 6, 13,7, 8, 9,20,11,10,12, 2,20,14,
+                5, 1,15,16,20,19,17,20,18, 6};
+
 int aa2idx[] = {0, 2, 4, 3, 6, 13,7, 8, 9,20,11,10,12, 2,20,14,
                 5, 1,15,16,20,19,17,20,18, 6};
     // idx for  A  B  C  D  E  F  G  H  I  J  K  L  M  N  O  P
@@ -113,8 +119,6 @@ int BLOSUM62_na[] = {
 //A  C  G  T  U  N  X
 //0  1  2  3  3  4  5
 };
-
-void setaa_to_na();
 
 struct TempFile
 {
@@ -209,7 +213,8 @@ void InitNAA( int max )
 	NAA12 = NAAN_array[12] = NAA6 * NAA6;
 }
 
-extern Options options;
+//extern Options options;
+Options options;
 ScoreMatrix mat;
 Vector<int> Comp_AAN_idx;
 
@@ -447,21 +452,21 @@ void Options::Print()
 // 	temp_files.Clear();
 // 	exit (1);
 // } // END void bomb_error
-// 
+//
 // void bomb_error(const char *message, const char *message2)
 // {
 // 	fprintf( stderr, "\nFatal Error:\n%s %s\nProgram halted !!\n\n", message, message2 );
 // 	temp_files.Clear();
 // 	exit (1);
 // } // END void bomb_error
-// 
-// 
+//
+//
 // void bomb_warning(const char *message)
 // {
 // 	fprintf( stderr, "\nWarning:\n%s\nNot fatal, but may affect results !!\n\n", message );
 // } // END void bomb_warning
-// 
-// 
+//
+//
 // void bomb_warning(const char *message, const char *message2)
 // {
 // 	fprintf( stderr, "\nWarning:\n%s %s\nNot fatal, but may affect results !!\n\n", message, message2 );
@@ -554,10 +559,10 @@ int diag_test_aapn(int NAA1, char iseq2[], int len1, int len2, WorkingBuffer & b
 	int score = best_score;
 	int score2 = best_score2;
 	for (k=from, j=band_m+1; j<band_e; j++, k++) {
-		score -= diag_score[k]; 
-		score += diag_score[j]; 
-		score2 -= diag_score2[k]; 
-		score2 += diag_score2[j]; 
+		score -= diag_score[k];
+		score += diag_score[j];
+		score2 -= diag_score2[k];
+		score2 += diag_score2[j];
 		if ( score2 > best_score2 ) {
 			from = k + 1;
 			end  = j;
@@ -585,16 +590,16 @@ int diag_test_aapn(int NAA1, char iseq2[], int len1, int len2, WorkingBuffer & b
 	}
 
 	//  delete [] diag_score;
-	band_left = from - len1 + 1; 
+	band_left = from - len1 + 1;
 	band_right= end - len1 + 1;
 	band_center = imax_diag - len1 + 1;
 	best_sum = best_score;
 	return OK_FUNC;
 }
 // END diag_test_aapn
- 
 
-int diag_test_aapn_est(int NAA1, char iseq2[], int len1, int len2, WorkingBuffer & buffer, 
+
+int diag_test_aapn_est(int NAA1, char iseq2[], int len1, int len2, WorkingBuffer & buffer,
         int &best_sum, int band_width, int &band_left, int &band_center, int &band_right, int required_aa1)
 {
 	int i, i1, j, k;
@@ -628,7 +633,7 @@ int diag_test_aapn_est(int NAA1, char iseq2[], int len1, int len2, WorkingBuffer
 		if ( (j=taap[c22]) == 0) continue;
 		cpx = 1 + (c0 != c1) + (c1 != c2) + (c2 != c3);
 		bip = & aap_list[ aap_begin[c22] ];     //    bi = aap_begin[c22];
-		for (; j; j--, bip++) { 
+		for (; j; j--, bip++) {
 			diag_score[i1 - *bip]++;
 			diag_score2[i1 - *bip] += cpx;
 		}
@@ -645,7 +650,7 @@ int diag_test_aapn_est(int NAA1, char iseq2[], int len1, int len2, WorkingBuffer
 		}
 	}
 #endif
-	
+
 	//find the best band range
 	//  int band_b = required_aa1;
 	int band_b = required_aa1-1 >= 0 ? required_aa1-1:0;  // on dec 21 2001
@@ -675,14 +680,14 @@ int diag_test_aapn_est(int NAA1, char iseq2[], int len1, int len2, WorkingBuffer
 	}
 	int from=band_b;
 	int end =band_m;
-	int score = best_score;  
-	int score2 = best_score2;  
+	int score = best_score;
+	int score2 = best_score2;
 
 	for (k=from, j=band_m+1; j<band_e; j++, k++) {
-		score -= diag_score[k]; 
-		score += diag_score[j]; 
-		score2 -= diag_score2[k]; 
-		score2 += diag_score2[j]; 
+		score -= diag_score[k];
+		score += diag_score[j];
+		score2 -= diag_score2[k];
+		score2 += diag_score2[j];
 		if ( score2 > best_score2 ) {
 			from = k + 1;
 			end  = j;
@@ -715,7 +720,7 @@ int diag_test_aapn_est(int NAA1, char iseq2[], int len1, int len2, WorkingBuffer
 		} else break;
 	}
 
-	band_left = from-len1+1; 
+	band_left = from-len1+1;
 	band_right= end-len1+1;
 	band_center = imax_diag - len1 + 1;
 	best_sum = best_score;
@@ -769,7 +774,7 @@ mat is matrix, return ALN_PAIR class
 
 */
 
-int local_band_align( char iseq1[], char iseq2[], int len1, int len2, ScoreMatrix &mat, 
+int local_band_align( char iseq1[], char iseq2[], int len1, int len2, ScoreMatrix &mat,
 		int &best_score, int &iden_no, int &alnln, float &dist, int *alninfo,
 		int band_left, int band_center, int band_right, WorkingBuffer & buffer)
 {
@@ -1056,8 +1061,8 @@ int local_band_align( char iseq1[], char iseq2[], int len1, int len2, ScoreMatri
 				begin2 = j + mm;
 			}
 			break;
-		default : 
-		    // printf( "%i\n", back ); 
+		default :
+		    // printf( "%i\n", back );
 		break;
 		}
 		if( options.is454 ){
@@ -1128,7 +1133,7 @@ int local_band_align( char iseq1[], char iseq2[], int len1, int len2, ScoreMatri
 		AA[NN-i-1] = aa;
 		BB[NN-i-1] = bb;
 	}
-	static int fcount = 0; 
+	static int fcount = 0;
 	fcount += 1;
 	FILE *fout = fopen( "alignments.txt", "a" );
 	if( fout == NULL ){
@@ -1182,6 +1187,12 @@ void setaa_to_na()
 	for (i=0; i<26; i++) aa2idx[i]   = na2idx[i];
 } // END void setaa_to_na
 
+void resetaa()
+{
+    int i;
+    for (i=0; i<26; i++) aa2idx[i]   = aa2idx_orig[i];
+} // END void resetaa
+
 
 /////////////////
 ScoreMatrix::ScoreMatrix()
@@ -1189,7 +1200,7 @@ ScoreMatrix::ScoreMatrix()
 	init();
 }
 
-void ScoreMatrix::init() 
+void ScoreMatrix::init()
 {
 	set_gap( -11, -1 );
 	set_matrix( BLOSUM62 );
@@ -1373,7 +1384,7 @@ void WordTable::PrintAll()
 	// 	cout << endl;
 	// 	k++;
 	// }
-	// 
+	//
 	// cout << "total cols: " << cols << " total words: " << total_words << endl;
 }
 
@@ -1411,7 +1422,7 @@ void PartialQuickSort( IndexCount *data, int first, int last, int partial )
 	if( upper+1 < last ) PartialQuickSort( data, upper+1, last, partial );
 }
 int WordTable::CountWords(int aan_no, Vector<int> & word_encodes, Vector<INTs> & word_encodes_no,
-    NVector<IndexCount> &lookCounts, NVector<uint32_t> & indexMapping, 
+    NVector<IndexCount> &lookCounts, NVector<uint32_t> & indexMapping,
 	bool est, int min)
 {
 	int S = frag_count ? frag_count : sequences.size();
@@ -1668,12 +1679,12 @@ void SequenceDB::Read( const char *file, const Options & options )
 						dummy.size = one.size;
 						dummy.offset = ftell( swap );
 						dummy.des_length = one.des_length;
-						sequences.Append( new Sequence( dummy ) ); 
+						sequences.Append( new Sequence( dummy ) );
 						one.ConvertBases();
 						fwrite( one.data, 1, one.size, swap );
 					}else{
 						//printf( "==================\n" );
-						sequences.Append( new Sequence( one ) ); 
+						sequences.Append( new Sequence( one ) );
 						//printf( "------------------\n" );
 						//if( sequences.size() > 10 ) break;
 					}
@@ -1768,10 +1779,10 @@ void SequenceDB::SortDivide( Options & options, bool sort )
 		if( seq->identifier ) total_desc += strlen( seq->identifier );
 	}
 	options.max_entries = max_len * MAX_TABLE_SEQ;
-	if (max_len >= 65536 and sizeof(INTs) <=2) 
+	if (max_len >= 65536 and sizeof(INTs) <=2)
 		bomb_warning("Some seqs longer than 65536, you may define LONG_SEQ");
 
-	if (max_len > MAX_SEQ ) 
+	if (max_len > MAX_SEQ )
 		bomb_warning("Some seqs are too long, please rebuild the program with make parameter "
 				"MAX_SEQ=new-maximum-length (e.g. make MAX_SEQ=10000000)");
 
@@ -1945,14 +1956,14 @@ vector<int> SequenceDB::GetClusters( const Options & options )
     vector<long long> sorting( N );
     for (i=0; i<N; i++) sorting[i] = ((long long)sequences[i]->index << 32) | i;
     std::sort( sorting.begin(), sorting.end() );
-    
+
     vector<int> clusters( N );
     for (i=0; i<N; i++){
         int k = sorting[i] & 0xffffffff;
         int id = sequences[k]->cluster_id;
         clusters[i] = id;
     }
-    
+
     return clusters;
 }
 void SequenceDB::WriteExtra2D( SequenceDB & other, const Options & options )
@@ -2020,7 +2031,7 @@ void WorkingParam::ControlLongCoverage( int len2, const Options & options )
 
 
 // when alignment coverage such as -aL is specified
-// if a existing rep is too long, it won't be qulified 
+// if a existing rep is too long, it won't be qulified
 int upper_bound_length_rep(int len, double opt_s, int opt_S, double opt_aL, int opt_AL )
 {
 	int len_upper_bound = 99999999;
@@ -2048,7 +2059,7 @@ void cal_aax_cutoff(double &aa1_cutoff, double &aa2_cutoff, double &aan_cutoff,
 	aa1_cutoff = cluster_thd;
 	aa2_cutoff = 1 - (1-cluster_thd)*2;
 	aan_cutoff = 1 - (1-cluster_thd)*NAA;
-	if (tolerance==0) return; 
+	if (tolerance==0) return;
 
 	int clstr_idx = (int) (cluster_thd * 100) - naa_stat_start_percent;
 	if (clstr_idx <0) clstr_idx = 0;
@@ -2072,7 +2083,7 @@ void update_aax_cutoff(double &aa1_cutoff, double &aa2_cutoff, double &aan_cutof
 	if (aa1_t > aa1_cutoff) aa1_cutoff = aa1_t;
 	if (aa2_t > aa2_cutoff) aa2_cutoff = aa2_t;
 	if (aan_t > aan_cutoff) aan_cutoff = aan_t;
-	return;  
+	return;
 } // END update_aax_cutoff
 
 void WorkingParam::ComputeRequiredBases( int NAA, int ss, const Options & option )
@@ -2239,7 +2250,7 @@ void SequenceDB::ClusterOne( Sequence *seq, int id, WordTable & table,
 			seq->state |= IS_REP;
 			if (frag_size){ /* not used for EST */
 				int frg1 = (len - NAA ) / frag_size + 1;
-				table.AddWordCountsFrag( aan_no, buffer.word_encodes_backup, 
+				table.AddWordCountsFrag( aan_no, buffer.word_encodes_backup,
 						buffer.word_encodes_no, frg1, frag_size );
 			}else{
 				table.AddWordCounts(aan_no, buffer.word_encodes, buffer.word_encodes_no, table.sequences.size(), options.isEST);
@@ -2340,7 +2351,7 @@ void SequenceDB::DoClustering( int T, const Options & options )
 
 	//printf( "%li\n", options.mem_limit );
 
-	if (frag_size){ 
+	if (frag_size){
 		frag_no = 0;
 		for (i=0; i<seq_no; i++) frag_no += (sequences[i]->size - NAA) / frag_size + 1;
 	}
@@ -2645,7 +2656,7 @@ int SequenceDB::CheckOneAA( Sequence *seq, WordTable & table, WorkingParam & par
 					band_left, band_center, band_right, buf);
 		else
 			rc = local_band_align(seqi, seqj, len, len2, mat,
-					best_score, tiden_no, alnln, distance, talign_info, 
+					best_score, tiden_no, alnln, distance, talign_info,
 					band_left, band_center, band_right, buf);
 		if ( rc == FAILED_FUNC ) continue;
 		if ( tiden_no < required_aa1 ) continue;
@@ -2765,7 +2776,7 @@ int SequenceDB::CheckOneEST( Sequence *seq, WordTable & table, WorkingParam & pa
 		if( comp ){
 			table.CountWords(aan_no, aan_list_comp, word_encodes_no, lookCounts, indexMapping, true, required_aan );
 		}else{
-			table.CountWords(aan_no, word_encodes, word_encodes_no, lookCounts, indexMapping, true, required_aan ); 
+			table.CountWords(aan_no, word_encodes, word_encodes_no, lookCounts, indexMapping, true, required_aan );
 		}
 
 		IndexCount *ic = lookCounts.items;
@@ -2863,9 +2874,9 @@ int SequenceDB::CheckOneEST( Sequence *seq, WordTable & table, WorkingParam & pa
 			seq->state |= IS_REDUNDANT ;
 		}
 		if( flag == -1 )
-			seq->state |= IS_MINUS_STRAND; 
+			seq->state |= IS_MINUS_STRAND;
 		else
-			seq->state &= ~IS_MINUS_STRAND; 
+			seq->state &= ~IS_MINUS_STRAND;
 	}
 	return flag;
 }
@@ -2960,7 +2971,7 @@ void SequenceDB::DoClustering( const Options & options, std::string name, bool s
 		return;
 	}
 
-	if (frag_size){ 
+	if (frag_size){
 		frag_no = 0;
 		for (i=0; i<seq_no; i++) frag_no += (sequences[i]->size - NAA) / frag_size + 1;
 	}
@@ -2984,7 +2995,7 @@ void SequenceDB::DoClustering( const Options & options, std::string name, bool s
 
 	Options opts( options );
 	opts.ComputeTableLimits( min_len, max_len, len_n50, mem_need );
-	
+
 	Progress prog(N, name, 1000, showProgress);
 	prog.start();
 
@@ -3131,7 +3142,7 @@ void SequenceDB::ClusterTo( SequenceDB & other, const Options & options )
 				// printf( "." );
 				//fflush( stdout );
 				// if ( (ks+1) % 10000 == 0 ) printf( "%9i  finished\n", ks+1 );
-			}  
+			}
 		}
 		float p0 = 0;
 		if( T > 1 ){
@@ -3236,11 +3247,11 @@ void SequenceDB::ClusterTo( SequenceDB & other, const Options & options )
 	temp_files.Clear();
 }
 
-int calc_ann_list(int len, char *seqi, int NAA, int& aan_no, Vector<int> & aan_list, Vector<INTs> & aan_list_no, bool est) 
+int calc_ann_list(int len, char *seqi, int NAA, int& aan_no, Vector<int> & aan_list, Vector<INTs> & aan_list_no, bool est)
 {
 	int i, j, k, i0, i1, k1;
 
-	// check_aan_list 
+	// check_aan_list
 	aan_no = len - NAA + 1;
 	for (j=0; j<aan_no; j++) {
 		aan_list[j] = 0;

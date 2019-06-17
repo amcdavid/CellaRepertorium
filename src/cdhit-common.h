@@ -29,7 +29,7 @@
 //                    Center for Biological Sequencing (CBS), DTU
 //                    2300 Kongens Lyngby, Denmark
 //                    Email: thomasp85@gmail.com
-//                    
+//
 // =============================================================================
 
 #include<iostream>
@@ -119,12 +119,12 @@ class NVector
 		int     capacity;
 
 		NVector(){ size = capacity = 0; items = NULL; }
-		NVector( int n, const TYPE & v=TYPE() ){ 
-			size = capacity = 0; items = NULL; 
+		NVector( int n, const TYPE & v=TYPE() ){
+			size = capacity = 0; items = NULL;
 			Resize( n, v );
 		}
 		NVector( const NVector & other ){
-			size = capacity = 0; items = NULL; 
+			size = capacity = 0; items = NULL;
 			if( other.items ){
 				Resize( other.size );
 				memcpy( items, other.items, other.size * sizeof(TYPE) );
@@ -136,7 +136,7 @@ class NVector
 		int  Size()const{ return size; }
 		void Clear(){
 			if( items ) free( items );
-			size = capacity = 0; items = NULL; 
+			size = capacity = 0; items = NULL;
 		}
 
 		void Resize( int n, const TYPE & value=TYPE() ){
@@ -213,6 +213,9 @@ extern int NAAN_array[13];
 
 void InitNAA( int max );
 
+void setaa_to_na();
+void resetaa();
+
 
 extern int naa_stat_start_percent;
 extern int naa_stat[5][61][4];
@@ -247,11 +250,11 @@ class WordTable
 		int  AddWordCounts( NVector<IndexCount> & counts, Sequence *seq, bool skipN=false);
 		int  AddWordCountsFrag( NVector<IndexCount> & counts, int frag, int frag_size, int repfrag );
 
-		int  AddWordCounts(int aan_no, Vector<int> & word_encodes, 
+		int  AddWordCounts(int aan_no, Vector<int> & word_encodes,
 				Vector<INTs> & word_encodes_no, int idx, bool skipN=false);
-		int AddWordCountsFrag( int aan_no, Vector<int> & word_encodes, 
+		int AddWordCountsFrag( int aan_no, Vector<int> & word_encodes,
 				Vector<INTs> & word_encodes_no, int frag, int frag_size );
-		int CountWords(int aan_no, Vector<int> & aan_list, Vector<INTs> & aan_list_no, 
+		int CountWords(int aan_no, Vector<int> & aan_list, Vector<INTs> & aan_list_no,
 				NVector<IndexCount> & lookCounts, NVector<uint32_t> & indexMapping,
 				bool est=false, int min=0);
 		void PrintAll();
@@ -357,6 +360,8 @@ struct Options
 
 	void Print();
 };
+
+extern Options options;
 
 void bomb_error(const char *message);
 void clear_temps();
@@ -572,7 +577,7 @@ class SequenceDB
 		void ClusterOne( Sequence *seq, int id, WordTable & table,
 				WorkingParam & param, WorkingBuffer & buf, const Options & options );
 
-		//void SelfComparing( int start, int end, WordTable & table, 
+		//void SelfComparing( int start, int end, WordTable & table,
 		//    WorkingParam & param, WorkingBuffer & buf, const Options & options );
 
 		void ComputeDistance( const Options & options );
@@ -591,13 +596,13 @@ void bomb_error(const char *message, const char *message2);
 void bomb_warning(const char *message);
 void bomb_warning(const char *message, const char *message2);
 void format_seq(char *seq);
-int diag_test_aapn(int NAA1, char iseq2[], int len1, int len2, 
+int diag_test_aapn(int NAA1, char iseq2[], int len1, int len2,
 		WorkingBuffer & buffer, int &best_sum,
 		int band_width, int &band_left, int &band_center, int &band_right, int required_aa1);
-int diag_test_aapn_est(int NAA1, char iseq2[], int len1, int len2, 
+int diag_test_aapn_est(int NAA1, char iseq2[], int len1, int len2,
 		WorkingBuffer & buffer, int &best_sum,
 		int band_width, int &band_left, int &band_center, int &band_right, int required_aa1);
-int local_band_align( char query[], char ref[], int qlen, int rlen, ScoreMatrix &mat, 
+int local_band_align( char query[], char ref[], int qlen, int rlen, ScoreMatrix &mat,
 		int &best_score, int &iden_no, int &alnln, float &dist, int *alninfo,
 		int band_left, int band_center, int band_right, WorkingBuffer & buffer);
 
