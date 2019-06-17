@@ -5,8 +5,8 @@
 \alias{ContigCellDB_10XVDJ}
 \title{Construct a ContigCellDB}
 \usage{
-ContigCellDB(contig_tbl, contig_pk, cell_tbl, cell_pk,
-  cluster_tbls = List(), cluster_pk = List())
+ContigCellDB(contig_tbl, contig_pk, cell_tbl, cell_pk, cluster_tbl,
+  cluster_pk = character())
 
 ContigCellDB_10XVDJ(contig_tbl, contig_pk = c("barcode", "contig_id"),
   cell_pk = "barcode")
@@ -20,9 +20,9 @@ ContigCellDB_10XVDJ(contig_tbl, contig_pk = c("barcode", "contig_id"),
 
 \item{cell_pk}{character vector naming fields in `cell_tbl` that uniquely identify a cell barcode}
 
-\item{cluster_tbls}{An optional list of data frames that provide cluster assignments for each contig}
-
 \item{cluster_pk}{If `cluster_tbls` was provided, a list of character vector naming fields in `cluster_tbls` that uniquely identify a cluster}
+
+\item{cluster_tbls}{An optional list of data frames that provide cluster assignments for each contig}
 }
 \value{
 \code{ContigCellDB}

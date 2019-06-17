@@ -35,6 +35,19 @@ canonicalize_by_chain = function(tbl,  cell_identifiers = 'barcode', sort_factor
 
 }
 
+canonicalize_by_subset = function(ccdb, tie_break_keys = c('umis', 'reads'), contig_fields = tie_break_keys, ...){
+    tbl = ccdb$contig_tbl
+    ft = filter(tbl, quos(...))
+    arranging = purrr::map(tie_break_keys, ~ rlang::quo(desc(!!sym(.x))))
+    ft2 = ft %>% group_by(!!!syms(ccdb$cell_pk)) %>% dplyr::arrange(!!!arranging)
+    cell_tbl = ccdb$cell_tbl
+    ccdb$cell_tbl = right_join_warn(ft2[unique(c(contig_fields, ccdb$cell_pk))], cell_tbl, by = ccdb$cell_pk)
+    ccdb
+}
+
+
+
+
 # Define canonical chain types per cell
 
 #' Given a family of similar sequences, return a "representative"

@@ -21,7 +21,6 @@ valid_KeyedTbl = function(tbl, keys){
     invisible(TRUE)
 }
 
-
 #' Construct a ContigCellDB
 #'
 #' @param contig_tbl a data frame of contigs, and additional fields describing their properties
@@ -35,13 +34,13 @@ valid_KeyedTbl = function(tbl, keys){
 #' @export
 #' @importFrom S4Vectors List SimpleList
 #' @importFrom tibble as_tibble
-#' @importFrom methods new slot slot<-
+#' @importFrom methods new slot slot<- validObject
 #' @rdname ContigCellDB-fun
 #'
 #' @examples
 #' data(contigs_qc)
 #' ContigCellDB(contigs_qc, contig_pk = c('barcode', 'pop', 'sample', 'contig_id'), cell_pk = c('barcode', 'pop', 'sample'))
-ContigCellDB = function(contig_tbl, contig_pk, cell_tbl, cell_pk, cluster_tbls = List(), cluster_pk = List()){
+ContigCellDB = function(contig_tbl, contig_pk, cell_tbl, cell_pk, cluster_tbl, cluster_pk = character()){
     valid_KeyedTbl(contig_tbl, contig_pk)
     equalized = FALSE
     if(missing(cell_tbl)){
@@ -51,7 +50,12 @@ ContigCellDB = function(contig_tbl, contig_pk, cell_tbl, cell_pk, cluster_tbls =
     } else{
         valid_KeyedTbl(cell_tbl, cell_pk)
     }
-    obj = new('ContigCellDB', contig_tbl = contig_tbl, contig_pk = contig_pk, cell_tbl = cell_tbl, cell_pk = cell_pk, cluster_tbls = cluster_tbls, equalized = equalized)
+    if(missing(cluster_tbl)){
+        cluster_tbl = tibble()
+    } else{
+        valid_KeyedTbl(cluster_tbl, cluster_pk)
+    }
+    obj = new('ContigCellDB', contig_tbl = contig_tbl, contig_pk = contig_pk, cell_tbl = cell_tbl, cell_pk = cell_pk, cluster_tbl = cluster_tbl, cluster_pk = cluster_pk, equalized = equalized)
     if(!equalized) equalize_ccdb(obj) else obj
 }
 
@@ -62,7 +66,7 @@ ContigCellDB_10XVDJ = function(contig_tbl, contig_pk = c('barcode', 'contig_id')
 }
 
 setMethod("$", signature = c(x = 'ContigCellDB'), function(x, name){
-    if(name %in% c('contig_tbl', 'cell_tbl', 'contig_pk', 'cell_pk')){
+    if(name %in% c('contig_tbl', 'cell_tbl', 'contig_pk', 'cell_pk', 'cluster_tbl', 'cluster_pk')){
         slot(x, name)
     } else{
         stop("Cannot access member ", name)
@@ -70,7 +74,7 @@ setMethod("$", signature = c(x = 'ContigCellDB'), function(x, name){
 })
 
 setReplaceMethod("$", signature = c(x = 'ContigCellDB'), function(x, name, value){
-    if(name %in% c('contig_tbl', 'cell_tbl', 'contig_pk', 'cell_pk')){
+    if(name %in% c('contig_tbl', 'cell_tbl', 'contig_pk', 'cell_pk', 'cluster_tbl', 'cluster_pk')){
         slot(x, name) <- value
         x@equalized = FALSE
     } else{
@@ -84,24 +88,45 @@ setReplaceMethod("$", signature = c(x = 'ContigCellDB'), function(x, name, value
         valid_KeyedTbl(x$cell_tbl, x$cell_pk)
         x = equalize_ccdb(x)
     }
+    if(name == 'cluster_tbl'){
+        valid_KeyedTbl(x$cluster_tbl, x$cluster_pk)
+        x = equalize_ccdb(x)
+    }
     invisible(x)
 })
 
 setMethod('show', signature = c(object = 'ContigCellDB'), function(object){
     cat(class(object), "of", nrow(object$contig_tbl), "contigs")
     if((ncells <- nrow(object$cell_tbl)) > 0) cat(";", ncells, "cells;")
-    cat(" and", length(cluster_tbls(object)), "cluster tables")
+    cat(" and", nrow(object$cluster_tbl), "clusters")
     cat(".\n")
     cat('Contigs keyed by ', paste(object@contig_pk, collapse = ', '), '; cells keyed by ', sep = '')
     cat(paste(object@cell_pk, collapse = ', '), '.\n', sep = '')
 })
 
+#' @importFrom dplyr semi_join left_join right_join
 equalize_ccdb = function(x){
     # Must use @ to avoid infinite loop!
     x@cell_tbl = semi_join(x$cell_tbl, x$contig_tbl, by = x$cell_pk)
     x@contig_tbl = semi_join(x$contig_tbl, x$cell_tbl, by = x$cell_pk)
+    if(nrow(x$cluster_tbl) > 0) x@cluster_tbl = semi_join(x$cluster_tbl, x$contig_tbl, by = x$cluster_pk)
     x@equalized = TRUE
     x
 }
 
+replace_cluster_tbl = function(ccdb, cluster_tbl, contig_tbl, cluster_pk){
+    if(nrow(ccdb$cluster_tbl)>0 && !missing(cluster_pk)){
+        warning("Replacing `cluster_tbl` with key ccdb$cluster_pk")
+    }
+    if(!missing(cluster_pk)) ccdb$cluster_pk = cluster_pk
+    ccdb@cluster_tbl = cluster_tbl
+    if(!missing(contig_tbl)){
+        ccdb@contig_tbl = contig_tbl
+        valid_KeyedTbl(ccdb$contig_tbl, ccdb$contig_pk)
+    }
+    valid_KeyedTbl(ccdb$cluster_tbl, ccdb$cluster_pk)
+    ccdb = equalize_ccdb(ccdb)
+    validObject(ccdb)
+    ccdb
+}
 

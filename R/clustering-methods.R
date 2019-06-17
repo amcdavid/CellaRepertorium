@@ -1,49 +1,14 @@
-Clustering = function(contig_tbl, contig_pk, cluster_tbl, cluster_pk, type = character()){
-    valid_KeyedTbl(contig_tbl, contig_pk)
-    if(missing(cluster_tbl)){
-        if(missing(cluster_pk) || !is.character(cluster_pk)) stop("If `cluster_tbl` missing then `cluster_pk` must name columns in `contig_tbl` that identify clusters")
-        cluster_tbl = as_tibble(unique(contig_tbl[cluster_pk]))
-    } else{
-        valid_KeyedTbl(cluster_tbl, cluster_pk)
-    }
-    obj = new('Clustering', contig_tbl = contig_tbl, contig_pk = contig_pk, cluster_tbl = cluster_tbl, cluster_pk = cluster_pk, type = type)
+
+cluster_germline = function(ccdb, segment_keys = c('v_gene', 'j_gene', 'chain'), cluster_name = 'cluster_idx'){
+    contig_tbl = ccdb$contig_tbl
+    seg_types = contig_tbl %>% group_by(!!!syms(segment_keys)) %>% summarize() %>% ungroup() %>% mutate(!!sym(cluster_name) := seq_len(nrow(.)))
+    cl_con_tbl = left_join_warn(seg_types, contig_tbl, by = segment_keys)
+    cluster_tbl = as_tibble(unique(cl_con_tbl[union(cluster_name, segment_keys)]))
+    replace_cluster_tbl(ccdb, cluster_tbl, cl_con_tbl, cluster_pk = cluster_name)
 }
 
-setMethod("$", signature = c(x = 'Clustering'), function(x, name){
-    if(name %in% c('contig_tbl', 'contig_pk', 'cluster_tbl', 'cluster_pk', 'type')){
-        slot(x, name)
-    } else{
-        stop("Cannot access member", name)
-    }
-})
 
-setReplaceMethod("$", signature = c(x = 'Clustering'), function(x, name, value){
-    if(name %in% c('contig_tbl', 'contig_pk', 'cluster_tbl', 'cluster_pk', 'type')){
-        slot(x, name) = value
-    } else{
-        stop("Cannot access member", name)
-    }
-    if(name == 'contig_tbl') valid_KeyedTbl(x$contig_tbl, x$contig_pk)
-    if(name == 'cluster_tbl') valid_KeyedTbl(x$cluster_tbl, x$cluster_pk)
-    invisible(x)
-})
-
-setMethod('show', signature = c(object = 'Clustering'), function(object){
-    cat(class(object), "of", nrow(object$contig_tbl), "contigs")
-    if((ncluster <- nrow(object$cluster_tbl)) > 0) cat(";", ncluster, "clusters.\n")
-    cat('Contigs keyed by ', paste(object@contig_pk, collapse = ', '), '; clusters keyed by ', sep = '')
-    cat(paste(object@cluster_pk, collapse = ', '), '.\n', sep = '')
-})
-
-
-cluster_germline = function(ccdb, segment_keys = c('v_gene', 'j_gene', 'chain'), cluster_tbl_name = length(cluster_tbls(ccdb)) + 1){
-    tbl = ccdb$contig_tbl
-    seg_types = tbl %>% group_by(!!!syms(segment_keys)) %>% summarize() %>% ungroup() %>% mutate(cluster_idx = seq_len(nrow(.)))
-    cl_con_tbl = tbl %>% select(!!!syms(union(ccdb$contig_pk, segment_keys))) %>% left_join(seg_types, by = segment_keys)
-    cluster_tbls(ccdb,cluster_tbl_name) = Clustering(cl_con_tbl, ccdb$contig_pk, cluster_pk = c('cluster_idx', segment_keys), type = 'segment')
-    ccdb
-}
-
+# Also canonicalize..
 #' Perform additional clustering of sequences within groups
 #'
 #' @param clustering `Clustering` object
@@ -55,14 +20,14 @@ cluster_germline = function(ccdb, segment_keys = c('v_gene', 'j_gene', 'chain'),
 #'
 #' @return `Clustering` object with updated `contig_tbl` and `cluster_tbl`
 #' @export
-fine_clustering = function(clustering, sequence_key = 'seq', type = clustering$type, max_affinity = NULL, keep_clustering_details = FALSE, ...){
-    cctb = clustering$contig_tbl
-    message('Calculating intradistances on ', nrow(clustering$cluster_tbl), ' clusters.')
+fine_clustering = function(ccdb, sequence_key, type, max_affinity = NULL, keep_clustering_details = FALSE, ...){
+    contig_tbl = ccdb$contig_tbl
+    message('Calculating intradistances on ', nrow(ccdb$cluster_tbl), ' clusters.')
     # run `fine_cluster_seqs` within each cluster_pk
-    cluster_tbl = cctb %>% group_by(!!!syms(clustering$cluster_pk)) %>% summarize(fc = list(fine_cluster_seqs(!!sym(sequence_key), type = type, ...)), n_cluster = n())
+    cluster_tbl = contig_tbl %>% group_by(!!!syms(ccdb$cluster_pk)) %>% summarize(fc = list(fine_cluster_seqs(!!sym(sequence_key), type = type, ...)), n_cluster = n())
     message('Summarizing')
-    contig_by_cluster = cctb[union(clustering$contig_pk, clustering$cluster_pk)] %>% nest(!!!syms(clustering$contig_pk)) %>%
-        right_join(cluster_tbl %>% select(!!!syms(clustering$cluster_pk)), by=clustering$cluster_pk) # need to make sure these are in the same order!
+    contig_by_cluster = contig_tbl[union(ccdb$contig_pk, ccdb$cluster_pk)] %>% nest(!!!syms(ccdb$contig_pk)) %>%
+        right_join(cluster_tbl %>% select(!!!syms(ccdb$cluster_pk)), by=ccdb$cluster_pk) # need to make sure these are in the same order!
 
     if(is.null(max_affinity)){
         max_max = max(purrr::map_dbl(cluster_tbl$fc, 'max_dist'))
@@ -75,13 +40,41 @@ fine_clustering = function(clustering, sequence_key = 'seq', type = clustering$t
         is_medoid = seq_len(nrow(.y)) == .x$medoid
         bind_cols(.y, `d(medoid)` = .x$homology, is_medoid = is_medoid)
     })
-    cctb = left_join(d_medoid, cctb, by = clustering$contig_pk)
-    avg_homology = cctb %>% group_by(!!!syms(clustering$cluster_pk)) %>% summarize(avg_homology = mean(`d(medoid)`))
-    cluster_tbl = cluster_tbl %>% left_join(avg_homology, by = clustering$cluster_pk)
+    contig_tbl = left_join_warn(d_medoid, contig_tbl, by = ccdb$contig_pk, overwrite = TRUE)
+    avg_homology = contig_tbl %>% group_by(!!!syms(ccdb$cluster_pk)) %>% summarize(avg_homology = mean(`d(medoid)`))
+    cluster_tbl = avg_homology %>% left_join_warn(cluster_tbl, by = ccdb$cluster_pk, overwrite = TRUE)
     if(!keep_clustering_details) cluster_tbl = cluster_tbl %>% select(-fc)
-    clustering$cluster_tbl = cluster_tbl
-    clustering$contig_tbl = cctb
-    clustering
+    replace_cluster_tbl(ccdb, cluster_tbl, contig_tbl)
+
+}
+
+right_join_warn = function(...) left_join_warn(..., join = right_join)
+
+left_join_warn = function(x, y, by, overwrite = FALSE, join = left_join, ...){
+    if(missing(by)) stop('by must be provided')
+    nx = setdiff(names(x), by)
+    ny = setdiff(names(y), by)
+    if(length(inter <- intersect(nx, ny))>0){
+        if(overwrite){
+            warning("Overwriting fields ",
+                    paste(inter, collapse = ', '),
+                    ' in table ', deparse(substitute(y)))
+            y = y[setdiff(names(y), inter)]
+        } else{
+            warning('Tables share fields ',
+                    paste(inter, collapse = ', '),
+                    ', which will gain a suffix in ',
+                    deparse(substitute(y)))
+        }
+    }
+    join(x  = x, y = y, by = by, suffix = c('', '.y'), ...)
+}
+
+canonicalize_cluster = function(ccdb, representative, contig_fields = c('cdr3', 'cdr3_nt', 'chain', 'v_gene', 'd_gene', 'j_gene')){
+    cluster_tbl = ccdb$contig_tbl %>% filter(is_medoid) %>% select(!!!syms(union(ccdb$cluster_pk, contig_fields)))
+    cluster_tbl = cluster_tbl %>% left_join_warn(ccdb$cluster_tbl, by = ccdb$cluster_pk) %>% mutate(representative = make.unique(!!sym(representative)), representative = forcats::fct_reorder(representative, n_cluster))
+    contig_tbl = left_join_warn(ccdb$contig_tbl, cluster_tbl %>% select(!!!syms(ccdb$cluster_pk), representative), by = ccdb$cluster_pk)
+    replace_cluster_tbl(ccdb, cluster_tbl, contig_tbl)
 }
 
 #' Calculate distances and perform hierarchical clustering on a set of sequences

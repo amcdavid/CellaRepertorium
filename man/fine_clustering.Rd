@@ -4,13 +4,10 @@
 \alias{fine_clustering}
 \title{Perform additional clustering of sequences within groups}
 \usage{
-fine_clustering(clustering, sequence_key = "seq",
-  type = clustering$type, max_affinity = NULL,
+fine_clustering(ccdb, sequence_key, type, max_affinity = NULL,
   keep_clustering_details = FALSE, ...)
 }
 \arguments{
-\item{clustering}{`Clustering` object}
-
 \item{sequence_key}{`character` naming column in `contig_tbl` with sequence}
 
 \item{type}{'AA' or 'DNA'}
@@ -20,6 +17,8 @@ fine_clustering(clustering, sequence_key = "seq",
 \item{keep_clustering_details}{`logical` -- should output of `fine_cluster_seqs` be kept as a list column}
 
 \item{...}{passed to `fine_cluster_seqs`}
+
+\item{clustering}{`Clustering` object}
 }
 \value{
 `Clustering` object with updated `contig_tbl` and `cluster_tbl`

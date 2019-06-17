@@ -10,7 +10,7 @@ cdhit(seqs, identity = NULL, kmerSize = NULL, min_length = 6,
   showProgress = interactive(), ...)
 
 cdhit_ccdb(object, sequence_key, type = c("DNA", "AA"),
-  cluster_tbl_name = length(cluster_tbls(object)) + 1, ...)
+  cluster_name = "cluster_idx", ...)
 }
 \arguments{
 \item{seqs}{\code{AAseq} or \code{DNAseq}}

@@ -28,7 +28,7 @@ globalVariables('cluster_idx')
 #' @return vector of \code{integer} of length \code{seqs} providing the cluster ID for each sequence, or a `tibble`.  See details.
 #' @export
 #' @importFrom tibble data_frame
-#' @importFrom dplyr group_by mutate
+#' @importFrom dplyr group_by mutate filter
 #'
 #' @examples
 #' fasta_path = system.file('extdata', 'demo.fasta', package='CellaRepertorium')
@@ -84,7 +84,7 @@ cdhit = function(seqs, identity = NULL, kmerSize = NULL, min_length = 6, s = 1, 
 ##' @param type one of 'DNA' or 'AA'
 ##' @param cluster_tbl_name What index should the clustering be stored in?  By default, a new, unnamed cluster is added.
 ##' @export
-cdhit_ccdb = function(object, sequence_key, type = c('DNA', 'AA'), cluster_tbl_name = length(cluster_tbls(object)) + 1, ...){
+cdhit_ccdb = function(object, sequence_key, type = c('DNA', 'AA'), cluster_name = 'cluster_idx', ...){
     seqs = object$contig_tbl[[sequence_key]]
     if(length(seqs) < 1) stop("No sequences were provided")
     type = match.arg(type, c('DNA', 'AA'))
@@ -94,7 +94,7 @@ cdhit_ccdb = function(object, sequence_key, type = c('DNA', 'AA'), cluster_tbl_n
         seqset = AAStringSet(seqs)
     }
     cluster_idx = cdhit(seqset, ..., only_index = TRUE)
-    cl_con_tbl = dplyr::mutate(object$contig_tbl[object$contig_pk], cluster_idx = cluster_idx, seq = seqs)
-    cluster_tbls(object,cluster_tbl_name) = Clustering(cl_con_tbl, object$contig_pk, cluster_pk = 'cluster_idx', type = type)
-    object
+    contig_tbl = dplyr::mutate(object$contig_tbl, !!sym(cluster_name) := cluster_idx)
+    cluster_tbl = as_tibble(unique(contig_tbl[cluster_name]))
+    replace_cluster_tbl(object, cluster_tbl, contig_tbl, cluster_pk = cluster_name)
 }

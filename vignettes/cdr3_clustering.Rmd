@@ -55,17 +55,14 @@ ggplot(paired_chain, aes(x = interaction(sample, pop), fill = pairing)) + geom_b
 
 ```{r}
 
-cdb = CellaRepertorium:::cdhit_ccdb(cdb, 'cdr3', type = 'AA', cluster_tbl_name = 'AA100')
+aa80 = CellaRepertorium:::cdhit_ccdb(cdb, 'cdr3', type = 'AA', cluster_name = 'aa80', identity = .8)
+aa80 = fine_clustering(aa80, sequence_key = 'cdr3', type = 'AA', keep_clustering_details = TRUE)
 
-## Note that I'm not confident that the `Clustering` should be an element of the ContigCellDB anymore becase I think that only certain outputs of the clustering may belong in the contig_tbl or cell_tbl
-# And because I think that these will be common steps
-aa100 = cluster_tbls(cdb)$AA100
-aa100 = fine_clustering(aa100)
 
 # This maybe should be a turned into a function 
 # Other plots should be considered:
 # That show how clusters are split between samples, chains, etc
-ggplot(aa100$cluster_tbl %>% filter(n_cluster>1) %>% gather(key, value, -cluster_idx) , aes(x = value))+ facet_wrap(~key, scales = 'free') + geom_histogram() + scale_y_sqrt()
+ggplot(aa80$cluster_tbl %>% filter(n_cluster>1) %>% gather(key, value, -aa80, -fc) , aes(x = value))+ facet_wrap(~key, scales = 'free') + geom_histogram() + scale_y_sqrt()
 
 ```
 
@@ -75,14 +72,16 @@ We cluster the CDR3 translated amino acid residues with the program [CD-HIT](htt
 # Cluster CDR3 DNA sequences
 
 ```{r, results = 'hide'}
-cdb = CellaRepertorium:::cdhit_ccdb(cdb, 'cdr3_nt', type = 'DNA', cluster_tbl_name = 'DNA97', identity = .965, min_length = MIN_CDR3_AA*3-1, G = 1)
+cdb = CellaRepertorium:::cdhit_ccdb(cdb, 'cdr3_nt', type = 'DNA', cluster_name = 'DNA97', identity = .965, min_length = MIN_CDR3_AA*3-1, G = 1)
 
-dna97 = cluster_tbls(cdb)$DNA97
-dna97 = fine_clustering(dna97, keep_clustering_details = TRUE)
+cdb = fine_clustering(cdb, sequence_key = 'cdr3_nt', type = 'DNA')
 
-ggplot(dna97$cluster_tbl %>% filter(n_cluster>1) %>% gather(key, value, -cluster_idx) , aes(x = value))+ facet_wrap(~key, scales = 'free') + geom_histogram() + scale_y_sqrt()
+ggplot(cdb$cluster_tbl %>% filter(n_cluster>1) %>% gather(key, value, -DNA97) , aes(x = value))+ facet_wrap(~key, scales = 'free') + geom_histogram() + scale_y_sqrt()
 
-cdb = CellaRepertorium:::cluster_germline(cdb, segment_keys = c('v_gene', 'j_gene', 'chain'))
+
+# Need to test if cluster_tbl is already set in this function and cdhit_ccdb and output a warning
+# This should allow us to do segment testing!
+germline_cluster = CellaRepertorium:::cluster_germline(cdb, segment_keys = c('v_gene', 'j_gene', 'chain'), cluster_name = 'segment_idx')
 
 # Need methods to take intersections/unions or manually reassign contigs into clusters
 
@@ -97,19 +96,18 @@ library(ggdendro)
 # This should be turned into a function in the package somehow
 # But plot arguments will be super-variable
 # Maybe just return the `hc` object?
-dendro_plot = function(clustering, idx, ccdb, method = 'complete'){
-    h = filter(clustering$cluster_tbl, !!sym(clustering$cluster_pk) == idx) %>% pull(fc) %>% .[[1]]
-    quer = filter(clustering$contig_tbl, !!sym(clustering$cluster_pk) == idx)
-    ann = left_join(quer, ccdb$contig_tbl, by = ccdb$contig_pk)
+dendro_plot = function(ccdb, idx, method = 'complete'){
+    h = filter(ccdb$cluster_tbl, !!sym(ccdb$cluster_pk) == idx) %>% pull(fc) %>% .[[1]]
+    quer = filter(ccdb$contig_tbl, !!sym(ccdb$cluster_pk) == idx)
     hc = hclust(as.dist(h$distance), method = method) %>% dendro_data(type = "rectangle")
-    hc$labels = cbind(hc$labels, ann)
+    hc$labels = cbind(hc$labels, quer)
    ggplot(hc$segments, aes(x=x, y=y)) + geom_segment(aes(xend=xend, yend=yend)) + 
-  theme_classic() + geom_text(data = hc$labels, aes(color = sample, label = fancy_name), size = 3, angle = 90, vjust = 0) + scale_x_continuous(breaks = NULL) + ylab('AA Distance') + xlab('')
+  theme_classic() + geom_text(data = hc$labels, aes(color = sample, label = chain), size = 3) + scale_x_continuous(breaks = NULL) + ylab('AA Distance') + xlab('')
 }
 
+to_plot = filter(aa80$cluster_tbl, n_cluster > 3)
 
-to_plot = filter(dna97$cluster_tbl, n_cluster > 3)
-map(to_plot$cluster_idx, ~ dendro_plot(dna97, ., cdb) + ylab("DNA Distance"))
+map(to_plot$aa80, ~ dendro_plot(aa80, .))
 
 ```
 
