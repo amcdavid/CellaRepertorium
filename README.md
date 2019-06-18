@@ -7,3 +7,4 @@ This package contains methods for clustering and analyzing single cell RepSeq da
 *  `cdhit`: An R interface to CDhit, which was originally ported by Thomas Lin Pedersen.
 *  `fine_cluster`: clustering CDR3 by edit distances (possibly using empirical amino acid substitution matrices)
 *  `cluster_permute_test`: permutation tests of cluster statistics
+
