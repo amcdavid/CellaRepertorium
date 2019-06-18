@@ -82,7 +82,7 @@ cdhit = function(seqs, identity = NULL, kmerSize = NULL, min_length = 6, s = 1, 
 ##' @param object An object of class `ClusterContigDB`
 ##' @param sequence_key `character` naming the column in the `contig_tbl` containing the sequence to be clustered
 ##' @param type one of 'DNA' or 'AA'
-##' @param cluster_tbl_name What index should the clustering be stored in?  By default, a new, unnamed cluster is added.
+##' @param cluster_name What index should the clustering be stored in?  By default, a new, unnamed cluster is added.
 ##' @export
 cdhit_ccdb = function(object, sequence_key, type = c('DNA', 'AA'), cluster_name = 'cluster_idx', ...){
     seqs = object$contig_tbl[[sequence_key]]

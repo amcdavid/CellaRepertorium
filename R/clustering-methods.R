@@ -11,13 +11,17 @@ cluster_germline = function(ccdb, segment_keys = c('v_gene', 'j_gene', 'chain'),
 # Also canonicalize..
 #' Perform additional clustering of sequences within groups
 #'
-#' @param clustering `Clustering` object
+#' @param ccdb A ContigCellDB object
 #' @param sequence_key `character` naming column in `contig_tbl` with sequence
 #' @param type 'AA' or 'DNA'
 #' @param max_affinity `numeric` naming the maximal affinity for the sparse affinity matrix that is constructed.  Not currently used.
 #' @param keep_clustering_details `logical` -- should output of `fine_cluster_seqs` be kept as a list column
 #' @param ... passed to `fine_cluster_seqs`
+#' @importFrom dplyr select bind_cols
 #'
+#' @examples 
+#' ccdb_ex = CellaRepertorium:::cdhit_ccdb(ccdb_ex, 'cdr3_nt', type = 'DNA', cluster_name = 'DNA97', identity = .965, min_length = 12, G = 1)
+#' ccdb_ex = fine_clustering(ccdb_ex, sequence_key = 'cdr3_nt', type = 'DNA') 
 #' @return `Clustering` object with updated `contig_tbl` and `cluster_tbl`
 #' @export
 fine_clustering = function(ccdb, sequence_key, type, max_affinity = NULL, keep_clustering_details = FALSE, ...){
@@ -26,8 +30,8 @@ fine_clustering = function(ccdb, sequence_key, type, max_affinity = NULL, keep_c
     # run `fine_cluster_seqs` within each cluster_pk
     cluster_tbl = contig_tbl %>% group_by(!!!syms(ccdb$cluster_pk)) %>% summarize(fc = list(fine_cluster_seqs(!!sym(sequence_key), type = type, ...)), n_cluster = n())
     message('Summarizing')
-    contig_by_cluster = contig_tbl[union(ccdb$contig_pk, ccdb$cluster_pk)] %>% nest(!!!syms(ccdb$contig_pk)) %>%
-        right_join(cluster_tbl %>% select(!!!syms(ccdb$cluster_pk)), by=ccdb$cluster_pk) # need to make sure these are in the same order!
+    contig_by_cluster = contig_tbl[union(ccdb$contig_pk, ccdb$cluster_pk)] %>% tidyr::nest(!!!syms(ccdb$contig_pk)) %>%
+        right_join(cluster_tbl %>% dplyr::select(!!!syms(ccdb$cluster_pk)), by=ccdb$cluster_pk) # need to make sure these are in the same order!
 
     if(is.null(max_affinity)){
         max_max = max(purrr::map_dbl(cluster_tbl$fc, 'max_dist'))
@@ -38,7 +42,7 @@ fine_clustering = function(ccdb, sequence_key, type, max_affinity = NULL, keep_c
     aff_matrix = Matrix::.bdiag(affinities)
     d_medoid = purrr::map2_dfr(cluster_tbl$fc, contig_by_cluster$data, function(.x, .y){
         is_medoid = seq_len(nrow(.y)) == .x$medoid
-        bind_cols(.y, `d(medoid)` = .x$homology, is_medoid = is_medoid)
+        dplyr::bind_cols(.y, `d(medoid)` = .x$homology, is_medoid = is_medoid)
     })
     contig_tbl = left_join_warn(d_medoid, contig_tbl, by = ccdb$contig_pk, overwrite = TRUE)
     avg_homology = contig_tbl %>% group_by(!!!syms(ccdb$cluster_pk)) %>% summarize(avg_homology = mean(`d(medoid)`))

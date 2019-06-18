@@ -8,6 +8,8 @@ fine_clustering(ccdb, sequence_key, type, max_affinity = NULL,
   keep_clustering_details = FALSE, ...)
 }
 \arguments{
+\item{ccdb}{A ContigCellDB object}
+
 \item{sequence_key}{`character` naming column in `contig_tbl` with sequence}
 
 \item{type}{'AA' or 'DNA'}
@@ -17,12 +19,14 @@ fine_clustering(ccdb, sequence_key, type, max_affinity = NULL,
 \item{keep_clustering_details}{`logical` -- should output of `fine_cluster_seqs` be kept as a list column}
 
 \item{...}{passed to `fine_cluster_seqs`}
-
-\item{clustering}{`Clustering` object}
 }
 \value{
 `Clustering` object with updated `contig_tbl` and `cluster_tbl`
 }
 \description{
 Perform additional clustering of sequences within groups
+}
+\examples{
+ccdb_ex = CellaRepertorium:::cdhit_ccdb(ccdb_ex, 'cdr3_nt', type = 'DNA', cluster_name = 'DNA97', identity = .965, min_length = 12, G = 1)
+ccdb_ex = fine_clustering(ccdb_ex, sequence_key = 'cdr3_nt', type = 'DNA') 
 }

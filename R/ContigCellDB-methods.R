@@ -27,8 +27,8 @@ valid_KeyedTbl = function(tbl, keys){
 #' @param contig_pk character vector naming fields in `contig_tbl` that uniquely identify a row/contig
 #' @param cell_tbl a data frame of cell barcodes, and (optional) additional fields describing their properties
 #' @param cell_pk character vector naming fields in `cell_tbl` that uniquely identify a cell barcode
-#' @param cluster_tbls An optional list of data frames that provide cluster assignments for each contig
-#' @param cluster_pk If `cluster_tbls` was provided, a list of character vector naming fields in `cluster_tbls` that uniquely identify a cluster
+#' @param cluster_tbl A data frame that provide cluster assignments for each contig
+#' @param cluster_pk If `cluster_tbl` was provided, a list of character vector naming fields in `cluster_tbl` that uniquely identify a cluster
 #'
 #' @return \code{ContigCellDB}
 #' @export
@@ -65,6 +65,16 @@ ContigCellDB_10XVDJ = function(contig_tbl, contig_pk = c('barcode', 'contig_id')
     ContigCellDB(contig_tbl = contig_tbl, contig_pk = contig_pk, cell_pk = cell_pk)
 }
 
+#' Creat a method for ContigCellDB object to access its slots
+#'
+#' @param x A ContigCellDB object
+#' @param name Name of a slot for a ContigCellDB object
+#'
+#' @return Slots of ContigCellDB
+#' @export
+#'
+#' @examples
+#' ccdb_ex$cluster_tbl
 setMethod("$", signature = c(x = 'ContigCellDB'), function(x, name){
     if(name %in% c('contig_tbl', 'cell_tbl', 'contig_pk', 'cell_pk', 'cluster_tbl', 'cluster_pk')){
         slot(x, name)
@@ -73,6 +83,17 @@ setMethod("$", signature = c(x = 'ContigCellDB'), function(x, name){
     }
 })
 
+#' Creat a function of ContigCellDB object to replace values of its slots
+#'
+#' @param x A ContigCellDB object
+#' @param name Name of a slot for a ContigCellDB object
+#' @param value The value assigned to a slot of ContigCellDB object
+#'
+#' @return A ContigCellDB object
+#' @export
+#'
+#' @examples
+#' ccdb_ex$contig_pk <- c("pop","barcode","contig_id")
 setReplaceMethod("$", signature = c(x = 'ContigCellDB'), function(x, name, value){
     if(name %in% c('contig_tbl', 'cell_tbl', 'contig_pk', 'cell_pk', 'cluster_tbl', 'cluster_pk')){
         slot(x, name) <- value

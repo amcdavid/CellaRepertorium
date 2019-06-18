@@ -38,7 +38,7 @@ You may need to lower it below 5 for AAseq with identity less than .7.}
 
 \item{type}{one of 'DNA' or 'AA'}
 
-\item{cluster_tbl_name}{What index should the clustering be stored in?  By default, a new, unnamed cluster is added.}
+\item{cluster_name}{What index should the clustering be stored in?  By default, a new, unnamed cluster is added.}
 }
 \value{
 vector of \code{integer} of length \code{seqs} providing the cluster ID for each sequence, or a `tibble`.  See details.
