@@ -55,3 +55,5 @@ Encoding: UTF-8
 LazyData: true
 NeedsCompilation: yes
 RoxygenNote: 6.1.1
+URL: https://github.com/amcdavid/CellaRepertorium
+BugReports: https://github.com/amcdavid/CellaRepertorium/issues

@@ -1,0 +1,7 @@
+pandoc: 2.3.1
+pkgdown: 1.3.0
+pkgdown_sha: ~
+articles:
+  cdr3_clustering: cdr3_clustering.html
+  mouse_tcell_qc: mouse_tcell_qc.html
+

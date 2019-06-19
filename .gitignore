@@ -9,3 +9,8 @@ inst/doc
 doc
 Meta
 *.dll
+*.Rproj
+.Rhistory
+.Renviron
+.RData
+

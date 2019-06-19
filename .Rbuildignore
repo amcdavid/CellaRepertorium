@@ -6,3 +6,6 @@ extdata/refdata-cellranger-vdj-GRCh38-alts-ensembl-2.0.0/
 ^doc$
 ^Meta$
 manuscript/
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
