@@ -123,17 +123,14 @@ get_canonical_representative = function(seqs, medoid_idx, warn_if_distinct = FAL
 #' @section Caveats and warnings:
 #'  The cell_idx -> cluster_idx map is generally one-to-many, and is resolved by `canonicalize_fun`.  For `table_order>1`, few collisions are expected as most cells will contain no more than 2 clusters.  Any collisions are resolved by returning the most prevalent cluster, across samples.  When two clusters are tied for most prevalent within a cell, the `cluster_idx` returned is arbitrary. Therefore, when `table_order=1`, it is strongly recommended to subset the `cluster_tbl` to just a single chain.
 #'
-#' @param cluster_tbl a table with all combinations of clusters in all cells
-#' @param cell_identifiers character vector naming fields that key a cell
-#' @param cluster_idx character naming a single field IDing the clusters
+#' @param ccdb `ContigCellDB`
 #' @param min_expansion the minimal number of times a pairing needs to occur for it to be reported
-#' @param cell_tbl optional, ancillary table with additional cell features.  Must also be keyed by `cell_identifiers`
-#' @param feature_tbl optional, ancillary table with additional cluster features.  Must also be keyed by `cluster_idx`
+#' @param cluster_keys optional `character` naming additional columns in `ccdb$cluster_tbl` to be reported in the pairing
 #' @param table_order Integer larger than 1. What order of cluster_idx will be paired, eg, order = 2 means that the most common and second most common cluster_idx will be sought for each cell
 #' @param orphan_level Integer larger than 0 and less than or equal to `table_order`.  Given that at least `min_expansion` cells are found that have `table_order` chains identical, how many `cluster_idx` pairs will we match on to select other cells.  Example: `ophan_level=1` means that cells that share just a single chain with the
-#' @param cluster_whitelist a table of "cluster_idx" that should always be reported.  In contrast to the `cluster_tbl`, here the clusters must be named "cluster_idx.1", "cluster_idx.2" (if order-2 pairs are being selected).
-#' @param cluster_blacklist a table of "cluster_idx" that will never be reported.  Must be named as per `cluster_whitelist`.
-#' @param canonicalize_fun a function with signature `canonicalize_fun(cluster_tbl, cell_identifiers, cluster_idx, order = i)` that for each `cell_identifier` returns a single contig that depends on the `order`.  For instance \link{canonicalize_by_prevalence} or \link{canonicalize_by_chain}.
+#' @param cluster_whitelist a table of pairings or clusters that should always be reported.  Here the clusters must be named "cluster_idx.1", "cluster_idx.2" (if order-2 pairs are being selected) rather than with `ccdb$cluster_pk``
+#' @param cluster_blacklist a table of pairings or clusters that will never be reported.  Must be named as per `cluster_whitelist`.
+#' @param canonicalize_fun a function with signature `canonicalize_fun(ContigCellDB, order = i)` that for each cell, returns a single contig that depends on the `order`.  For instance \link{canonicalize_by_prevalence} or \link{canonicalize_by_chain}.
 #'
 #' @return list of tables.  The `cell_tbl` is keyed by the `cell_identifiers`, with fields "cluster_idx.1", "cluster_idx.2", etc, IDing the contigs present in each cell. "cluster_idx.1_fct" and "cluster_idx.2_fct" cast these fields to factors and are reordered to maximize the number of pairs along the diagonal. The `idx1_tbl` and `idx2_tbl` report information (passed in about the `cluster_idx` by `feature_tbl`.)  The `cluster_pair_tbl` reports all pairings found of contigs, and the number of times observed.
 #' @export
@@ -214,7 +211,7 @@ pairing_tables = function(ccdb,  canonicalize_fun = canonicalize_by_chain, table
         co = NA_integer_
     }
 
-    ci_class = class(cluster_tbl[[cluster_idx]])
+    ci_class = class(contig_tbl[[cluster_idx]])
     as_method = if(ci_class == 'factor') as.factor else function(x) as(x, ci_class)
     rowid = data_frame(cluster_idx = expanded_counts$cluster_idx.1 %>% as_method, plot_order = ro)
     colid = suppressWarnings(data_frame(cluster_idx = colnames(expanded_counts)[-1] %>% as_method, plot_order = co))
@@ -233,11 +230,9 @@ pairing_tables = function(ccdb,  canonicalize_fun = canonicalize_by_chain, table
 
     idx1_tbl = rowid %>% dplyr::rename(!!cluster_idx := cluster_idx)
     idx2_tbl = colid %>% dplyr::rename(!!cluster_idx := cluster_idx)
-    if(!is.null(feature_tbl)){
-        if(anyDuplicated(feature_tbl %>% select(!!sym(cluster_idx)))) stop('`feature_tbl` must not have duplicate `cluster_idx`.')
-        idx1_tbl = left_join(idx1_tbl, feature_tbl, by = cluster_idx)
-        idx2_tbl = left_join(idx2_tbl, feature_tbl, by = cluster_idx)
-    }
+    feature_tbl = ccdb$cluster_tbl[unique(c(cluster_keys, cluster_idx))]
+    idx1_tbl = left_join_warn(idx1_tbl, feature_tbl, by = cluster_idx)
+    idx2_tbl = left_join_warn(idx2_tbl, feature_tbl, by = cluster_idx)
 
     list(cell_tbl = expanded_c1, idx1_tbl = idx1_tbl, idx2_tbl = idx2_tbl, cluster_pair_tbl = cluster_pair_tbl)
 
