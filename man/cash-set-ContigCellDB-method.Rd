@@ -3,14 +3,14 @@
 \docType{methods}
 \name{$<-,ContigCellDB-method}
 \alias{$<-,ContigCellDB-method}
-\title{Creat a function of ContigCellDB object to replace values of its slots}
+\title{Create a function of ContigCellDB object to replace values of its slots}
 \usage{
 \S4method{$}{ContigCellDB}(x, name) <- value
 }
 \arguments{
 \item{x}{A ContigCellDB object}
 
-\item{name}{Name of a slot for a ContigCellDB object}
+\item{name}{Name of a slot for a ContigCellDB object (one of  `c('contig_tbl', 'cell_tbl', 'contig_pk', 'cell_pk', 'cluster_tbl', 'cluster_pk')`)}
 
 \item{value}{The value assigned to a slot of ContigCellDB object}
 }
@@ -18,8 +18,12 @@
 A ContigCellDB object
 }
 \description{
-Creat a function of ContigCellDB object to replace values of its slots
+Create a function of ContigCellDB object to replace values of its slots
 }
 \examples{
-ccdb_ex$contig_pk <- c("pop","barcode","contig_id")
+ccdb_ex$contig_pk = c("sample","barcode","contig_id") # 'pop' is technically redundant with 'sample'
+# Take a subset of ccdb_ex
+ccdb_ex
+ccdb_ex$contig_tbl = dplyr::filter(ccdb_ex$contig_tbl, pop == 'b6')
+ccdb_ex
 }

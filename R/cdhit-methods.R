@@ -82,8 +82,14 @@ cdhit = function(seqs, identity = NULL, kmerSize = NULL, min_length = 6, s = 1, 
 ##' @param object An object of class `ClusterContigDB`
 ##' @param sequence_key `character` naming the column in the `contig_tbl` containing the sequence to be clustered
 ##' @param type one of 'DNA' or 'AA'
-##' @param cluster_name What index should the clustering be stored in?  By default, a new, unnamed cluster is added.
+##' @param cluster_name `character` specifying key, and name for the clustering.
 ##' @export
+##' @examples
+##' res = CellaRepertorium:::cdhit_ccdb(ccdb_ex, 'cdr3_nt', type = 'DNA',
+##' cluster_name = 'DNA97', identity = .965, min_length = 12, G = 1)
+##' res$cluster_tbl
+##' res$contig_tbl
+##' res$cluster_pk
 cdhit_ccdb = function(object, sequence_key, type = c('DNA', 'AA'), cluster_name = 'cluster_idx', ...){
     seqs = object$contig_tbl[[sequence_key]]
     if(length(seqs) < 1) stop("No sequences were provided")

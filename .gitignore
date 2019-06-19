@@ -8,3 +8,4 @@ data-raw/*.json
 inst/doc
 doc
 Meta
+*.dll

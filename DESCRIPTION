@@ -1,31 +1,41 @@
-Package: CellaRepertorium
 Type: Package
-Title: Methods for clustering and analyzing high-throughput single cell immune cell repertoires (RepSeq)
-Version: 0.3.0
-Author: Andrew McDavid
+Package: CellaRepertorium
+Title: Methods for clustering and analyzing high-throughput
+    single cell immune cell repertoires (RepSeq)
+Version: 0.3.1
+Authors@R: 
+    c(person(given = "Andrew",
+             family = "McDavid",
+             role = c('aut', 'cre'),
+             email = "Andrew_McDavid@urmc.rochester.edu"),
+      person(given = "Yu",
+             family = "Gu",
+             role = "aut",
+             email = "Yu_Gu@urmc.rochester.edu"))
 Maintainer: Andrew McDavid <Andrew_McDavid@urmc.rochester.edu>
-Description: Methods to cluster and analyze high-throughput single cell immune cell repertoires,
-    especially from the 10X Genomics VDJ solution. 
-    Contains an R interface to CD-HIT (Li and Godzik 2006).
-    Tests for specific expansion, as well as omnibus oligoclonality under hypergeometric models.
+Description: Methods to cluster and analyze high-throughput
+    single cell immune cell repertoires, especially from the 10X Genomics
+    VDJ solution. Contains an R interface to CD-HIT (Li and Godzik 2006).   
+    Methods to visualize and analyze paired heavy-light chain data.
+    Tests for specific expansion, as well as omnibus oligoclonality under
+    hypergeometric models.
 License: GPL-3
-Encoding: UTF-8
-LazyData: true
-Depends: R (>= 3.5.0)
+Depends: 
+    R (>= 3.5.0)
 Imports:
-   dplyr,
-   tibble,
-   stringr,
-   Biostrings,
-   Rcpp,
-   reshape2,
-   methods,
-   rlang,
-   purrr,
-   Matrix,
-   S4Vectors,
-   tidyr,
-   forcats
+    dplyr,
+    tibble,
+    stringr,
+    Biostrings,
+    Rcpp,
+    reshape2,
+    methods,
+    rlang,
+    purrr,
+    Matrix,
+    S4Vectors,
+    tidyr,
+    forcats
 Suggests: 
     testthat,
     readr,
@@ -33,8 +43,15 @@ Suggests:
     rmarkdown,
     ggplot2,
     BiocStyle,
-    ggdendro
-RoxygenNote: 6.1.1
-LinkingTo: Rcpp
+    ggdendro,
+    broom,
+    lme4,
+    RColorBrewer
+LinkingTo: 
+    Rcpp
+VignetteBuilder: 
+    knitr
+Encoding: UTF-8
+LazyData: true
 NeedsCompilation: yes
-VignetteBuilder: knitr
+RoxygenNote: 6.1.1

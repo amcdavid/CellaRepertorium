@@ -4,20 +4,15 @@
 \alias{pairing_tables}
 \title{Generate a list of tables representing clusters paired in cells}
 \usage{
-pairing_tables(cluster_tbl, cell_identifiers = "barcode",
-  cluster_idx = "cluster_idx",
-  canonicalize_fun = canonicalize_by_chain, table_order = 2,
-  min_expansion = 2, orphan_level = 1, cluster_whitelist = NULL,
-  cluster_blacklist = NULL, cell_tbl = NULL, feature_tbl = NULL)
+pairing_tables(ccdb, canonicalize_fun = canonicalize_by_chain,
+  table_order = 2, min_expansion = 2, orphan_level = 1,
+  cluster_keys = character(), cluster_whitelist = NULL,
+  cluster_blacklist = NULL)
 }
 \arguments{
-\item{cluster_tbl}{a table with all combinations of clusters in all cells}
+\item{ccdb}{`ContigCellDB`}
 
-\item{cell_identifiers}{character vector naming fields that key a cell}
-
-\item{cluster_idx}{character naming a single field IDing the clusters}
-
-\item{canonicalize_fun}{a function with signature `canonicalize_fun(cluster_tbl, cell_identifiers, cluster_idx, order = i)` that for each `cell_identifier` returns a single contig that depends on the `order`.  For instance \link{canonicalize_by_prevalence} or \link{canonicalize_by_chain}.}
+\item{canonicalize_fun}{a function with signature `canonicalize_fun(ContigCellDB, order = i)` that for each cell, returns a single contig that depends on the `order`.  For instance \link{canonicalize_by_prevalence} or \link{canonicalize_by_chain}.}
 
 \item{table_order}{Integer larger than 1. What order of cluster_idx will be paired, eg, order = 2 means that the most common and second most common cluster_idx will be sought for each cell}
 
@@ -25,13 +20,11 @@ pairing_tables(cluster_tbl, cell_identifiers = "barcode",
 
 \item{orphan_level}{Integer larger than 0 and less than or equal to `table_order`.  Given that at least `min_expansion` cells are found that have `table_order` chains identical, how many `cluster_idx` pairs will we match on to select other cells.  Example: `ophan_level=1` means that cells that share just a single chain with the}
 
-\item{cluster_whitelist}{a table of "cluster_idx" that should always be reported.  In contrast to the `cluster_tbl`, here the clusters must be named "cluster_idx.1", "cluster_idx.2" (if order-2 pairs are being selected).}
+\item{cluster_keys}{optional `character` naming additional columns in `ccdb$cluster_tbl` to be reported in the pairing}
 
-\item{cluster_blacklist}{a table of "cluster_idx" that will never be reported.  Must be named as per `cluster_whitelist`.}
+\item{cluster_whitelist}{a table of pairings or clusters that should always be reported.  Here the clusters must be named "cluster_idx.1", "cluster_idx.2" (if order-2 pairs are being selected) rather than with `ccdb$cluster_pk``}
 
-\item{cell_tbl}{optional, ancillary table with additional cell features.  Must also be keyed by `cell_identifiers`}
-
-\item{feature_tbl}{optional, ancillary table with additional cluster features.  Must also be keyed by `cluster_idx`}
+\item{cluster_blacklist}{a table of pairings or clusters that will never be reported.  Must be named as per `cluster_whitelist`.}
 }
 \value{
 list of tables.  The `cell_tbl` is keyed by the `cell_identifiers`, with fields "cluster_idx.1", "cluster_idx.2", etc, IDing the contigs present in each cell. "cluster_idx.1_fct" and "cluster_idx.2_fct" cast these fields to factors and are reordered to maximize the number of pairs along the diagonal. The `idx1_tbl` and `idx2_tbl` report information (passed in about the `cluster_idx` by `feature_tbl`.)  The `cluster_pair_tbl` reports all pairings found of contigs, and the number of times observed.
@@ -54,23 +47,25 @@ This facilitates plotting.
 
 \examples{
 library(dplyr)
-cluster_tbl = data_frame(clust_idx = gl(3, 2), cell_idx = rep(1:3, times = 2))
+tbl = tibble(clust_idx = gl(3, 2), cell_idx = rep(1:3, times = 2), contig_idx = 1:6)
+ccdb = ContigCellDB(tbl, contig_pk = c('cell_idx', 'contig_idx'),
+cell_pk = 'cell_idx', cluster_pk = 'clust_idx')
 # no pairs found twice
-pt1 = pairing_tables(cluster_tbl, 'cell_idx', 'clust_idx', canonicalize_by_prevalence)
+pt1 = pairing_tables(ccdb, canonicalize_by_prevalence)
 # all pairs found, found once.
-pt2 = pairing_tables(cluster_tbl, 'cell_idx', 'clust_idx',
-    canonicalize_by_prevalence, min_expansion = 1)
+pt2 = pairing_tables(ccdb, canonicalize_by_prevalence, min_expansion = 1)
 pt2$cell_tbl
-cluster_tbl2 = bind_rows(cluster_tbl, cluster_tbl \%>\% mutate(cell_idx = rep(4:6, times = 2)))
+tbl2 = bind_rows(tbl, tbl \%>\% mutate(cell_idx = rep(4:6, times = 2)))
+ccdb2 = ContigCellDB(tbl2, contig_pk = c('cell_idx', 'contig_idx'), cell_pk = 'cell_idx',
+cluster_pk = 'clust_idx')
 #all pairs found twice
-pt3 = pairing_tables(cluster_tbl2, 'cell_idx', 'clust_idx', canonicalize_by_prevalence, min_expansion = 1)
+pt3 = pairing_tables(ccdb2, canonicalize_by_prevalence, min_expansion = 1)
 pt3$cell_tbl
 # `canonicalize_by_chain` expects fields `umis`, `reads`
 # to break ties,  wrap the function to change this
-cluster_tbl3 = cluster_tbl2 \%>\%
+ccdb2$contig_tbl = ccdb2$contig_tbl \%>\%
     mutate(umis = 1, reads = 1, chain = rep(c('TRA', 'TRB'), times = 6))
-pt4 = pairing_tables(cluster_tbl3, 'cell_idx', 'clust_idx',
-    canonicalize_by_chain, min_expansion = 1, table_order = 2)
+pt4 = pairing_tables(ccdb2, canonicalize_by_chain, min_expansion = 1, table_order = 2)
 }
 \seealso{
 canonicalize_by_prevalence, canonicalize_by_chain

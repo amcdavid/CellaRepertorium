@@ -1,3 +1,4 @@
+globalVariables(c('prev'))
 #' For each cell, return a single, canonical chain-cluster
 #'
 #' In single cell data, multiple chains (heavy-light or alpha-beta) are expected.  In some cases, there could be more than two (eg multiple alpha alleles for T cells).
@@ -19,7 +20,7 @@ canonicalize_by_prevalence = function(tbl, cell_identifiers = 'barcode', cluster
 
 
 
-
+# I believe this function is obsoleted by `canonicalize_by_subset``
 #' @param sort_factors `character` vector naming columns in `tbl` to sorted on, within  `cell_identifier`. Sorted by first element first, then ties broken by subsequent elements.  Sorted in decreasing order for each element.
 #' @param chain_levels an optional `character` vector providing the sort order of the `chain` column in `tbl`.  Set to length zero to disable.
 #' @export
@@ -35,12 +36,40 @@ canonicalize_by_chain = function(tbl,  cell_identifiers = 'barcode', sort_factor
 
 }
 
-canonicalize_by_subset = function(ccdb, tie_break_keys = c('umis', 'reads'), contig_fields = tie_break_keys, ...){
+#' Return single contig for each cell based on filtering and sorting
+#'
+#' @param ccdb `ContigCellDB`
+#' @param ... unquoted expressions passed to `dplyr::filter` that will be applied to the `contig_tbl`
+#' @param tie_break_keys columns used to sort the `contig_tbl` in **decreasing** order
+#' @param order `integer` specifying which entry (ordinal) will be selected from the sorted contig_tbl, within each cell
+#' @param contig_fields columns in the `contig_tbl` that will be copied over to the `cell_tbl`
+#'
+#' @return `ContigCellDB` with additional fields in `cell_tbl`
+#' @export
+#'
+#' @examples
+#' # Report beta chain with highest umi-count, breaking ties with reads
+#' beta = canonicalize_by_subset(ccdb_ex, chain == 'TRB',
+#' tie_break_keys = c('umis', 'reads'),
+#' contig_fields = c('umis', 'reads', 'chain', 'v_gene', 'd_gene', 'j_gene'))
+#' head(beta$cell_tbl)
+#' # Only adds fields to `cell_tbl`
+#' stopifnot(all.equal(beta$cell_tbl[ccdb_ex$cell_pk],
+#' ccdb_ex$cell_tbl[ccdb_ex$cell_pk]))
+#' #Report cdr3 with highest UMI count, but only when > 5 UMIs support it
+#' umi5 = canonicalize_by_subset(ccdb_ex, umis > 5,
+#' tie_break_keys = c('umis', 'reads'), contig_fields = c('umis', 'cdr3'))
+#' stopifnot(all(umi5$cell_tbl$umis > 5, na.rm = TRUE))
+canonicalize_by_subset = function(ccdb, ...,  tie_break_keys = c('umis', 'reads'), contig_fields = tie_break_keys, order = 1){
     tbl = ccdb$contig_tbl
-    ft = filter(tbl, quos(...))
+    # Filter with expressions in ...
+    ft = filter(.data = tbl, !!!rlang::quos(...))
+    # setup quosures to arrange the data
     arranging = purrr::map(tie_break_keys, ~ rlang::quo(desc(!!sym(.x))))
-    ft2 = ft %>% group_by(!!!syms(ccdb$cell_pk)) %>% dplyr::arrange(!!!arranging)
+    # take first row of each cell
+    ft2 = ft %>% group_by(!!!syms(ccdb$cell_pk)) %>% dplyr::arrange(!!!arranging) %>% dplyr::do(dplyr::slice(., order))
     cell_tbl = ccdb$cell_tbl
+    # join with cell tbl (so same number of cells)
     ccdb$cell_tbl = right_join_warn(ft2[unique(c(contig_fields, ccdb$cell_pk))], cell_tbl, by = ccdb$cell_pk)
     ccdb
 }
@@ -52,6 +81,7 @@ canonicalize_by_subset = function(ccdb, tie_break_keys = c('umis', 'reads'), con
 
 #' Given a family of similar sequences, return a "representative"
 #'
+#' This function can be deprecated.
 #' @param seqs character vector
 #' @param medoid_idx optional index into seqs
 #' @param warn_if_distinct Should a warning be emitted if there are distinct elements in seqs?
@@ -60,10 +90,9 @@ canonicalize_by_subset = function(ccdb, tie_break_keys = c('umis', 'reads'), con
 #' sequence is returned
 #'
 #' @return character vector
-#' @export
 #'
 #' @examples
-#' get_canonical_representative(c('apple', 'manzana', 'pomme'))
+#' CellaRepertorium:::get_canonical_representative(c('apple', 'manzana', 'pomme'))
 get_canonical_representative = function(seqs, medoid_idx, warn_if_distinct = FALSE){
     if(!missing(medoid_idx)){
         if(!is.integer(medoid_idx) || medoid_idx < 1 || medoid_idx > length(seqs)) stop("Illegal `medoid_idx`")
@@ -79,6 +108,7 @@ get_canonical_representative = function(seqs, medoid_idx, warn_if_distinct = FAL
     return(rep)
 }
 
+# This should return a ccdb or a subclass?
 #' Generate a list of tables representing clusters paired in cells
 #'
 #' A contingency table of every combination of `cluster_idx` up to `table_order` is generated.
@@ -115,31 +145,37 @@ get_canonical_representative = function(seqs, medoid_idx, warn_if_distinct = FAL
 #' @importFrom rlang sym syms :=
 #' @examples
 #' library(dplyr)
-#' cluster_tbl = data_frame(clust_idx = gl(3, 2), cell_idx = rep(1:3, times = 2))
+#' tbl = tibble(clust_idx = gl(3, 2), cell_idx = rep(1:3, times = 2), contig_idx = 1:6)
+#' ccdb = ContigCellDB(tbl, contig_pk = c('cell_idx', 'contig_idx'),
+#' cell_pk = 'cell_idx', cluster_pk = 'clust_idx')
 #' # no pairs found twice
-#' pt1 = pairing_tables(cluster_tbl, 'cell_idx', 'clust_idx', canonicalize_by_prevalence)
+#' pt1 = pairing_tables(ccdb, canonicalize_by_prevalence)
 #' # all pairs found, found once.
-#' pt2 = pairing_tables(cluster_tbl, 'cell_idx', 'clust_idx',
-#'     canonicalize_by_prevalence, min_expansion = 1)
+#' pt2 = pairing_tables(ccdb, canonicalize_by_prevalence, min_expansion = 1)
 #' pt2$cell_tbl
-#' cluster_tbl2 = bind_rows(cluster_tbl, cluster_tbl %>% mutate(cell_idx = rep(4:6, times = 2)))
+#' tbl2 = bind_rows(tbl, tbl %>% mutate(cell_idx = rep(4:6, times = 2)))
+#' ccdb2 = ContigCellDB(tbl2, contig_pk = c('cell_idx', 'contig_idx'), cell_pk = 'cell_idx',
+#' cluster_pk = 'clust_idx')
 #' #all pairs found twice
-#' pt3 = pairing_tables(cluster_tbl2, 'cell_idx', 'clust_idx', canonicalize_by_prevalence, min_expansion = 1)
+#' pt3 = pairing_tables(ccdb2, canonicalize_by_prevalence, min_expansion = 1)
 #' pt3$cell_tbl
 #' # `canonicalize_by_chain` expects fields `umis`, `reads`
 #' # to break ties,  wrap the function to change this
-#' cluster_tbl3 = cluster_tbl2 %>%
+#' ccdb2$contig_tbl = ccdb2$contig_tbl %>%
 #'     mutate(umis = 1, reads = 1, chain = rep(c('TRA', 'TRB'), times = 6))
-#' pt4 = pairing_tables(cluster_tbl3, 'cell_idx', 'clust_idx',
-#'     canonicalize_by_chain, min_expansion = 1, table_order = 2)
-pairing_tables = function(cluster_tbl, cell_identifiers = 'barcode', cluster_idx = 'cluster_idx', canonicalize_fun = canonicalize_by_chain, table_order = 2, min_expansion = 2,  orphan_level = 1, cluster_whitelist = NULL, cluster_blacklist = NULL, cell_tbl = NULL, feature_tbl = NULL ){
+#' pt4 = pairing_tables(ccdb2, canonicalize_by_chain, min_expansion = 1, table_order = 2)
+pairing_tables = function(ccdb,  canonicalize_fun = canonicalize_by_chain, table_order = 2, min_expansion = 2,  orphan_level = 1, cluster_keys = character(), cluster_whitelist = NULL, cluster_blacklist = NULL){
 
     if(orphan_level > table_order) stop('`ophan_level` must be less than or equal to `table_order`')
     if(table_order < 1) stop('Table order must be at least 1')
 
     # get `table_order` most common clusters for each cell
     # forcibly rename cluster_idx -> "cluster_idx"
-    bar_chain_tbls = purrr::map(seq_len(table_order), function(i) canonicalize_fun(cluster_tbl, cell_identifiers = cell_identifiers, cluster_idx = cluster_idx, order = i) %>% dplyr::select(!!!c(syms(cell_identifiers), rlang::quo(cluster_idx))) %>% dplyr::rename( !!paste0('cluster_idx.', i) := !!cluster_idx))
+    contig_tbl = ccdb$contig_tbl
+    cell_identifiers = ccdb$cell_pk
+    cluster_idx = ccdb$cluster_pk
+    cell_tbl = ccdb$cell_tbl
+    bar_chain_tbls = purrr::map(seq_len(table_order), function(i) canonicalize_fun(contig_tbl, cell_identifiers = cell_identifiers, cluster_idx = cluster_idx, order = i) %>% dplyr::select(!!!c(syms(cell_identifiers), rlang::quo(cluster_idx))) %>% dplyr::rename( !!paste0('cluster_idx.', i) := !!cluster_idx))
     # for each cell, what clusters are present
     oligo_cluster_pairs = purrr::reduce(bar_chain_tbls, left_join, by = cell_identifiers)
 

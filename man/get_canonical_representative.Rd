@@ -20,8 +20,8 @@ sequence is returned}
 character vector
 }
 \description{
-Given a family of similar sequences, return a "representative"
+This function can be deprecated.
 }
 \examples{
-get_canonical_representative(c('apple', 'manzana', 'pomme'))
+CellaRepertorium:::get_canonical_representative(c('apple', 'manzana', 'pomme'))
 }

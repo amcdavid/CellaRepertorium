@@ -10,7 +10,7 @@
 \arguments{
 \item{x}{A ContigCellDB object}
 
-\item{name}{Name of a slot for a ContigCellDB object}
+\item{name}{a slot of a ContigCellDB object (one of  `c('contig_tbl', 'cell_tbl', 'contig_pk', 'cell_pk', 'cluster_tbl', 'cluster_pk')`)}
 }
 \value{
 Slots of ContigCellDB
@@ -19,5 +19,7 @@ Slots of ContigCellDB
 Creat a method for ContigCellDB object to access its slots
 }
 \examples{
+ccdb_ex$contig_tbl
+ccdb_ex$cell_tbl
 ccdb_ex$cluster_tbl
 }

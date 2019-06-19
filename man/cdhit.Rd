@@ -38,7 +38,7 @@ You may need to lower it below 5 for AAseq with identity less than .7.}
 
 \item{type}{one of 'DNA' or 'AA'}
 
-\item{cluster_name}{What index should the clustering be stored in?  By default, a new, unnamed cluster is added.}
+\item{cluster_name}{`character` specifying key, and name for the clustering.}
 }
 \value{
 vector of \code{integer} of length \code{seqs} providing the cluster ID for each sequence, or a `tibble`.  See details.
@@ -73,4 +73,9 @@ cdhit(aaseq,identity = 1, G = 0, aL = 1, aS = 1,  only_index = TRUE)[1:10]
 cdhit(aaseq,identity = 1, G = 0, aL = .9, aS = .9,  only_index = TRUE)[1:10]
 # a tibble
 tbl = cdhit(aaseq, identity = 1, G = 0, aL = .9, aS = .9, only_index = FALSE)
+res = CellaRepertorium:::cdhit_ccdb(ccdb_ex, 'cdr3_nt', type = 'DNA',
+cluster_name = 'DNA97', identity = .965, min_length = 12, G = 1)
+res$cluster_tbl
+res$contig_tbl
+res$cluster_pk
 }

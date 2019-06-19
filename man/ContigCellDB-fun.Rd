@@ -22,7 +22,7 @@ ContigCellDB_10XVDJ(contig_tbl, contig_pk = c("barcode", "contig_id"),
 
 \item{cluster_tbl}{A data frame that provide cluster assignments for each contig}
 
-\item{cluster_pk}{If `cluster_tbl` was provided, a list of character vector naming fields in `cluster_tbl` that uniquely identify a cluster}
+\item{cluster_pk}{If `cluster_tbl` was provided, a character vector naming fields in `cluster_tbl` that uniquely identify a cluster}
 }
 \value{
 \code{ContigCellDB}
@@ -37,5 +37,6 @@ Construct a ContigCellDB
 
 \examples{
 data(contigs_qc)
-ContigCellDB(contigs_qc, contig_pk = c('barcode', 'pop', 'sample', 'contig_id'), cell_pk = c('barcode', 'pop', 'sample'))
+ContigCellDB(contigs_qc, contig_pk = c('barcode', 'pop', 'sample', 'contig_id'),
+ cell_pk = c('barcode', 'pop', 'sample'))
 }

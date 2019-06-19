@@ -7,6 +7,7 @@ cluster_germline = function(ccdb, segment_keys = c('v_gene', 'j_gene', 'chain'),
     replace_cluster_tbl(ccdb, cluster_tbl, cl_con_tbl, cluster_pk = cluster_name)
 }
 
+globalVariables(c('fc', 'd(medoid)', 'is_medoid', 'n_cluster'))
 
 # Also canonicalize..
 #' Perform additional clustering of sequences within groups
@@ -146,8 +147,8 @@ fine_cluster_seqs = function(seqs, type = 'AA', big_memory_brute = FALSE, method
     }
 
     medoid = which.min(colMeans(sd))
-    homology = sd[medoid,]
-    list(cluster = hc, distance = sd, homology = homology, medoid = medoid, max_dist = max(sd))
+    distance = sd[medoid,]
+    list(cluster = hc, distance_mat = sd, distance = distance, medoid = medoid, max_dist = max(sd))
 }
 
 

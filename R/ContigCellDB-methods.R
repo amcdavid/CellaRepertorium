@@ -28,7 +28,7 @@ valid_KeyedTbl = function(tbl, keys){
 #' @param cell_tbl a data frame of cell barcodes, and (optional) additional fields describing their properties
 #' @param cell_pk character vector naming fields in `cell_tbl` that uniquely identify a cell barcode
 #' @param cluster_tbl A data frame that provide cluster assignments for each contig
-#' @param cluster_pk If `cluster_tbl` was provided, a list of character vector naming fields in `cluster_tbl` that uniquely identify a cluster
+#' @param cluster_pk If `cluster_tbl` was provided, a character vector naming fields in `cluster_tbl` that uniquely identify a cluster
 #'
 #' @return \code{ContigCellDB}
 #' @export
@@ -39,7 +39,8 @@ valid_KeyedTbl = function(tbl, keys){
 #'
 #' @examples
 #' data(contigs_qc)
-#' ContigCellDB(contigs_qc, contig_pk = c('barcode', 'pop', 'sample', 'contig_id'), cell_pk = c('barcode', 'pop', 'sample'))
+#' ContigCellDB(contigs_qc, contig_pk = c('barcode', 'pop', 'sample', 'contig_id'),
+#'  cell_pk = c('barcode', 'pop', 'sample'))
 ContigCellDB = function(contig_tbl, contig_pk, cell_tbl, cell_pk, cluster_tbl, cluster_pk = character()){
     valid_KeyedTbl(contig_tbl, contig_pk)
     equalized = FALSE
@@ -68,12 +69,14 @@ ContigCellDB_10XVDJ = function(contig_tbl, contig_pk = c('barcode', 'contig_id')
 #' Creat a method for ContigCellDB object to access its slots
 #'
 #' @param x A ContigCellDB object
-#' @param name Name of a slot for a ContigCellDB object
+#' @param name a slot of a ContigCellDB object (one of  `c('contig_tbl', 'cell_tbl', 'contig_pk', 'cell_pk', 'cluster_tbl', 'cluster_pk')`)
 #'
 #' @return Slots of ContigCellDB
 #' @export
 #'
 #' @examples
+#' ccdb_ex$contig_tbl
+#' ccdb_ex$cell_tbl
 #' ccdb_ex$cluster_tbl
 setMethod("$", signature = c(x = 'ContigCellDB'), function(x, name){
     if(name %in% c('contig_tbl', 'cell_tbl', 'contig_pk', 'cell_pk', 'cluster_tbl', 'cluster_pk')){
@@ -83,17 +86,21 @@ setMethod("$", signature = c(x = 'ContigCellDB'), function(x, name){
     }
 })
 
-#' Creat a function of ContigCellDB object to replace values of its slots
+#' Create a function of ContigCellDB object to replace values of its slots
 #'
 #' @param x A ContigCellDB object
-#' @param name Name of a slot for a ContigCellDB object
+#' @param name Name of a slot for a ContigCellDB object (one of  `c('contig_tbl', 'cell_tbl', 'contig_pk', 'cell_pk', 'cluster_tbl', 'cluster_pk')`)
 #' @param value The value assigned to a slot of ContigCellDB object
 #'
 #' @return A ContigCellDB object
 #' @export
 #'
 #' @examples
-#' ccdb_ex$contig_pk <- c("pop","barcode","contig_id")
+#' ccdb_ex$contig_pk = c("sample","barcode","contig_id") # 'pop' is technically redundant with 'sample'
+#' # Take a subset of ccdb_ex
+#' ccdb_ex
+#' ccdb_ex$contig_tbl = dplyr::filter(ccdb_ex$contig_tbl, pop == 'b6')
+#' ccdb_ex
 setReplaceMethod("$", signature = c(x = 'ContigCellDB'), function(x, name, value){
     if(name %in% c('contig_tbl', 'cell_tbl', 'contig_pk', 'cell_pk', 'cluster_tbl', 'cluster_pk')){
         slot(x, name) <- value

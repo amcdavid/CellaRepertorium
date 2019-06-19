@@ -52,7 +52,7 @@ get_gaps = function(ca){
     data_frame(vd_gap, dj_gap, vj_gap)
 }
 
-read_contig_json = function(file, seq_cols = c('quals', 'aa_sequence', '')){
+read_contig_json = function(anno_file, seq_cols = c('quals', 'aa_sequence', '')){
     jsn = fromJSON(file(anno_file), flatten = TRUE)
     # contig sequences and gaps
 }

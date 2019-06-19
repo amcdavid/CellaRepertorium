@@ -27,6 +27,10 @@ fine_clustering(ccdb, sequence_key, type, max_affinity = NULL,
 Perform additional clustering of sequences within groups
 }
 \examples{
-ccdb_ex = CellaRepertorium:::cdhit_ccdb(ccdb_ex, 'cdr3_nt', type = 'DNA', cluster_name = 'DNA97', identity = .965, min_length = 12, G = 1)
-ccdb_ex = fine_clustering(ccdb_ex, sequence_key = 'cdr3_nt', type = 'DNA') 
+ccdb_ex_small = ccdb_ex
+ccdb_ex_small$cell_tbl = ccdb_ex_small$cell_tbl[1:200,]
+ccdb_ex_small = CellaRepertorium:::cdhit_ccdb(ccdb_ex_small,
+sequence_key = 'cdr3_nt', type = 'DNA', cluster_name = 'DNA97',
+identity = .965, min_length = 12, G = 1)
+ccdb_ex_small = fine_clustering(ccdb_ex_small, sequence_key = 'cdr3_nt', type = 'DNA')
 }
