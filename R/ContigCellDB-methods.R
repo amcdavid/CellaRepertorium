@@ -52,10 +52,13 @@ ContigCellDB = function(contig_tbl, contig_pk, cell_tbl, cell_pk, cluster_tbl, c
         valid_KeyedTbl(cell_tbl, cell_pk)
     }
     if(missing(cluster_tbl)){
-        cluster_tbl = tibble()
-    } else{
-        valid_KeyedTbl(cluster_tbl, cluster_pk)
+        if(length(cluster_pk)>0){
+            cluster_tbl = as_tibble(unique(contig_tbl[cluster_pk]))
+        } else{
+            cluster_tbl = tibble()
+        }
     }
+    valid_KeyedTbl(cluster_tbl, cluster_pk)
     obj = new('ContigCellDB', contig_tbl = contig_tbl, contig_pk = contig_pk, cell_tbl = cell_tbl, cell_pk = cell_pk, cluster_tbl = cluster_tbl, cluster_pk = cluster_pk, equalized = equalized)
     if(!equalized) equalize_ccdb(obj) else obj
 }
