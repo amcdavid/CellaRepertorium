@@ -20,16 +20,22 @@ globalVariables(c('fc', 'd(medoid)', 'is_medoid', 'n_cluster'))
 #' @param ... passed to `fine_cluster_seqs`
 #' @importFrom dplyr select bind_cols
 #'
-#' @examples 
-#' ccdb_ex = CellaRepertorium:::cdhit_ccdb(ccdb_ex, 'cdr3_nt', type = 'DNA', cluster_name = 'DNA97', identity = .965, min_length = 12, G = 1)
-#' ccdb_ex = fine_clustering(ccdb_ex, sequence_key = 'cdr3_nt', type = 'DNA') 
+#' @examples
+#' ccdb_ex_small = ccdb_ex
+#' ccdb_ex_small$cell_tbl = ccdb_ex_small$cell_tbl[1:200,]
+#' ccdb_ex_small = CellaRepertorium:::cdhit_ccdb(ccdb_ex_small,
+#' sequence_key = 'cdr3_nt', type = 'DNA', cluster_name = 'DNA97',
+#' identity = .965, min_length = 12, G = 1)
+#' ccdb_ex_small = fine_clustering(ccdb_ex_small, sequence_key = 'cdr3_nt', type = 'DNA')
 #' @return `Clustering` object with updated `contig_tbl` and `cluster_tbl`
 #' @export
 fine_clustering = function(ccdb, sequence_key, type, max_affinity = NULL, keep_clustering_details = FALSE, ...){
     contig_tbl = ccdb$contig_tbl
     message('Calculating intradistances on ', nrow(ccdb$cluster_tbl), ' clusters.')
     # run `fine_cluster_seqs` within each cluster_pk
-    cluster_tbl = contig_tbl %>% group_by(!!!syms(ccdb$cluster_pk)) %>% summarize(fc = list(fine_cluster_seqs(!!sym(sequence_key), type = type, ...)), n_cluster = n())
+    cluster_tbl = contig_tbl %>% group_by(!!!syms(ccdb$cluster_pk)) %>% summarize(fc = list(fine_cluster_seqs(!!sym(sequence_key), type = type, ...)), n_cluster = dplyr::n())
+    cluster_tbl_orig = ccdb$cluster_tbl
+    cluster_tbl = left_join_warn(cluster_tbl, cluster_tbl_orig, by = ccdb$cluster_pk, overwrite = TRUE)
     message('Summarizing')
     contig_by_cluster = contig_tbl[union(ccdb$contig_pk, ccdb$cluster_pk)] %>% tidyr::nest(!!!syms(ccdb$contig_pk)) %>%
         right_join(cluster_tbl %>% dplyr::select(!!!syms(ccdb$cluster_pk)), by=ccdb$cluster_pk) # need to make sure these are in the same order!
@@ -43,11 +49,11 @@ fine_clustering = function(ccdb, sequence_key, type, max_affinity = NULL, keep_c
     aff_matrix = Matrix::.bdiag(affinities)
     d_medoid = purrr::map2_dfr(cluster_tbl$fc, contig_by_cluster$data, function(.x, .y){
         is_medoid = seq_len(nrow(.y)) == .x$medoid
-        dplyr::bind_cols(.y, `d(medoid)` = .x$homology, is_medoid = is_medoid)
+        dplyr::bind_cols(.y, `d(medoid)` = .x$distance, is_medoid = is_medoid)
     })
     contig_tbl = left_join_warn(d_medoid, contig_tbl, by = ccdb$contig_pk, overwrite = TRUE)
-    avg_homology = contig_tbl %>% group_by(!!!syms(ccdb$cluster_pk)) %>% summarize(avg_homology = mean(`d(medoid)`))
-    cluster_tbl = avg_homology %>% left_join_warn(cluster_tbl, by = ccdb$cluster_pk, overwrite = TRUE)
+    avg_distance = contig_tbl %>% group_by(!!!syms(ccdb$cluster_pk)) %>% summarize(avg_distance = mean(`d(medoid)`))
+    cluster_tbl = avg_distance %>% left_join_warn(cluster_tbl, by = ccdb$cluster_pk, overwrite = TRUE)
     if(!keep_clustering_details) cluster_tbl = cluster_tbl %>% select(-fc)
     replace_cluster_tbl(ccdb, cluster_tbl, contig_tbl)
 
