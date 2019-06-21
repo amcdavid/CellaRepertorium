@@ -1,4 +1,16 @@
 
+#' Cluster contigs by germline properties
+#'
+#' @param ccdb `ContigCellDB`
+#' @param segment_keys fields in `contig_tbl` that identify a cluster
+#' @param cluster_name name of cluster to be added to `cluster_tbl`
+#'
+#' @return `ContigCellDB`
+#' @export
+#'
+#' @examples
+#' ccdb_ex = cluster_germline(ccdb_ex)
+#' ccdb_ex$cluster_tbl
 cluster_germline = function(ccdb, segment_keys = c('v_gene', 'j_gene', 'chain'), cluster_name = 'cluster_idx'){
     contig_tbl = ccdb$contig_tbl
     seg_types = contig_tbl %>% group_by(!!!syms(segment_keys)) %>% summarize() %>% ungroup() %>% mutate(!!sym(cluster_name) := seq_len(nrow(.)))
@@ -20,14 +32,8 @@ globalVariables(c('fc', 'd(medoid)', 'is_medoid', 'n_cluster'))
 #' @param ... passed to `fine_cluster_seqs`
 #' @importFrom dplyr select bind_cols
 #'
-#' @examples
-#' ccdb_ex_small = ccdb_ex
-#' ccdb_ex_small$cell_tbl = ccdb_ex_small$cell_tbl[1:200,]
-#' ccdb_ex_small = CellaRepertorium:::cdhit_ccdb(ccdb_ex_small,
-#' sequence_key = 'cdr3_nt', type = 'DNA', cluster_name = 'DNA97',
-#' identity = .965, min_length = 12, G = 1)
-#' ccdb_ex_small = fine_clustering(ccdb_ex_small, sequence_key = 'cdr3_nt', type = 'DNA')
-#' @return `Clustering` object with updated `contig_tbl` and `cluster_tbl`
+#' @example inst/examples/small_cluster_example.R
+#' @return `ContigCellDB` object with updated `contig_tbl` and `cluster_tbl`
 #' @export
 fine_clustering = function(ccdb, sequence_key, type, max_affinity = NULL, keep_clustering_details = FALSE, ...){
     contig_tbl = ccdb$contig_tbl
@@ -54,7 +60,7 @@ fine_clustering = function(ccdb, sequence_key, type, max_affinity = NULL, keep_c
     contig_tbl = left_join_warn(d_medoid, contig_tbl, by = ccdb$contig_pk, overwrite = TRUE)
     avg_distance = contig_tbl %>% group_by(!!!syms(ccdb$cluster_pk)) %>% summarize(avg_distance = mean(`d(medoid)`))
     cluster_tbl = avg_distance %>% left_join_warn(cluster_tbl, by = ccdb$cluster_pk, overwrite = TRUE)
-    if(!keep_clustering_details) cluster_tbl = cluster_tbl %>% select(-fc)
+    if(!keep_clustering_details) cluster_tbl = cluster_tbl %>% dplyr::select(-fc)
     replace_cluster_tbl(ccdb, cluster_tbl, contig_tbl)
 
 }
@@ -81,10 +87,47 @@ left_join_warn = function(x, y, by, overwrite = FALSE, join = left_join, ...){
     join(x  = x, y = y, by = by, suffix = c('', '.y'), ...)
 }
 
-canonicalize_cluster = function(ccdb, representative, contig_fields = c('cdr3', 'cdr3_nt', 'chain', 'v_gene', 'd_gene', 'j_gene')){
-    cluster_tbl = ccdb$contig_tbl %>% filter(is_medoid) %>% select(!!!syms(union(ccdb$cluster_pk, contig_fields)))
-    cluster_tbl = cluster_tbl %>% left_join_warn(ccdb$cluster_tbl, by = ccdb$cluster_pk) %>% mutate(representative = make.unique(!!sym(representative)), representative = forcats::fct_reorder(representative, n_cluster))
-    contig_tbl = left_join_warn(ccdb$contig_tbl, cluster_tbl %>% select(!!!syms(ccdb$cluster_pk), representative), by = ccdb$cluster_pk)
+#' Find a canonical contig to represent a cluster
+#'
+#' @param ccdb `ContigCellDB`
+#' @param contig_filter_args an expression passed to dplyr::filter.  Unlike `filter`, multiple criteria must be `&` together, rather than using commas to separate.
+#' that act on `ccdb$contig_tbl``
+#' @param tie_break_keys (optional) `character` naming fields in `contig_tbl`
+#' that are used sort the contig table in descending order.
+#' Used to break ties if `contig_filter_args` does not return a unique contig
+#' for each cluster
+#' @param order The rank order of the contig, based on `tie_break_keys`
+#' to return
+#' @param representative an optional field from `contig_tbl` that will be made
+#' unique. Serve as a surrogate `cluster_pk`.
+#' @param contig_fields Optional fields from `contig_tbl` that will be copied into
+#' the `cluster_tbl` from the canonical contig.
+#'
+#' @return `ContigCellDB`
+#' @export
+#' @seealso canonicalize_cell
+#' @example inst/examples/small_cluster_example.R
+canonicalize_cluster = function(ccdb, contig_filter_args = is_medoid,
+tie_break_keys = character(), order = 1, representative = ccdb$cluster_pk[1], contig_fields = c('cdr3', 'cdr3_nt', 'chain', 'v_gene', 'd_gene', 'j_gene')){
+    sub_contig_tbl = filter(.data = ccdb$contig_tbl, !!rlang::enexpr(contig_filter_args))
+
+    if(nrow(sub_contig_tbl) != nrow(ccdb$cluster_tbl)){
+        message('Subset of `contig_tbl` has ', nrow(sub_contig_tbl) , ' rows for ',
+                nrow(ccdb$cluster_tbl), ' clusters. Filling missing values and breaking ties ', appendLF = FALSE)
+        if(length(tie_break_keys) == 0) message('arbitrarily by first contig.')
+        else message('with ', paste(tie_break_keys, sep = ', '), '.')
+    }
+    # setup quosures to arrange the data
+    arranging = purrr::map(tie_break_keys, ~ rlang::quo(desc(!!sym(.x))))
+
+    # take first row of each cluster
+    cluster_tbl = sub_contig_tbl %>% group_by(!!!syms(ccdb$cluster_pk)) %>% dplyr::arrange(!!!arranging) %>% dplyr::do(dplyr::slice(., order))
+    cluster_tbl = cluster_tbl %>% dplyr::select(!!!syms(unique(c(ccdb$cluster_pk, contig_fields, representative))))
+
+    # fill any missing clusters after the filtering
+    cluster_tbl = cluster_tbl  %>% ungroup() %>% right_join_warn(ccdb$cluster_tbl, by = ccdb$cluster_pk)
+    cluster_tbl = cluster_tbl %>% mutate(representative = make.unique(as.character(!!sym(representative))), representative = forcats::fct_reorder(representative, n_cluster))
+    contig_tbl = left_join_warn(ccdb$contig_tbl, cluster_tbl %>% dplyr::select(!!!syms(ccdb$cluster_pk), representative), by = ccdb$cluster_pk)
     replace_cluster_tbl(ccdb, cluster_tbl, contig_tbl)
 }
 

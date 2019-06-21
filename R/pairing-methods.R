@@ -20,11 +20,11 @@ canonicalize_by_prevalence = function(tbl, cell_identifiers = 'barcode', cluster
 
 
 
-# I believe this function is obsoleted by `canonicalize_by_subset``
+# I believe this function is obsoleted by `canonicalize_cell``
 #' @param sort_factors `character` vector naming columns in `tbl` to sorted on, within  `cell_identifier`. Sorted by first element first, then ties broken by subsequent elements.  Sorted in decreasing order for each element.
 #' @param chain_levels an optional `character` vector providing the sort order of the `chain` column in `tbl`.  Set to length zero to disable.
-#' @export
 #' @describeIn canonicalize_by_prevalence return a canonical contig by chain type, with TRB/IGH returned first. By default, ties are broken by umis and reads.
+#' @export
 canonicalize_by_chain = function(tbl,  cell_identifiers = 'barcode', sort_factors = c('chain', 'umis', 'reads'), cluster_idx = 'cluster_idx', order = 1, chain_levels = c('IGL', 'IGK', 'TRA', 'TRB', 'IGH')){
     #ochain = tbl[[sort_factors[1]]]
     if(length(chain_levels) > 0){
@@ -36,34 +36,35 @@ canonicalize_by_chain = function(tbl,  cell_identifiers = 'barcode', sort_factor
 
 }
 
-#' Return single contig for each cell based on filtering and sorting
+#' Find a canonical contig to represent a cell
 #'
-#' @param ccdb `ContigCellDB`
-#' @param ... unquoted expressions passed to `dplyr::filter` that will be applied to the `contig_tbl`
-#' @param tie_break_keys columns used to sort the `contig_tbl` in **decreasing** order
-#' @param order `integer` specifying which entry (ordinal) will be selected from the sorted contig_tbl, within each cell
-#' @param contig_fields columns in the `contig_tbl` that will be copied over to the `cell_tbl`
+#' Using filtering in `...` and sorting in `tie_break_keys` and `order` find a
+#' single, canonical contig to represent each cell
+#' Fields in `contig_fields` will be copied over to the `cell_tbl`.
+#' @inheritParams canonicalize_cluster
 #'
 #' @return `ContigCellDB` with additional fields in `cell_tbl`
 #' @export
-#'
+#' @seealso canonicalize_cluster
 #' @examples
 #' # Report beta chain with highest umi-count, breaking ties with reads
-#' beta = canonicalize_by_subset(ccdb_ex, chain == 'TRB',
+#' beta = canonicalize_cell(ccdb_ex, chain == 'TRB',
 #' tie_break_keys = c('umis', 'reads'),
 #' contig_fields = c('umis', 'reads', 'chain', 'v_gene', 'd_gene', 'j_gene'))
 #' head(beta$cell_tbl)
+#'
 #' # Only adds fields to `cell_tbl`
 #' stopifnot(all.equal(beta$cell_tbl[ccdb_ex$cell_pk],
 #' ccdb_ex$cell_tbl[ccdb_ex$cell_pk]))
+#'
 #' #Report cdr3 with highest UMI count, but only when > 5 UMIs support it
-#' umi5 = canonicalize_by_subset(ccdb_ex, umis > 5,
+#' umi5 = canonicalize_cell(ccdb_ex, umis > 5,
 #' tie_break_keys = c('umis', 'reads'), contig_fields = c('umis', 'cdr3'))
 #' stopifnot(all(umi5$cell_tbl$umis > 5, na.rm = TRUE))
-canonicalize_by_subset = function(ccdb, ...,  tie_break_keys = c('umis', 'reads'), contig_fields = tie_break_keys, order = 1){
+canonicalize_cell = function(ccdb, contig_filter_args,  tie_break_keys = c('umis', 'reads'), contig_fields = tie_break_keys, order = 1){
     tbl = ccdb$contig_tbl
-    # Filter with expressions in ...
-    ft = filter(.data = tbl, !!!rlang::quos(...))
+    # Filter with expressions in contig_filter_args
+    ft = filter(.data = tbl, !!rlang::enexpr(contig_filter_args))
     # setup quosures to arrange the data
     arranging = purrr::map(tie_break_keys, ~ rlang::quo(desc(!!sym(.x))))
     # take first row of each cell
