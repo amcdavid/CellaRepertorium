@@ -14,7 +14,6 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-#load_all()
 library(CellaRepertorium)
 library(dplyr)
 library(ggplot2)
@@ -79,11 +78,13 @@ ggplot(cdb$cluster_tbl %>% filter(n_cluster>1) %>% gather(key, value, -DNA97) , 
 
 We can also cluster by DNA identity.
 
+# Cluster by V-J identity
+
 ```{r}
 germline_cluster = CellaRepertorium:::cluster_germline(cdb, segment_keys = c('v_gene', 'j_gene', 'chain'), cluster_name = 'segment_idx')
 ```
 
-And by other features of the contigs. Here we cluster each contig based on the chain and V-J genes.  This gives us the set of observed V-J pairings:
+We can cluster by any other feature of the contigs. Here we cluster each contig based on the chain and V-J genes.  This gives us the set of observed V-J pairings:
 
 ```{r}
 germline_cluster = fine_clustering(germline_cluster, sequence_key = 'cdr3_nt', type = 'DNA')
@@ -98,6 +99,7 @@ ggplot(germline_cluster$cluster_tbl %>% filter(chain == 'TRB'), aes(x = v_gene, 
 
 Average Levenstein distance of CDR3 within each pair
 
+# Some simple phylogenetic relationship
 
 ```{r}
 library(ggdendro)
@@ -122,7 +124,7 @@ map(to_plot$aa80, ~ dendro_plot(aa80, .))
 ```
 
 ```{r}
-aa80 = CellaRepertorium:::canonicalize_cluster(aa80, c('cdr3'), contig_fields = c('cdr3', 'cdr3_nt', 'chain', 'v_gene', 'd_gene', 'j_gene'))
+aa80 = canonicalize_cluster(aa80, representative = 'cdr3', contig_fields = c('cdr3', 'cdr3_nt', 'chain', 'v_gene', 'd_gene', 'j_gene'))
 ```
 
 Pull the fields listed in `contig_fields` into the `cluster_tbl`, using the values found in the medoid contig
@@ -178,9 +180,9 @@ mm_out = suppressWarnings(oligo_cluster_stat %>% group_by(cluster_idx, chain) %>
 ```
 
 ```{r  per_iso_tests, eval = FALSE}
-mm_outj = filter(left_join(ungroup(mm_out), unique(oligo_clusters_all %>% select(cdr3_representative, cluster_idx))), term %in% c('popCD31Pos', 'weeks_premature')) %>% mutate(ci_lo = AMmisc::clamp(conf.low), ci_hi = AMmisc::clamp(conf.high)) %>% arrange(desc(cdr3_representative))
+mm_outj = filter(left_join(ungroup(mm_out), unique(oligo_clusters_all %>% select(representative, cluster_idx))), term %in% c('popCD31Pos', 'weeks_premature')) %>% mutate(ci_lo = AMmisc::clamp(conf.low), ci_hi = AMmisc::clamp(conf.high)) %>% arrange(desc(representative))
 
-ggplot(mm_outj, aes(x = cdr3_representative, ymin = ci_lo, ymax = ci_hi, y = clamp(estimate))) + geom_pointrange() + facet_wrap(~term, scales = 'free') + coord_flip() + theme_minimal() + geom_hline(yintercept = 0, lty = 2) + xlab("Isomorph") + ylab("log odds of isomorph")
+ggplot(mm_outj, aes(x = representative, ymin = ci_lo, ymax = ci_hi, y = clamp(estimate))) + geom_pointrange() + facet_wrap(~term, scales = 'free') + coord_flip() + theme_minimal() + geom_hline(yintercept = 0, lty = 2) + xlab("Isomorph") + ylab("log odds of isomorph")
 ```
 
 We test if the binomial rate of clone expression differs between CD31+/- or term, for each clone.
@@ -188,21 +190,23 @@ We test if the binomial rate of clone expression differs between CD31+/- or term
 # Clonal pairs
 
 ```{r expanded_clones}
-class_colors = data_frame(chain =  unique(aa80$cluster_tbl$chain)) %>% mutate(class_color =  RColorBrewer::brewer.pal(length(chain),"Set1")[seq_along(chain)])
+class_colors = tibble(chain =  unique(aa80$cluster_tbl$chain)) %>% mutate(class_color =  RColorBrewer::brewer.pal(length(chain),"Set1")[seq_along(chain)])
 
 aa80$cluster_pk = 'representative'
-pairing_list = pairing_tables(aa80, table_order = 2, orphan_level = 1, min_expansion = 2, cluster_keys = c('cdr3', 'representative', 'chain', 'v_gene', 'j_gene', 'avg_distance'))
+pairing_list = pairing_tables(aa80, table_order = 2, orphan_level = 1, min_expansion = 3, cluster_keys = c('cdr3', 'representative', 'chain', 'v_gene', 'j_gene', 'avg_distance'))
 
 
 ```
 
 
-```{r plot_expanded, eval = FALSE}
-pairs_plt = ggplot(pairing_list$cell_tbl, aes(x = cluster_idx.1_fct, y = cluster_idx.2_fct, color = sample, shape = pop)) + geom_jitter(width = .3, height = .3) + theme_minimal()
+```{r plot_expanded}
+pairs_plt = ggplot(pairing_list$cell_tbl, aes(x = cluster_idx.1_fct, y = cluster_idx.2_fct, color = sample, shape = pop)) + geom_jitter(width = .2, height = .2) + theme_minimal() + xlab('TRB') + ylab('TRA')
 
-ylab = data_frame(cdr3_representative =  ggplot_build(pairs_plt)$layout$panel_params[[1]]$y.label) %>% left_join(feature_tbl) %>% mutate(class_color = ifelse(is.na(class_color), '#E41A1C', class_color))
+feature_tbl = left_join(bind_rows(pairing_list$idx1_tbl, pairing_list$idx2_tbl), class_colors)
 
-xlab = data_frame(cdr3_representative =  ggplot_build(pairs_plt)$layout$panel_params[[1]]$x.label) %>% left_join(feature_tbl) %>% mutate(class_color = ifelse(is.na(class_color), '#E41A1C', class_color))
+ylab = data_frame(representative =  ggplot_build(pairs_plt)$layout$panel_params[[1]]$y.label) %>% left_join(feature_tbl) %>% mutate(class_color = ifelse(is.na(class_color), '#E41A1C', class_color))
+
+xlab = data_frame(representative =  ggplot_build(pairs_plt)$layout$panel_params[[1]]$x.label) %>% left_join(feature_tbl) %>% mutate(class_color = ifelse(is.na(class_color), '#E41A1C', class_color))
 
 pairs_plt = pairs_plt + theme(axis.text.x = element_text(angle = 90, color = xlab$class_color, size = 8), axis.text.y = element_text(color = ylab$class_color, size = 8))
 
@@ -213,12 +217,11 @@ pairs_plt
 ## Expanded clones
 
 ```{r, eval = FALSE}
-pairing_list = pairing_tables(oligo_clusters_all %>% select(cdr3_representative, dataset, barcode, chain, umis, reads), cluster_idx = 'cdr3_representative', cell_identifiers = c('dataset', 'barcode'), canonicalize_fun = canonicalize_by_prevalence, table_order = 2, orphan_level = 1, min_expansion = 4, feature_tbl = feature_tbl, cell_tbl = good_cells, cluster_whitelist = filter(oligo_clusters, n_cluster>8) %>% dplyr::select(cluster_idx.1 = cdr3_representative) %>% unique())
+pairing_list = pairing_tables(oligo_clusters_all %>% select(representative, dataset, barcode, chain, umis, reads), cluster_idx = 'representative', cell_identifiers = c('dataset', 'barcode'), canonicalize_fun = canonicalize_by_prevalence, table_order = 2, orphan_level = 1, min_expansion = 4, feature_tbl = feature_tbl, cell_tbl = good_cells, cluster_whitelist = filter(oligo_clusters, n_cluster>8) %>% dplyr::select(cluster_idx.1 = representative) %>% unique())
 <<plot_expanded>>
 ```
 
 # Length of CDR3
-
 
 ```{r}
 aa80$contig_tbl = aa80$contig_tbl %>% mutate(cdr3_length = str_length(cdr3_nt))
@@ -235,5 +238,7 @@ ggplot(cdr_len %>% filter(group == 'fixed', term != '(Intercept)'), aes(x = inte
 
 ```
 
-As was suggested by the histogram, there doesn't seem to be an obvious `pop` effect.
+We end up with a convergence warning.  This is not a suprise, because the `samples` aren't actually replicates -- they are just subsamples drawn for illustrative purposes.
+The Balbc mice  have .5 fewer nucleotides per contig, on average, 
+and this is not significant.
 

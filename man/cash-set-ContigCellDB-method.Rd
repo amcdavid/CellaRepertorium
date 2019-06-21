@@ -3,7 +3,7 @@
 \docType{methods}
 \name{$<-,ContigCellDB-method}
 \alias{$<-,ContigCellDB-method}
-\title{Create a function of ContigCellDB object to replace values of its slots}
+\title{Access public members of ContigCellDB object}
 \usage{
 \S4method{$}{ContigCellDB}(x, name) <- value
 }
@@ -18,7 +18,7 @@
 A ContigCellDB object
 }
 \description{
-Create a function of ContigCellDB object to replace values of its slots
+Access public members of ContigCellDB object
 }
 \examples{
 ccdb_ex$contig_pk = c("sample","barcode","contig_id") # 'pop' is technically redundant with 'sample'

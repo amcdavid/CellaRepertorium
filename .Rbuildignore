@@ -9,3 +9,5 @@ manuscript/
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
+.ignore
+README.Rmd

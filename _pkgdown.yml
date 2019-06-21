@@ -1,1 +1,41 @@
 destination: docs
+
+reference:
+- title: Constuction and modification
+  desc: "Functions to construct and modify a ContigCellDB"
+  contents:
+   - '`ContigCellDB`'
+   - '`$,ContigCellDB-method`'
+   - '`$<-,ContigCellDB-method`'
+- title: Clustering
+  desc: "Methods to cluster contigs"
+  contents:
+   - '`cluster_germline`'
+   - '`fine_clustering`'
+   - '`cdhit`'
+   - '`pairing_tables`'
+- title: Canonicalization
+  desc: "Methods to return single contigs for cells or clusters"
+  contents:
+   - '`canonicalize_cell`'
+   - '`canonicalize_cluster`'
+- title: Statistical testing
+  contents:
+   - '`cluster_permute_test`'
+   - '`purity`'
+- title: Datasets
+  contents:
+   - '`ccdb_ex`'
+   - '`contigs_qc`'
+   - '`canonicalize_by_prevalence`'
+- title: Internal or WIP
+  desc: "Functions that may be made internal, removed, or with interfaces subject to change."
+  contents:
+  - '`cluster_germline`'
+  - '`cluster_permute_test`'
+  - '`.cluster_permute_test`'
+  - '`entropy`'
+  - '`ig_chain_recode`'
+  - '`fancy_name_contigs`'
+  - '`fine_cluster_seqs`'
+  - '`get_canonical_representative`'

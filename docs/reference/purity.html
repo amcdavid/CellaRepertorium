@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Access public members of ContigCellDB object — $&lt;-,ContigCellDB-method • CellaRepertorium</title>
+<title>Calculate number of cluster-subject singletons — purity • CellaRepertorium</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,9 +30,9 @@
 
 
 
-<meta property="og:title" content="Access public members of ContigCellDB object — $&lt;-,ContigCellDB-method" />
+<meta property="og:title" content="Calculate number of cluster-subject singletons — purity" />
 
-<meta property="og:description" content="Access public members of ContigCellDB object" />
+<meta property="og:description" content="Calculate number of cluster-subject singletons" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -114,49 +114,41 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Access public members of ContigCellDB object</h1>
-    <small class="dont-index">Source: <a href='https://github.com/amcdavid/CellaRepertorium/blob/master/R/ContigCellDB-methods.R'><code>R/ContigCellDB-methods.R</code></a></small>
-    <div class="hidden name"><code>cash-set-ContigCellDB-method.Rd</code></div>
+    <h1>Calculate number of cluster-subject singletons</h1>
+    <small class="dont-index">Source: <a href='https://github.com/amcdavid/CellaRepertorium/blob/master/R/permutation-testing.R'><code>R/permutation-testing.R</code></a></small>
+    <div class="hidden name"><code>purity.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Access public members of ContigCellDB object</p>
+    <p>Calculate number of cluster-subject singletons</p>
     
     </div>
 
-    <pre class="usage"># S4 method for ContigCellDB
-$(x, name) <- value</pre>
+    <pre class="usage"><span class='fu'>purity</span>(<span class='no'>cluster_idx</span>, <span class='no'>subject</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>x</th>
-      <td><p>A ContigCellDB object</p></td>
+      <th>cluster_idx</th>
+      <td><p>factor-like cluster variable</p></td>
     </tr>
     <tr>
-      <th>name</th>
-      <td><p>Name of a slot for a ContigCellDB object (one of  `c('contig_tbl', 'cell_tbl', 'contig_pk', 'cell_pk', 'cluster_tbl', 'cluster_pk')`)</p></td>
-    </tr>
-    <tr>
-      <th>value</th>
-      <td><p>The value assigned to a slot of ContigCellDB object</p></td>
+      <th>subject</th>
+      <td><p>factor-like subject</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A ContigCellDB object</p>
+    <p>average number of singletons</p>
+    
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p>cluster_permute_test</p></div>
     
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>ccdb_ex</span>$<span class='no'>contig_pk</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"sample"</span>,<span class='st'>"barcode"</span>,<span class='st'>"contig_id"</span>) <span class='co'># 'pop' is technically redundant with 'sample'</span>
-<span class='co'># Take a subset of ccdb_ex</span>
-<span class='no'>ccdb_ex</span></div><div class='output co'>#&gt; ContigCellDB of 1508 contigs; 832 cells; and 0 clusters.
-#&gt; Contigs keyed by sample, barcode, contig_id; cells keyed by pop, sample, barcode.</div><div class='input'><span class='no'>ccdb_ex</span>$<span class='no'>contig_tbl</span> <span class='kw'>=</span> <span class='kw pkg'>dplyr</span><span class='kw ns'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span>(<span class='no'>ccdb_ex</span>$<span class='no'>contig_tbl</span>, <span class='no'>pop</span> <span class='kw'>==</span> <span class='st'>'b6'</span>)
-<span class='no'>ccdb_ex</span></div><div class='output co'>#&gt; ContigCellDB of 767 contigs; 426 cells; and 0 clusters.
-#&gt; Contigs keyed by sample, barcode, contig_id; cells keyed by pop, sample, barcode.</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -164,9 +156,9 @@ $(x, name) <- value</pre>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
-      
-      <li><a href="#examples">Examples</a></li>
-    </ul>
+
+      <li><a href="#see-also">See also</a></li>
+          </ul>
 
   </div>
 </div>

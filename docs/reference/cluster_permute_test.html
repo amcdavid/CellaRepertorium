@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Tests for independence between clusters and labels using permutation — cluster_permute_test • CellaRepertorium</title>
+<title>Tests for independence between labels and covariates using permutation of cells — cluster_permute_test • CellaRepertorium</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,12 +30,11 @@
 
 
 
-<meta property="og:title" content="Tests for independence between clusters and labels using permutation — cluster_permute_test" />
+<meta property="og:title" content="Tests for independence between labels and covariates using permutation of cells — cluster_permute_test" />
 
-<meta property="og:description" content="This tests a statistic for association between clusters and labels by permuting the link between the two
-Both clusters and labels should be factors.  Each observation represents a cell.
-For example, clusters could be a clonal ID, while labels is a subject ID.
-statistic is any" />
+<meta property="og:description" content="This tests a statistic for association between labels (for instance, cluster/clonal ID) and covariates (for instance, subject or treatment) by permuting the link between the two.
+Each observation represents a cell.
+statistic is any function of `labels`" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -117,41 +116,41 @@ statistic is any" />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Tests for independence between clusters and labels using permutation</h1>
+    <h1>Tests for independence between labels and covariates using permutation of cells</h1>
     <small class="dont-index">Source: <a href='https://github.com/amcdavid/CellaRepertorium/blob/master/R/permutation-testing.R'><code>R/permutation-testing.R</code></a></small>
     <div class="hidden name"><code>cluster_permute_test.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>This tests a statistic for association between clusters and labels by permuting the link between the two
-Both clusters and labels should be factors.  Each observation represents a cell.
-For example, <code>clusters</code> could be a clonal ID, while <code>labels</code> is a subject ID.
-<code>statistic</code> is any</p>
+    <p>This tests a statistic for association between labels (for instance, cluster/clonal ID) and covariates (for instance, subject or treatment) by permuting the link between the two.
+Each observation represents a cell.
+<code>statistic</code> is any function of `labels`</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>cluster_permute_test</span>(<span class='no'>clusters</span>, <span class='no'>labels</span>, <span class='no'>covariates</span>, <span class='no'>statistic</span>,
-  <span class='kw'>n_perm</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>alternative</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"two.sided"</span>, <span class='st'>"less"</span>, <span class='st'>"greater"</span>), <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>cluster_permute_test</span>(<span class='no'>ccdb</span>, <span class='no'>cell_covariate_keys</span>,
+  <span class='kw'>cell_label_key</span> <span class='kw'>=</span> <span class='no'>ccdb</span>$<span class='no'>cluster_pk</span>, <span class='no'>statistic</span>, <span class='no'>n_perm</span>,
+  <span class='kw'>alternative</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"two.sided"</span>, <span class='st'>"less"</span>, <span class='st'>"greater"</span>), <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>clusters</th>
-      <td><p><code>factor</code> of length n</p></td>
+      <th>ccdb</th>
+      <td><p>`ContigCellDB`</p></td>
     </tr>
     <tr>
-      <th>labels</th>
-      <td><p><code>factor</code> of length n</p></td>
+      <th>cell_covariate_keys</th>
+      <td><p>`character` naming fields in `ccdb$cell_tbl`</p></td>
     </tr>
     <tr>
-      <th>covariates</th>
-      <td><p>optional <code>factor</code> of length n.</p></td>
+      <th>cell_label_key</th>
+      <td><p>`character` naming a single field in `ccdb$cell_tbl`</p></td>
     </tr>
     <tr>
       <th>statistic</th>
-      <td><p>function of <code>clusters</code>, <code>labels</code> and optionally <code>covariates</code> that returns a <code>numeric</code> of length 1.</p></td>
+      <td><p>function of <code>covariates</code> (a `data.frame`), <code>labels</code> (a `vector`) that returns a <code>numeric</code> of length 1.</p></td>
     </tr>
     <tr>
       <th>n_perm</th>
@@ -171,27 +170,39 @@ For example, <code>clusters</code> could be a clonal ID, while <code>labels</cod
 
     <p>a list containing the observed value of the statistic, its expectation (under independence), a p-value, and the monte carlo standard error (of the expected value).</p>
     
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p>purity</p></div>
+    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>library</a></span>(<span class='no'>dplyr</span>)</div><div class='output co'>#&gt; <span class='message'></span>
-#&gt; <span class='message'>Attaching package: ‘dplyr’</span></div><div class='output co'>#&gt; <span class='message'>The following object is masked from ‘package:testthat’:</span>
-#&gt; <span class='message'></span>
-#&gt; <span class='message'>    matches</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from ‘package:stats’:</span>
-#&gt; <span class='message'></span>
-#&gt; <span class='message'>    filter, lag</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from ‘package:base’:</span>
-#&gt; <span class='message'></span>
-#&gt; <span class='message'>    intersect, setdiff, setequal, union</span></div><div class='input'><span class='no'>purity</span> <span class='kw'>=</span> <span class='kw'>function</span>(<span class='no'>clusters</span>, <span class='no'>labels</span>, <span class='no'>covariates</span>){
-<span class='no'>n_label_cluster</span> <span class='kw'>=</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/reexports.html'>data_frame</a></span>(<span class='kw'>labels</span> <span class='kw'>=</span> <span class='no'>labels</span>, <span class='kw'>clusters</span> <span class='kw'>=</span> <span class='no'>clusters</span>) <span class='kw'>%&gt;%</span>
-    <span class='fu'><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></span>(<span class='no'>clusters</span>, <span class='no'>labels</span>) <span class='kw'>%&gt;%</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/summarise.html'>summarize</a></span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/n.html'>n</a></span>()) <span class='kw'>%&gt;%</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/group_by.html'>ungroup</a></span>()
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>library</a></span>(<span class='no'>dplyr</span>)
+<span class='co'># covariate must be a vector, rather than a data.frame</span>
+
+<span class='no'>cluster_idx</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>2</span>, <span class='fl'>2</span>, <span class='fl'>3</span>, <span class='fl'>3</span>)
+<span class='no'>subject</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>'A'</span>, <span class='st'>'A'</span>, <span class='st'>'B'</span>, <span class='st'>'B'</span>, <span class='st'>'B'</span>, <span class='st'>'C'</span>, <span class='st'>'C'</span>)
+<span class='no'>contig_tbl</span> <span class='kw'>=</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/reexports.html'>tibble</a></span>(<span class='kw'>contig_pk</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/seq'>seq_along</a></span>(<span class='no'>cluster_idx</span>), <span class='no'>cluster_idx</span>, <span class='no'>subject</span>)
+<span class='no'>ccdb_test</span> <span class='kw'>=</span> <span class='fu'><a href='ContigCellDB-fun.html'>ContigCellDB</a></span>(<span class='kw'>contig_tbl</span> <span class='kw'>=</span> <span class='no'>contig_tbl</span>, <span class='kw'>contig_pk</span> <span class='kw'>=</span> <span class='st'>'contig_pk'</span>,
+<span class='kw'>cell_pk</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>'contig_pk'</span>, <span class='st'>'subject'</span>, <span class='st'>'cluster_idx'</span>), <span class='kw'>cluster_pk</span> <span class='kw'>=</span> <span class='st'>'cluster_idx'</span>)
+<span class='no'>ccdb_test</span>$<span class='no'>cell_tbl</span></div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 7 x 3</span><span>
+#&gt;   contig_pk subject cluster_idx
+#&gt;       </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
+#&gt; </span><span style='color: #555555;'>1</span><span>         1 A                 1
+#&gt; </span><span style='color: #555555;'>2</span><span>         2 A                 1
+#&gt; </span><span style='color: #555555;'>3</span><span>         3 B                 1
+#&gt; </span><span style='color: #555555;'>4</span><span>         4 B                 2
+#&gt; </span><span style='color: #555555;'>5</span><span>         5 B                 2
+#&gt; </span><span style='color: #555555;'>6</span><span>         6 C                 3
+#&gt; </span><span style='color: #555555;'>7</span><span>         7 C                 3</div><div class='input'>
+<span class='no'>purity_ex</span> <span class='kw'>=</span> <span class='kw'>function</span>(<span class='no'>cluster_idx</span>, <span class='no'>subject</span>) {
+<span class='no'>n_label_cluster</span> <span class='kw'>=</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/reexports.html'>tibble</a></span>(<span class='kw'>cluster_idx</span> <span class='kw'>=</span> <span class='no'>cluster_idx</span>, <span class='kw'>subject</span> <span class='kw'>=</span> <span class='no'>subject</span>) <span class='kw'>%&gt;%</span>
+<span class='fu'><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></span>(<span class='no'>cluster_idx</span>, <span class='no'>subject</span>) <span class='kw'>%&gt;%</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/summarise.html'>summarize</a></span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/n.html'>n</a></span>()) <span class='kw'>%&gt;%</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/group_by.html'>ungroup</a></span>()
+<span class='co'>#Average number of singleton clusters for each subject</span>
 <span class='no'>singletons</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/mean'>mean</a></span>(<span class='no'>n_label_cluster</span>$<span class='no'>n</span> <span class='kw'>==</span> <span class='fl'>1</span>)
 <span class='no'>singletons</span>
 }
-
-<span class='no'>clusters</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>2</span>, <span class='fl'>2</span>, <span class='fl'>3</span>, <span class='fl'>3</span>)
-<span class='no'>labels</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>'A'</span>, <span class='st'>'A'</span>, <span class='st'>'B'</span>, <span class='st'>'B'</span>, <span class='st'>'B'</span>, <span class='st'>'C'</span>, <span class='st'>'C'</span>)
-<span class='no'>covariates</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>'X'</span>, <span class='st'>'X'</span>, <span class='st'>'Y'</span>, <span class='st'>'Y'</span>, <span class='st'>'Y'</span>, <span class='st'>'Y'</span>, <span class='st'>'Y'</span>)
-<span class='fu'>cluster_permute_test</span>(<span class='no'>clusters</span>, <span class='no'>labels</span>, <span class='kw'>statistic</span> <span class='kw'>=</span> <span class='no'>purity</span>, <span class='kw'>n_perm</span>  <span class='kw'>=</span> <span class='fl'>50</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: `data_frame()` is deprecated, use `tibble()`.</span>
-#&gt; <span class='warning'><span style='color: #555555;'>This warning is displayed once per session.</span><span></span></div><div class='output co'>#&gt; $observed
+<span class='fu'>cluster_permute_test</span>(<span class='no'>ccdb_test</span>, <span class='st'>'subject'</span>, <span class='st'>'cluster_idx'</span>,
+<span class='kw'>statistic</span> <span class='kw'>=</span> <span class='no'>purity</span>, <span class='kw'>n_perm</span>  <span class='kw'>=</span> <span class='fl'>50</span>)</div><div class='output co'>#&gt; $observed
 #&gt; [1] 0.25
 #&gt; 
 #&gt; $expected
@@ -211,6 +222,8 @@ For example, <code>clusters</code> could be a clonal ID, while <code>labels</cod
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
+
+      <li><a href="#see-also">See also</a></li>
       
       <li><a href="#examples">Examples</a></li>
     </ul>

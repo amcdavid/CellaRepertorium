@@ -2,19 +2,20 @@
 % Please edit documentation in R/permutation-testing.R
 \name{cluster_permute_test}
 \alias{cluster_permute_test}
-\title{Tests for independence between clusters and labels using permutation}
+\title{Tests for independence between labels and covariates using permutation of cells}
 \usage{
-cluster_permute_test(clusters, labels, covariates, statistic,
-  n_perm = 1000, alternative = c("two.sided", "less", "greater"), ...)
+cluster_permute_test(ccdb, cell_covariate_keys,
+  cell_label_key = ccdb$cluster_pk, statistic, n_perm,
+  alternative = c("two.sided", "less", "greater"), ...)
 }
 \arguments{
-\item{clusters}{\code{factor} of length n}
+\item{ccdb}{`ContigCellDB`}
 
-\item{labels}{\code{factor} of length n}
+\item{cell_covariate_keys}{`character` naming fields in `ccdb$cell_tbl`}
 
-\item{covariates}{optional \code{factor} of length n.}
+\item{cell_label_key}{`character` naming a single field in `ccdb$cell_tbl`}
 
-\item{statistic}{function of \code{clusters}, \code{labels} and optionally \code{covariates} that returns a \code{numeric} of length 1.}
+\item{statistic}{function of \code{covariates} (a `data.frame`), \code{labels} (a `vector`) that returns a \code{numeric} of length 1.}
 
 \item{n_perm}{number of permutations.}
 
@@ -26,23 +27,32 @@ cluster_permute_test(clusters, labels, covariates, statistic,
 a list containing the observed value of the statistic, its expectation (under independence), a p-value, and the monte carlo standard error (of the expected value).
 }
 \description{
-This tests a statistic for association between clusters and labels by permuting the link between the two
-Both clusters and labels should be factors.  Each observation represents a cell.
-For example, \code{clusters} could be a clonal ID, while \code{labels} is a subject ID.
-\code{statistic} is any
+This tests a statistic for association between labels (for instance, cluster/clonal ID) and covariates (for instance, subject or treatment) by permuting the link between the two.
+Each observation represents a cell.
+\code{statistic} is any function of `labels`
 }
 \examples{
 library(dplyr)
-purity = function(clusters, labels, covariates){
-n_label_cluster = data_frame(labels = labels, clusters = clusters) \%>\%
-    group_by(clusters, labels) \%>\% summarize(n = n()) \%>\% ungroup()
+# covariate must be a vector, rather than a data.frame
+
+cluster_idx = c(1, 1, 1, 2, 2, 3, 3)
+subject = c('A', 'A', 'B', 'B', 'B', 'C', 'C')
+contig_tbl = tibble(contig_pk = seq_along(cluster_idx), cluster_idx, subject)
+ccdb_test = ContigCellDB(contig_tbl = contig_tbl, contig_pk = 'contig_pk',
+cell_pk = c('contig_pk', 'subject', 'cluster_idx'), cluster_pk = 'cluster_idx')
+ccdb_test$cell_tbl
+
+purity_ex = function(cluster_idx, subject) {
+n_label_cluster = tibble(cluster_idx = cluster_idx, subject = subject) \%>\%
+group_by(cluster_idx, subject) \%>\% summarize(n = n()) \%>\% ungroup()
+#Average number of singleton clusters for each subject
 singletons = mean(n_label_cluster$n == 1)
 singletons
 }
+cluster_permute_test(ccdb_test, 'subject', 'cluster_idx',
+statistic = purity, n_perm  = 50)
 
-clusters = c(1, 1, 1, 2, 2, 3, 3)
-labels = c('A', 'A', 'B', 'B', 'B', 'C', 'C')
-covariates = c('X', 'X', 'Y', 'Y', 'Y', 'Y', 'Y')
-cluster_permute_test(clusters, labels, statistic = purity, n_perm  = 50)
-
+}
+\seealso{
+purity
 }

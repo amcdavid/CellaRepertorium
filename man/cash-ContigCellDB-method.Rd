@@ -3,7 +3,7 @@
 \docType{methods}
 \name{$,ContigCellDB-method}
 \alias{$,ContigCellDB-method}
-\title{Creat a method for ContigCellDB object to access its slots}
+\title{Access public members of ContigCellDB object}
 \usage{
 \S4method{$}{ContigCellDB}(x, name)
 }
@@ -13,10 +13,10 @@
 \item{name}{a slot of a ContigCellDB object (one of  `c('contig_tbl', 'cell_tbl', 'contig_pk', 'cell_pk', 'cluster_tbl', 'cluster_pk')`)}
 }
 \value{
-Slots of ContigCellDB
+Slot of ContigCellDB
 }
 \description{
-Creat a method for ContigCellDB object to access its slots
+Access public members of ContigCellDB object
 }
 \examples{
 ccdb_ex$contig_tbl

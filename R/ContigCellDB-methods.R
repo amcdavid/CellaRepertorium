@@ -1,6 +1,5 @@
 # To Document
 # primary_keys, primary_keys<- -- use `$` to access/replace. Table not checked for validity, but I think should be?
-# canonicalize contigs on cells
 # subset (subset a table, then equalize...)
 
 
@@ -69,12 +68,12 @@ ContigCellDB_10XVDJ = function(contig_tbl, contig_pk = c('barcode', 'contig_id')
     ContigCellDB(contig_tbl = contig_tbl, contig_pk = contig_pk, cell_pk = cell_pk)
 }
 
-#' Creat a method for ContigCellDB object to access its slots
+#' Access public members of ContigCellDB object
 #'
 #' @param x A ContigCellDB object
 #' @param name a slot of a ContigCellDB object (one of  `c('contig_tbl', 'cell_tbl', 'contig_pk', 'cell_pk', 'cluster_tbl', 'cluster_pk')`)
 #'
-#' @return Slots of ContigCellDB
+#' @return Slot of ContigCellDB
 #' @export
 #'
 #' @examples
@@ -89,7 +88,7 @@ setMethod("$", signature = c(x = 'ContigCellDB'), function(x, name){
     }
 })
 
-#' Create a function of ContigCellDB object to replace values of its slots
+#' Access public members of ContigCellDB object
 #'
 #' @param x A ContigCellDB object
 #' @param name Name of a slot for a ContigCellDB object (one of  `c('contig_tbl', 'cell_tbl', 'contig_pk', 'cell_pk', 'cluster_tbl', 'cluster_pk')`)
@@ -147,7 +146,7 @@ equalize_ccdb = function(x){
 
 replace_cluster_tbl = function(ccdb, cluster_tbl, contig_tbl, cluster_pk){
     if(nrow(ccdb$cluster_tbl)>0 && !missing(cluster_pk)){
-        warning("Replacing `cluster_tbl` with key ccdb$cluster_pk")
+        warning("Replacing `cluster_tbl` with ", paste(ccdb$cluster_pk, sep = ', ', '.'))
     }
     if(!missing(cluster_pk)) ccdb$cluster_pk = cluster_pk
     ccdb@cluster_tbl = cluster_tbl

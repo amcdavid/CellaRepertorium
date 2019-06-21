@@ -125,8 +125,8 @@
     <tbody>
       <tr>
         <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-          <p class="section-desc"></p>
+          <h2 id="section-constuction-and-modification" class="hasAnchor"><a href="#section-constuction-and-modification" class="anchor"></a>Constuction and modification</h2>
+          <p class="section-desc"><p>Functions to construct and modify a ContigCellDB</p></p>
         </th>
       </tr>
       <tr>
@@ -138,33 +138,35 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="canonicalize_by_prevalence.html">canonicalize_by_prevalence()</a></code> <code><a href="canonicalize_by_prevalence.html">canonicalize_by_chain()</a></code> </p>
-        </td>
-        <td><p>For each cell, return a single, canonical chain-cluster</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="canonicalize_by_subset.html">canonicalize_by_subset()</a></code> </p>
-        </td>
-        <td><p>Return single contig for each cell based on filtering and sorting</p></td>
-      </tr><tr>
-        
-        <td>
           <p><code><a href="cash-ContigCellDB-method.html">`$`(<i>&lt;ContigCellDB&gt;</i>)</a></code> </p>
         </td>
-        <td><p>Creat a method for ContigCellDB object to access its slots</p></td>
+        <td><p>Access public members of ContigCellDB object</p></td>
       </tr><tr>
         
         <td>
           <p><code><a href="cash-set-ContigCellDB-method.html">`$<-`(<i>&lt;ContigCellDB&gt;</i>)</a></code> </p>
         </td>
-        <td><p>Create a function of ContigCellDB object to replace values of its slots</p></td>
+        <td><p>Access public members of ContigCellDB object</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-clustering" class="hasAnchor"><a href="#section-clustering" class="anchor"></a>Clustering</h2>
+          <p class="section-desc"><p>Methods to cluster contigs</p></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="cluster_germline.html">cluster_germline()</a></code> </p>
+        </td>
+        <td><p>Cluster contigs by germline properties</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="ccdb_ex.html">ccdb_ex</a></code> </p>
+          <p><code><a href="fine_clustering.html">fine_clustering()</a></code> </p>
         </td>
-        <td><p>A preconstructed `ContigClusterDB` from the `contigs_qc` data</p></td>
+        <td><p>Perform additional clustering of sequences within groups</p></td>
       </tr><tr>
         
         <td>
@@ -174,15 +176,101 @@
       </tr><tr>
         
         <td>
+          <p><code><a href="pairing_tables.html">pairing_tables()</a></code> </p>
+        </td>
+        <td><p>Generate a list of tables representing clusters paired in cells</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-canonicalization" class="hasAnchor"><a href="#section-canonicalization" class="anchor"></a>Canonicalization</h2>
+          <p class="section-desc"><p>Methods to return single contigs for cells or clusters</p></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="canonicalize_cell.html">canonicalize_cell()</a></code> </p>
+        </td>
+        <td><p>Find a canonical contig to represent a cell</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="canonicalize_cluster.html">canonicalize_cluster()</a></code> </p>
+        </td>
+        <td><p>Find a canonical contig to represent a cluster</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-statistical-testing" class="hasAnchor"><a href="#section-statistical-testing" class="anchor"></a>Statistical testing</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
           <p><code><a href="cluster_permute_test.html">cluster_permute_test()</a></code> </p>
         </td>
-        <td><p>Tests for independence between clusters and labels using permutation</p></td>
+        <td><p>Tests for independence between labels and covariates using permutation of cells</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="purity.html">purity()</a></code> </p>
+        </td>
+        <td><p>Calculate number of cluster-subject singletons</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-datasets" class="hasAnchor"><a href="#section-datasets" class="anchor"></a>Datasets</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="ccdb_ex.html">ccdb_ex</a></code> </p>
+        </td>
+        <td><p>A preconstructed `ContigClusterDB` from the `contigs_qc` data</p></td>
       </tr><tr>
         
         <td>
           <p><code><a href="contigs_qc.html">contigs_qc</a></code> </p>
         </td>
         <td><p>Filtered and annotated contigs of TCR from mice</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="canonicalize_by_prevalence.html">canonicalize_by_prevalence()</a></code> <code><a href="canonicalize_by_prevalence.html">canonicalize_by_chain()</a></code> </p>
+        </td>
+        <td><p>For each cell, return a single, canonical chain-cluster</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-internal-or-wip" class="hasAnchor"><a href="#section-internal-or-wip" class="anchor"></a>Internal or WIP</h2>
+          <p class="section-desc"><p>Functions that may be made internal, removed, or with interfaces subject to change.</p></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="cluster_germline.html">cluster_germline()</a></code> </p>
+        </td>
+        <td><p>Cluster contigs by germline properties</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="cluster_permute_test.html">cluster_permute_test()</a></code> </p>
+        </td>
+        <td><p>Tests for independence between labels and covariates using permutation of cells</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="dot-cluster_permute_test.html">.cluster_permute_test()</a></code> </p>
+        </td>
+        <td><p>Cell permutation tests (internal)</p></td>
       </tr><tr>
         
         <td>
@@ -210,21 +298,9 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="fine_clustering.html">fine_clustering()</a></code> </p>
-        </td>
-        <td><p>Perform additional clustering of sequences within groups</p></td>
-      </tr><tr>
-        
-        <td>
           <p><code><a href="get_canonical_representative.html">get_canonical_representative()</a></code> </p>
         </td>
         <td><p>Given a family of similar sequences, return a "representative"</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="pairing_tables.html">pairing_tables()</a></code> </p>
-        </td>
-        <td><p>Generate a list of tables representing clusters paired in cells</p></td>
       </tr>
     </tbody>
     </table>
@@ -233,7 +309,12 @@
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#section-all-functions">All functions</a></li>
+      <li><a href="#section-constuction-and-modification">Constuction and modification</a></li>
+      <li><a href="#section-clustering">Clustering</a></li>
+      <li><a href="#section-canonicalization">Canonicalization</a></li>
+      <li><a href="#section-statistical-testing">Statistical testing</a></li>
+      <li><a href="#section-datasets">Datasets</a></li>
+      <li><a href="#section-internal-or-wip">Internal or WIP</a></li>
     </ul>
   </div>
 </div>
