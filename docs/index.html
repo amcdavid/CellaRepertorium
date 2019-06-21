@@ -105,10 +105,10 @@
 <h2 class="hasAnchor">
 <a href="#data-requirements-and-package-structure" class="anchor"></a>Data requirements and package structure</h2>
 <p>The fundamental unit this package operates on is the <strong>contig</strong>, which is a section of contiguously stitched reads from a single <strong>cell</strong>. Each contig belongs to one (and only one) cell, however, cells generate multiple contigs.</p>
-<p><img src="../../../../Box%20Sync/research/scRNAseq/CellaRepertorium/vignettes/figure/contig_schematic.png"><!-- --></p>
+<p><img src="../../../../Box%20Sync/research/scRNAseq/CellaRepertorium/vignettes/img/contig_schematic.png"><!-- --></p>
 <p>Contigs can also belong to a <strong>cluster</strong>. Because of these two many-to-one mappings, these data can be thought as a series of ragged arrays. The links between them mean they are relational data. A <code>ContigCellDB</code> object wraps each of these objects as a sequence of three <code>data.frames</code> (well, <code>tibbles</code>, actually). <code>ContigCellDB</code> also tracks columns (the primary keys) that unique identify each row in each of these tables. The <code>contig_tbl</code> is the <code>tibble</code> containing <strong>contigs</strong>, the <code>cell_tbl</code> contains the <strong>cells</strong>, and the <code>cluster_tbl</code> contains the <strong>clusters</strong>.</p>
 <p>The <code>contig_pk</code>, <code>cell_pk</code> and <code>cluster_pk</code> identify the columns that identify a contig, cell and cluster, respectively. These will serve as foreign keys that link the three tables together. The tables are kept in sync so that subsetting the contigs will subset the cells, and clusters, and vice-versa.</p>
-<p><img src="../../../../Box%20Sync/research/scRNAseq/CellaRepertorium/vignettes/figure/table_schematic.png"><!-- --></p>
+<p><img src="../../../../Box%20Sync/research/scRNAseq/CellaRepertorium/vignettes/img/table_schematic.png"><!-- --></p>
 <p>Of course, each of these tables can contain many other columns that will serve as covariates for various analyses, such as the CDR3 sequence, or the identity of the V, D and J regions. Various derived quantities that describe cells and clusters can also be calculated, and added to these tables, such as the medoid of a cluster – a contig that minimizes the average distance to all other clusters.</p>
 </div>
 <div id="functions" class="section level2">

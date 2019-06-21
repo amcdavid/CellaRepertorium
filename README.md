@@ -20,7 +20,7 @@ is a section of contiguously stitched reads from a single **cell**. Each
 contig belongs to one (and only one) cell, however, cells generate
 multiple contigs.
 
-![](vignettes/figure/contig_schematic.png)<!-- -->
+![](vignettes/img/contig_schematic.png)<!-- -->
 
 Contigs can also belong to a **cluster**. Because of these two
 many-to-one mappings, these data can be thought as a series of ragged
@@ -38,7 +38,7 @@ foreign keys that link the three tables together. The tables are kept in
 sync so that subsetting the contigs will subset the cells, and clusters,
 and vice-versa.
 
-![](vignettes/figure/table_schematic.png)<!-- -->
+![](vignettes/img/table_schematic.png)<!-- -->
 
 Of course, each of these tables can contain many other columns that will
 serve as covariates for various analyses, such as the CDR3 sequence, or
