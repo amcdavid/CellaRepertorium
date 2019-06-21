@@ -54,7 +54,7 @@ ggplot(paired_chain, aes(x = interaction(sample, pop), fill = pairing)) + geom_b
 
 ```{r}
 
-aa80 = CellaRepertorium:::cdhit_ccdb(cdb, 'cdr3', type = 'AA', cluster_name = 'aa80', identity = .8)
+aa80 = cdhit_ccdb(cdb, 'cdr3', type = 'AA', cluster_name = 'aa80', identity = .8)
 aa80 = fine_clustering(aa80, sequence_key = 'cdr3', type = 'AA', keep_clustering_details = TRUE)
 
 
@@ -65,13 +65,13 @@ ggplot(aa80$cluster_tbl %>% filter(n_cluster>1) %>% gather(key, value, -aa80, -f
 
 ```
 
-We cluster the CDR3 translated amino acid residues with the program [CD-HIT](http://weizhongli-lab.org/cdhit_suite/cgi-bin/index.cgi?cmd=cd-hit).  A sequence is included in a cluster if it matches by 100% similiarity and has the same CDR3 length.  Note that this can and should be relaxed -- especially in the beta chain we see "near clones" that only differ by a residue or two, seemingly in stylized places.
+We cluster the CDR3 translated amino acid residues with the program [CD-HIT](http://weizhongli-lab.org/cdhit_suite/cgi-bin/index.cgi?cmd=cd-hit).  A sequence is included in a cluster if it matches by 100% similarity and has the same CDR3 length.  Note that this can and should be relaxed -- especially in the beta chain we see "near clones" that only differ by a residue or two, seemingly in stylized places.
 
 
 # Cluster CDR3 DNA sequences
 
 ```{r, results = 'hide'}
-cdb = CellaRepertorium:::cdhit_ccdb(cdb, 'cdr3_nt', type = 'DNA', cluster_name = 'DNA97', identity = .965, min_length = MIN_CDR3_AA*3-1, G = 1)
+cdb = cdhit_ccdb(cdb, 'cdr3_nt', type = 'DNA', cluster_name = 'DNA97', identity = .965, min_length = MIN_CDR3_AA*3-1, G = 1)
 cdb = fine_clustering(cdb, sequence_key = 'cdr3_nt', type = 'DNA')
 ggplot(cdb$cluster_tbl %>% filter(n_cluster>1) %>% gather(key, value, -DNA97) , aes(x = value))+ facet_wrap(~key, scales = 'free') + geom_histogram() + scale_y_sqrt()
 ```
@@ -81,7 +81,7 @@ We can also cluster by DNA identity.
 # Cluster by V-J identity
 
 ```{r}
-germline_cluster = CellaRepertorium:::cluster_germline(cdb, segment_keys = c('v_gene', 'j_gene', 'chain'), cluster_name = 'segment_idx')
+germline_cluster = cluster_germline(cdb, segment_keys = c('v_gene', 'j_gene', 'chain'), cluster_name = 'segment_idx')
 ```
 
 We can cluster by any other feature of the contigs. Here we cluster each contig based on the chain and V-J genes.  This gives us the set of observed V-J pairings:
@@ -97,9 +97,56 @@ Number of pairs
 ggplot(germline_cluster$cluster_tbl %>% filter(chain == 'TRB'), aes(x = v_gene, y = j_gene, fill = avg_distance)) + geom_tile() + theme(axis.text.x = element_text(angle = 90))
 ```
 
-Average Levenstein distance of CDR3 within each pair
+Average Levenstein distance of CDR3 within each pair.  This might be turned into a z-score by fitting a weighted linear model with sum-to-zero contrasts and returning the pearson residuals.  This could determine if a pairing has an unexpected small, or large, within cluster distance.
 
-# Some simple phylogenetic relationship
+
+
+
+# Oligo clusters
+
+Next, we will examine the clusters that are found in many contigs.  First we will get a canonical contig to represent each cluster.  This will be the medoid contig, by default.
+
+```{r}
+aa80 = canonicalize_cluster(aa80, representative = 'cdr3', contig_fields = c('cdr3', 'cdr3_nt', 'chain', 'v_gene', 'd_gene', 'j_gene'))
+```
+
+`aa80` now includes the fields listed in `contig_fields` in the `cluster_tbl`, using the values found in the medoid contig.
+
+```{r}
+MIN_OLIGO = 7
+oligo_clusters = filter(aa80$cluster_tbl, n_cluster >= MIN_OLIGO)
+oligo_contigs = aa80
+oligo_contigs$contig_tbl = semi_join(oligo_contigs$contig_tbl, oligo_clusters, by = 'aa80')
+oligo_contigs
+```
+
+Get contigs/cells/clusters found at least `r MIN_OLIGO` times (across contigs).  Note that replacing `contig_tbl` with the subset selected with the `semi_join` also automatically subsetted the `cell_tbl` and `cluster_tbl`.
+
+
+```{r}
+oligo_clusters = oligo_contigs$contig_tbl %>% group_by(aa80) %>% summarize(`n subjects observed` = length(unique(sample))) %>% left_join(oligo_clusters)
+
+knitr::kable(oligo_clusters %>% select(aa80:cdr3, chain:j_gene, avg_distance, n_cluster))
+
+```
+
+Report some statistics about these expanded clusters.
+
+```{r}
+oligo_plot = ggplot(oligo_contigs$contig_tbl, aes(x = representative, fill = chain)) + geom_bar() + coord_flip() + scale_fill_brewer(type = 'qual') + theme_minimal()
+oligo_plot
+```
+
+These always come from a single chain.
+
+```{r}
+oligo_plot + aes(fill =   sample) + facet_wrap(~pop)
+
+```
+
+But come from multiple populations and samples.
+
+## Some simple phylogenetic relationships
 
 ```{r}
 library(ggdendro)
@@ -116,54 +163,13 @@ dendro_plot = function(ccdb, idx, method = 'complete'){
   theme_classic() + geom_text(data = hc$labels, aes(color = sample, label = fancy_name), size = 3, angle = 60) + scale_x_continuous(breaks = NULL) + ylab('AA Distance') + xlab('')
 }
 
-MIN_OLIGO = 7
 to_plot = filter(aa80$cluster_tbl, n_cluster >= MIN_OLIGO)
 
 map(to_plot$aa80, ~ dendro_plot(aa80, .))
 
 ```
 
-```{r}
-aa80 = canonicalize_cluster(aa80, representative = 'cdr3', contig_fields = c('cdr3', 'cdr3_nt', 'chain', 'v_gene', 'd_gene', 'j_gene'))
-```
-
-Pull the fields listed in `contig_fields` into the `cluster_tbl`, using the values found in the medoid contig
-
-```{r}
-oligo_clusters = filter(aa80$cluster_tbl, n_cluster >= MIN_OLIGO)
-oligo_contigs = aa80
-oligo_contigs$contig_tbl = semi_join(oligo_contigs$contig_tbl, oligo_clusters, by = 'aa80')
-oligo_contigs
-```
-Get contigs/cells/clusters found at least `r MIN_OLIGO` times (across contigs).  Note that replacing `contig_tbl` with the subset selected with the `semi_join` also automatically subsetted the `cell_tbl` and `cluster_tbl`.
-
-
-```{r}
-oligo_clusters = oligo_contigs$contig_tbl %>% group_by(aa80) %>% summarize(`n subjects observed` = length(unique(sample))) %>% left_join(oligo_clusters)
-
-knitr::kable(oligo_clusters %>% select(aa80:cdr3, chain:j_gene, avg_distance, n_cluster))
-
-```
-
-Report some statistics about these expanded clusters.
-
-# Oligo clusters
-
-```{r}
-oligo_plot = ggplot(oligo_contigs$contig_tbl, aes(x = representative, fill = chain)) + geom_bar() + coord_flip() + scale_fill_brewer(type = 'qual') + theme_minimal()
-oligo_plot
-```
-
-These always come from a single chain.
-
-```{r}
-oligo_plot + aes(fill =   sample) + facet_wrap(~pop)
-
-```
-
-But come from multiple populations and samples.
-
-# Formal testing for frequency differences
+## Formal testing for frequency differences
 
 ```{r, eval = FALSE, results = 'hide'}
 library(lme4)
@@ -189,6 +195,8 @@ We test if the binomial rate of clone expression differs between CD31+/- or term
 
 # Clonal pairs
 
+Next, we can examine the pairing between $\alpha-\beta$ chains and see if any pairs are found more than once.
+
 ```{r expanded_clones}
 class_colors = tibble(chain =  unique(aa80$cluster_tbl$chain)) %>% mutate(class_color =  RColorBrewer::brewer.pal(length(chain),"Set1")[seq_along(chain)])
 
@@ -198,6 +206,7 @@ pairing_list = pairing_tables(aa80, table_order = 2, orphan_level = 1, min_expan
 
 ```
 
+`pairing_tables` finds all contig combinations of order `table_order` across cells.  Among those combinations that occur at least `min_expansion` times, the expanded combinations and and any other combinations that shared an expanded combo.
 
 ```{r plot_expanded}
 pairs_plt = ggplot(pairing_list$cell_tbl, aes(x = cluster_idx.1_fct, y = cluster_idx.2_fct, color = sample, shape = pop)) + geom_jitter(width = .2, height = .2) + theme_minimal() + xlab('TRB') + ylab('TRA')
@@ -217,9 +226,12 @@ pairs_plt
 ## Expanded clones
 
 ```{r, eval = FALSE}
-pairing_list = pairing_tables(oligo_clusters_all %>% select(representative, dataset, barcode, chain, umis, reads), cluster_idx = 'representative', cell_identifiers = c('dataset', 'barcode'), canonicalize_fun = canonicalize_by_prevalence, table_order = 2, orphan_level = 1, min_expansion = 4, feature_tbl = feature_tbl, cell_tbl = good_cells, cluster_whitelist = filter(oligo_clusters, n_cluster>8) %>% dplyr::select(cluster_idx.1 = representative) %>% unique())
+whitelist = oligo_clusters %>% dplyr::select(cluster_idx.1 = representative) %>% unique()
+pairing_list = pairing_tables(aa80, canonicalize_fun = canonicalize_by_prevalence, table_order = 2, orphan_level = 1, min_expansion = Inf, cluster_whitelist = whitelist,  cluster_keys = c('cdr3', 'representative', 'chain', 'v_gene', 'j_gene', 'avg_distance'))
 <<plot_expanded>>
 ```
+
+By setting `min_expansion = Inf, cluster_whitelist = whitelist` we can examine any pairings for a set of cluster_idx, in this case the ones that were seen multiple times.  Interestingly (and unlike some human samples) the expanded clusters are  $\beta$-chain, and their $\alpha$ chains are sprinkled quite evenly across clusters.
 
 # Length of CDR3
 
@@ -238,7 +250,6 @@ ggplot(cdr_len %>% filter(group == 'fixed', term != '(Intercept)'), aes(x = inte
 
 ```
 
-We end up with a convergence warning.  This is not a suprise, because the `samples` aren't actually replicates -- they are just subsamples drawn for illustrative purposes.
-The Balbc mice  have .5 fewer nucleotides per contig, on average, 
-and this is not significant.
+We end up with a (harmless) convergence warning about a singular fit.  This is expected, because the `samples` aren't actually replicates -- they are just subsamples drawn for illustrative purposes.
+The Balbc mice  have .5 fewer nucleotides per contig, on average,  and this is not significant.
 

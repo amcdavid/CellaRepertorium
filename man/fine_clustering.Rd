@@ -8,20 +8,25 @@ fine_clustering(ccdb, sequence_key, type, max_affinity = NULL,
   keep_clustering_details = FALSE, ...)
 }
 \arguments{
-\item{ccdb}{A ContigCellDB object}
+\item{ccdb}{A \code{\link[=ContigCellDB]{ContigCellDB()}} object}
 
-\item{sequence_key}{`character` naming column in `contig_tbl` with sequence}
+\item{sequence_key}{\code{character} naming column in \code{contig_tbl} with sequence}
 
 \item{type}{'AA' or 'DNA'}
 
-\item{max_affinity}{`numeric` naming the maximal affinity for the sparse affinity matrix that is constructed.  Not currently used.}
+\item{max_affinity}{\code{numeric} naming the maximal affinity for the sparse affinity matrix that is constructed.  Not currently used.}
 
-\item{keep_clustering_details}{`logical` -- should output of `fine_cluster_seqs` be kept as a list column}
+\item{keep_clustering_details}{\code{logical} -- should output of \code{fine_cluster_seqs} be kept as a list column}
 
-\item{...}{passed to `fine_cluster_seqs`}
+\item{...}{Arguments passed on to \code{fine_cluster_seqs}
+\describe{
+  \item{big_memory_brute}{attempt to cluster more than 4000 sequences?  Clustering is quadratic, so this will take a long time and might exhaust memory}
+  \item{method}{one of 'substitutionMatrix' or 'levenshtein'}
+  \item{substitution_matrix}{a character vector naming a substitution matrix available in Biostrings, or a  substitution matrix itself}
+}}
 }
 \value{
-`ContigCellDB` object with updated `contig_tbl` and `cluster_tbl`
+\code{\link[=ContigCellDB]{ContigCellDB()}} object with updated \code{contig_tbl} and \code{cluster_tbl}
 }
 \description{
 Perform additional clustering of sequences within groups

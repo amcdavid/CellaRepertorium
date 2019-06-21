@@ -2,7 +2,7 @@
 % Please edit documentation in R/permutation-testing.R
 \name{purity}
 \alias{purity}
-\title{Calculate number of cluster-subject singletons}
+\title{Calculate number of cluster-subject singletons for the purposes of permutation testing}
 \usage{
 purity(cluster_idx, subject)
 }
@@ -15,8 +15,8 @@ purity(cluster_idx, subject)
 average number of singletons
 }
 \description{
-Calculate number of cluster-subject singletons
+Calculate number of cluster-subject singletons for the purposes of permutation testing
 }
 \seealso{
-cluster_permute_test
+\code{\link[=cluster_permute_test]{cluster_permute_test()}}
 }

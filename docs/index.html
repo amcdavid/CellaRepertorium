@@ -37,7 +37,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">CellaRepertorium</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
       </span>
     </div>
 
@@ -104,27 +104,33 @@
 <div id="data-requirements-and-package-structure" class="section level2">
 <h2 class="hasAnchor">
 <a href="#data-requirements-and-package-structure" class="anchor"></a>Data requirements and package structure</h2>
-<p>The fundamental unit this package operates on is the <strong>contig</strong>, which is a section of contiguously stitched reads from a single <strong>cell</strong>. Each contig belongs to one (and only one) cell, however, cells generate multiple contigs.</p>
-<p><img src="../../../../Box%20Sync/research/scRNAseq/CellaRepertorium/vignettes/img/contig_schematic.png"><!-- --></p>
-<p>Contigs can also belong to a <strong>cluster</strong>. Because of these two many-to-one mappings, these data can be thought as a series of ragged arrays. The links between them mean they are relational data. A <code>ContigCellDB</code> object wraps each of these objects as a sequence of three <code>data.frames</code> (well, <code>tibbles</code>, actually). <code>ContigCellDB</code> also tracks columns (the primary keys) that unique identify each row in each of these tables. The <code>contig_tbl</code> is the <code>tibble</code> containing <strong>contigs</strong>, the <code>cell_tbl</code> contains the <strong>cells</strong>, and the <code>cluster_tbl</code> contains the <strong>clusters</strong>.</p>
-<p>The <code>contig_pk</code>, <code>cell_pk</code> and <code>cluster_pk</code> identify the columns that identify a contig, cell and cluster, respectively. These will serve as foreign keys that link the three tables together. The tables are kept in sync so that subsetting the contigs will subset the cells, and clusters, and vice-versa.</p>
-<p><img src="../../../../Box%20Sync/research/scRNAseq/CellaRepertorium/vignettes/img/table_schematic.png"><!-- --></p>
-<p>Of course, each of these tables can contain many other columns that will serve as covariates for various analyses, such as the CDR3 sequence, or the identity of the V, D and J regions. Various derived quantities that describe cells and clusters can also be calculated, and added to these tables, such as the medoid of a cluster – a contig that minimizes the average distance to all other clusters.</p>
+<p>The fundamental unit this package operates on is the <strong>contig</strong>, which is a section of contiguously stitched reads from a single <strong>cell</strong>. Each contig belongs to one (and only one) cell, however, cells generate multiple contigs.<br><img src="reference/figures/contig_schematic.png"></p>
+<p>Contigs can also belong to a <strong>cluster</strong>. Because of these two many-to-one mappings, these data can be thought as a series of ragged arrays. The links between them mean they are relational data. A <code><a href="reference/ContigCellDB-fun.html">ContigCellDB()</a></code> object wraps each of these objects as a sequence of three <code>data.frames</code> (well, <code><a href="https://dplyr.tidyverse.org/reference/reexports.html">dplyr::tibble()</a></code>, actually). <code><a href="reference/ContigCellDB-fun.html">ContigCellDB()</a></code> also tracks columns (the primary keys) that unique identify each row in each of these tables. The <code>contig_tbl</code> is the <code>tibble</code> containing <strong>contigs</strong>, the <code>cell_tbl</code> contains the <strong>cells</strong>, and the <code>cluster_tbl</code> contains the <strong>clusters</strong>.</p>
+<p>The <code>contig_pk</code>, <code>cell_pk</code> and <code>cluster_pk</code> specify the columns that identify a contig, cell and cluster, respectively. These will serve as foreign keys that link the three tables together. The tables are kept in sync so that subsetting the contigs will subset the cells, and clusters, and vice-versa.</p>
+<p><img src="reference/figures/table_schematic.png"></p>
+<p>Of course, each of these tables can contain many other columns that will serve as covariates for various analyses, such as the <strong>CDR3</strong> sequence, or the identity of the <strong>V</strong>, <strong>D</strong> and <strong>J</strong> regions. Various derived quantities that describe cells and clusters can also be calculated, and added to these tables, such as the <strong>medoid</strong> of a cluster – a contig that minimizes the average distance to all other clusters.</p>
 </div>
-<div id="functions" class="section level2">
+<div id="some-functions-of-interest" class="section level2">
 <h2 class="hasAnchor">
-<a href="#functions" class="anchor"></a>Functions</h2>
+<a href="#some-functions-of-interest" class="anchor"></a>Some functions of interest</h2>
 <p>[a screencap of something interesting?]</p>
 <ul>
 <li>
-<code>cdhit_ccdb</code>: An R interface to CDhit, which was originally ported by Thomas Lin Pedersen.</li>
+<code><a href="reference/cdhit_ccdb.html">cdhit_ccdb()</a></code>: An R interface to CDhit, which was originally ported by Thomas Lin Pedersen.</li>
 <li>
-<code>fine_clustering</code>: clustering CDR3 by edit distances (possibly using empirical amino acid substitution matrices)</li>
+<code><a href="reference/fine_clustering.html">fine_clustering()</a></code>: clustering CDR3 by edit distances (possibly using empirical amino acid substitution matrices)</li>
 <li>
-<code>cluster_permute_test</code>: permutation tests of cluster statistics</li>
+<code><a href="reference/canonicalize_cell.html">canonicalize_cell()</a></code>: Return a single contig for each cell, e.g., for combining VDJ information with 5’-based single cell expressoin</li>
 <li>
-<code>pairing_tables</code>: Generate pairings of contigs within each cell in a way that they can be plotted</li>
+<code><a href="reference/cluster_permute_test.html">cluster_permute_test()</a></code>: permutation tests of cluster statistics</li>
+<li>
+<code><a href="reference/pairing_tables.html">pairing_tables()</a></code>: Generate pairings of contigs within each cell in a way that they can be plotted</li>
 </ul>
+</div>
+<div id="inferfacing-related-packages" class="section level2">
+<h2 class="hasAnchor">
+<a href="#inferfacing-related-packages" class="anchor"></a>Inferfacing Related packages</h2>
+<p>To combine repertoire information with expression of endogenuous mRNAs have been measured, this package has been used with <code><a href="https://www.rdocumentation.org/packages/SingleCellExperiment/topics/SingleCellExperiment">SingleCellExperiment::SingleCellExperiment()</a></code> and (<code>Seurat</code>)[<a href="https://satijalab.org/seurat/" class="uri">https://satijalab.org/seurat/</a>] after generating various cell canonicalizations. Many tools from <a href="https://alakazam.readthedocs.io/en/version-0.2.11/"><code>Immcantation</code></a> work directly on <code><a href="reference/ContigCellDB-fun.html">ContigCellDB()</a></code> objects.</p>
 </div>
 </div>
   </div>

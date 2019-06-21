@@ -32,8 +32,8 @@
 
 <meta property="og:title" content="Generate a list of tables representing clusters paired in cells — pairing_tables" />
 
-<meta property="og:description" content="A contingency table of every combination of `cluster_idx` up to `table_order` is generated.
-Combinations that are found in at least `min_expansion` number of cells are reported.  All cells that have these combinations are returned, as well as cells that only have `orphan_level` of matching `cluster_idx`." />
+<meta property="og:description" content="A contingency table of every combination of cluster_idx up to table_order is generated.
+Combinations that are found in at least min_expansion number of cells are reported.  All cells that have these combinations are returned, as well as cells that only have orphan_level of matching cluster_idx." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -64,7 +64,7 @@ Combinations that are found in at least `min_expansion` number of cells are repo
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CellaRepertorium</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
       </span>
     </div>
 
@@ -122,8 +122,8 @@ Combinations that are found in at least `min_expansion` number of cells are repo
 
     <div class="ref-description">
     
-    <p>A contingency table of every combination of `cluster_idx` up to `table_order` is generated.
-Combinations that are found in at least `min_expansion` number of cells are reported.  All cells that have these combinations are returned, as well as cells that only have `orphan_level` of matching `cluster_idx`.</p>
+    <p>A contingency table of every combination of <code>cluster_idx</code> up to <code>table_order</code> is generated.
+Combinations that are found in at least <code>min_expansion</code> number of cells are reported.  All cells that have these combinations are returned, as well as cells that only have <code>orphan_level</code> of matching <code>cluster_idx</code>.</p>
     
     </div>
 
@@ -137,11 +137,11 @@ Combinations that are found in at least `min_expansion` number of cells are repo
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>ccdb</th>
-      <td><p>`ContigCellDB`</p></td>
+      <td><p><code>ContigCellDB</code></p></td>
     </tr>
     <tr>
       <th>canonicalize_fun</th>
-      <td><p>a function with signature `canonicalize_fun(ContigCellDB, order = i)` that for each cell, returns a single contig that depends on the `order`.  For instance <a href='canonicalize_by_prevalence.html'>canonicalize_by_prevalence</a> or <a href='canonicalize_by_prevalence.html'>canonicalize_by_chain</a>.</p></td>
+      <td><p>a function with signature <code>canonicalize_fun(ContigCellDB, order = i)</code> that for each cell, returns a single contig that depends on the <code>order</code>.  For instance <a href='canonicalize_by_prevalence.html'>canonicalize_by_prevalence</a> or <a href='canonicalize_by_prevalence.html'>canonicalize_by_chain</a>.</p></td>
     </tr>
     <tr>
       <th>table_order</th>
@@ -153,11 +153,11 @@ Combinations that are found in at least `min_expansion` number of cells are repo
     </tr>
     <tr>
       <th>orphan_level</th>
-      <td><p>Integer larger than 0 and less than or equal to `table_order`.  Given that at least `min_expansion` cells are found that have `table_order` chains identical, how many `cluster_idx` pairs will we match on to select other cells.  Example: `ophan_level=1` means that cells that share just a single chain with the</p></td>
+      <td><p>Integer larger than 0 and less than or equal to <code>table_order</code>.  Given that at least <code>min_expansion</code> cells are found that have <code>table_order</code> chains identical, how many <code>cluster_idx</code> pairs will we match on to select other cells.  Example: <code>ophan_level=1</code> means that cells that share just a single chain with the</p></td>
     </tr>
     <tr>
       <th>cluster_keys</th>
-      <td><p>optional `character` naming additional columns in `ccdb$cluster_tbl` to be reported in the pairing</p></td>
+      <td><p>optional <code>character</code> naming additional columns in <code>ccdb$cluster_tbl</code> to be reported in the pairing</p></td>
     </tr>
     <tr>
       <th>cluster_whitelist</th>
@@ -165,29 +165,29 @@ Combinations that are found in at least `min_expansion` number of cells are repo
     </tr>
     <tr>
       <th>cluster_blacklist</th>
-      <td><p>a table of pairings or clusters that will never be reported.  Must be named as per `cluster_whitelist`.</p></td>
+      <td><p>a table of pairings or clusters that will never be reported.  Must be named as per <code>cluster_whitelist</code>.</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>list of tables.  The `cell_tbl` is keyed by the `cell_identifiers`, with fields "cluster_idx.1", "cluster_idx.2", etc, IDing the contigs present in each cell. "cluster_idx.1_fct" and "cluster_idx.2_fct" cast these fields to factors and are reordered to maximize the number of pairs along the diagonal. The `idx1_tbl` and `idx2_tbl` report information (passed in about the `cluster_idx` by `feature_tbl`.)  The `cluster_pair_tbl` reports all pairings found of contigs, and the number of times observed.</p>
+    <p>list of tables.  The <code>cell_tbl</code> is keyed by the <code>cell_identifiers</code>, with fields "cluster_idx.1", "cluster_idx.2", etc, IDing the contigs present in each cell. "cluster_idx.1_fct" and "cluster_idx.2_fct" cast these fields to factors and are reordered to maximize the number of pairs along the diagonal. The <code>idx1_tbl</code> and <code>idx2_tbl</code> report information (passed in about the <code>cluster_idx</code> by <code>feature_tbl</code>.)  The <code>cluster_pair_tbl</code> reports all pairings found of contigs, and the number of times observed.</p>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>For example, if `table_order=2` and `min_expansion=2` then heavy/light or alpha/beta pairs found two or more times will be returned (as well as alpha-alpha pairs, etc, if those are present).
-If `orphan_level=1` then all cells that share just a single chain with an expanded clone will be returned.</p>
-<p>The `cluster_idx.1_fct` and `cluster_idx.2_fct` fields in `cell_tbl`, `idx1_tbl`, `idx2_tbl` are cast to factors and ordered such that pairings will tend to occur along the diagonal when they are cross-tabulated.
+    <p>For example, if <code>table_order=2</code> and <code>min_expansion=2</code> then heavy/light or alpha/beta pairs found two or more times will be returned (as well as alpha-alpha pairs, etc, if those are present).
+If <code>orphan_level=1</code> then all cells that share just a single chain with an expanded clone will be returned.</p>
+<p>The <code>cluster_idx.1_fct</code> and <code>cluster_idx.2_fct</code> fields in <code>cell_tbl</code>, <code>idx1_tbl</code>, <code>idx2_tbl</code> are cast to factors and ordered such that pairings will tend to occur along the diagonal when they are cross-tabulated.
 This facilitates plotting.</p>
     
     <h2 class="hasAnchor" id="caveats-and-warnings"><a class="anchor" href="#caveats-and-warnings"></a>Caveats and warnings</h2>
 
     
-    <p>The cell_idx -&gt; cluster_idx map is generally one-to-many, and is resolved by `canonicalize_fun`.  For `table_order&gt;1`, few collisions are expected as most cells will contain no more than 2 clusters.  Any collisions are resolved by returning the most prevalent cluster, across samples.  When two clusters are tied for most prevalent within a cell, the `cluster_idx` returned is arbitrary. Therefore, when `table_order=1`, it is strongly recommended to subset the `cluster_tbl` to just a single chain.</p>
+    <p>The cell_idx -&gt; cluster_idx map is generally one-to-many, and is resolved by <code>canonicalize_fun</code>.  For <code>table_order&gt;1</code>, few collisions are expected as most cells will contain no more than 2 clusters.  Any collisions are resolved by returning the most prevalent cluster, across samples.  When two clusters are tied for most prevalent within a cell, the <code>cluster_idx</code> returned is arbitrary. Therefore, when <code>table_order=1</code>, it is strongly recommended to subset the <code>cluster_tbl</code> to just a single chain.</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>canonicalize_by_prevalence, canonicalize_by_chain</p></div>
+    <div class='dont-index'><p><code><a href='canonicalize_by_prevalence.html'>canonicalize_by_prevalence()</a></code>, <code><a href='canonicalize_by_prevalence.html'>canonicalize_by_chain()</a></code></p></div>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>

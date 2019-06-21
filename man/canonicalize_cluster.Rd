@@ -10,27 +10,29 @@ canonicalize_cluster(ccdb, contig_filter_args = is_medoid,
   "cdr3_nt", "chain", "v_gene", "d_gene", "j_gene"))
 }
 \arguments{
-\item{ccdb}{`ContigCellDB`}
+\item{ccdb}{\code{\link[=ContigCellDB]{ContigCellDB()}}}
 
-\item{contig_filter_args}{an expression passed to dplyr::filter.  Unlike `filter`, multiple criteria must be `&` together, rather than using commas to separate.
-that act on `ccdb$contig_tbl``}
+\item{contig_filter_args}{an expression passed to \code{\link[dplyr:filter]{dplyr::filter()}}.
+Unlike \code{filter}, multiple criteria must be \code{&} together, rather than using
+commas to separate. These act on \code{ccdb$contig_tbl}}
 
-\item{tie_break_keys}{(optional) `character` naming fields in `contig_tbl`
+\item{tie_break_keys}{(optional) \code{character} naming fields in \code{contig_tbl}
 that are used sort the contig table in descending order.
-Used to break ties if `contig_filter_args` does not return a unique contig
+Used to break ties if \code{contig_filter_args} does not return a unique contig
 for each cluster}
 
-\item{order}{The rank order of the contig, based on `tie_break_keys`
-to return}
+\item{order}{The rank order of the contig, based on \code{tie_break_keys}
+to return.  If \code{tie_break_keys} included an ordered factor (such as chain)
+this could be used to return the second chain.}
 
-\item{representative}{an optional field from `contig_tbl` that will be made
-unique. Serve as a surrogate `cluster_pk`.}
+\item{representative}{an optional field from \code{contig_tbl} that will be made
+unique. Serve as a surrogate \code{cluster_pk}.}
 
-\item{contig_fields}{Optional fields from `contig_tbl` that will be copied into
-the `cluster_tbl` from the canonical contig.}
+\item{contig_fields}{Optional fields from \code{contig_tbl} that will be copied into
+the \code{cluster_tbl} from the canonical contig.}
 }
 \value{
-`ContigCellDB`
+\code{\link[=ContigCellDB]{ContigCellDB()}}
 }
 \description{
 Find a canonical contig to represent a cluster
@@ -55,5 +57,5 @@ contig_fields = c('chain', 'length'))
 ccdb_umi$cluster_tbl \%>\% dplyr::select(chain, length) \%>\% summary()
 }
 \seealso{
-canonicalize_cell
+\code{\link[=canonicalize_cell]{canonicalize_cell()}}
 }

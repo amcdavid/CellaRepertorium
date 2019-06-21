@@ -2,15 +2,10 @@
 % Please edit documentation in R/cdhit-methods.R
 \name{cdhit}
 \alias{cdhit}
-\alias{cdhit_ccdb}
 \title{R interface to CDHIT/CDHITest}
 \usage{
 cdhit(seqs, identity = NULL, kmerSize = NULL, min_length = 6,
-  s = 1, name = "CD-Hit", only_index = FALSE,
-  showProgress = interactive(), ...)
-
-cdhit_ccdb(object, sequence_key, type = c("DNA", "AA"),
-  cluster_name = "cluster_idx", ...)
+  s = 1, only_index = FALSE, showProgress = interactive(), ...)
 }
 \arguments{
 \item{seqs}{\code{AAseq} or \code{DNAseq}}
@@ -24,44 +19,29 @@ You may need to lower it below 5 for AAseq with identity less than .7.}
 
 \item{s}{fraction of shorter sequence covered by alignment.}
 
-\item{name}{program name (?)}
-
 \item{only_index}{if TRUE only return the integer cluster indices, otherwise return a tibble.}
 
 \item{showProgress}{show a status bar}
 
 \item{...}{other arguments that can be passed to cdhit, see https://github.com/weizhongli/cdhit/wiki/3.-User's-Guide#CDHIT for details.  These will override any default values.}
-
-\item{object}{An object of class `ClusterContigDB`}
-
-\item{sequence_key}{`character` naming the column in the `contig_tbl` containing the sequence to be clustered}
-
-\item{type}{one of 'DNA' or 'AA'}
-
-\item{cluster_name}{`character` specifying key, and name for the clustering.}
 }
 \value{
-vector of \code{integer} of length \code{seqs} providing the cluster ID for each sequence, or a `tibble`.  See details.
+vector of \code{integer} of length \code{seqs} providing the cluster ID for each sequence, or a \code{tibble}.  See details.
 }
 \description{
 CDHIT is a greedy algorithm to cluster amino acid or DNA sequences based on a minimum identity.
 By default, in this package it is configured perform ungapped, global alignments with no clipping at start or end.
-The `identity` is the number of identical characters in alignment
+The \code{identity} is the number of identical characters in alignment
 divided by the full length of the shorter sequence.
-Set `s` < 1 to change the minimum coverage of the shorter sequence, which will allow clipping at start or end.
-Changing `G` = 0 changes the meaning of the `identity` to be the number of
+Set \code{s} < 1 to change the minimum coverage of the shorter sequence, which will allow clipping at start or end.
+Changing \code{G} = 0 changes the meaning of the \code{identity} to be the number of
 identical characters in the alignment divided by the length of the alignment.
-In this case, you must also set the alignment coverage controls `aL`, `AL`, `aS`, `AS`.
+In this case, you must also set the alignment coverage controls \code{aL}, \code{AL}, \code{aS}, \code{AS}.
 }
 \details{
 CDHit is by Fu, Niu, Zhu, Wu and Li (2012).  The R interface is originally by
 Thomas Lin Pedersen and was transcribed here because it is not exported from the package FindMyFriends, which is orphaned.
 }
-\section{Functions}{
-\itemize{
-\item \code{cdhit_ccdb}: Run `cdhit` on `ClusterContigDB` object
-}}
-
 \examples{
 fasta_path = system.file('extdata', 'demo.fasta', package='CellaRepertorium')
 aaseq = Biostrings::readAAStringSet(fasta_path)
@@ -73,9 +53,4 @@ cdhit(aaseq,identity = 1, G = 0, aL = 1, aS = 1,  only_index = TRUE)[1:10]
 cdhit(aaseq,identity = 1, G = 0, aL = .9, aS = .9,  only_index = TRUE)[1:10]
 # a tibble
 tbl = cdhit(aaseq, identity = 1, G = 0, aL = .9, aS = .9, only_index = FALSE)
-res = CellaRepertorium:::cdhit_ccdb(ccdb_ex, 'cdr3_nt', type = 'DNA',
-cluster_name = 'DNA97', identity = .965, min_length = 12, G = 1)
-res$cluster_tbl
-res$contig_tbl
-res$cluster_pk
 }

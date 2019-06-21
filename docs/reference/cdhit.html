@@ -34,12 +34,12 @@
 
 <meta property="og:description" content="CDHIT is a greedy algorithm to cluster amino acid or DNA sequences based on a minimum identity.
 By default, in this package it is configured perform ungapped, global alignments with no clipping at start or end.
-The `identity` is the number of identical characters in alignment
+The identity is the number of identical characters in alignment
 divided by the full length of the shorter sequence.
-Set `s` &amp;lt; 1 to change the minimum coverage of the shorter sequence, which will allow clipping at start or end.
-Changing `G` = 0 changes the meaning of the `identity` to be the number of
+Set s &amp;lt; 1 to change the minimum coverage of the shorter sequence, which will allow clipping at start or end.
+Changing G = 0 changes the meaning of the identity to be the number of
 identical characters in the alignment divided by the length of the alignment.
-In this case, you must also set the alignment coverage controls `aL`, `AL`, `aS`, `AS`." />
+In this case, you must also set the alignment coverage controls aL, AL, aS, AS." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -70,7 +70,7 @@ In this case, you must also set the alignment coverage controls `aL`, `AL`, `aS`
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CellaRepertorium</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
       </span>
     </div>
 
@@ -130,21 +130,17 @@ In this case, you must also set the alignment coverage controls `aL`, `AL`, `aS`
     
     <p>CDHIT is a greedy algorithm to cluster amino acid or DNA sequences based on a minimum identity.
 By default, in this package it is configured perform ungapped, global alignments with no clipping at start or end.
-The `identity` is the number of identical characters in alignment
+The <code>identity</code> is the number of identical characters in alignment
 divided by the full length of the shorter sequence.
-Set `s` &lt; 1 to change the minimum coverage of the shorter sequence, which will allow clipping at start or end.
-Changing `G` = 0 changes the meaning of the `identity` to be the number of
+Set <code>s</code> &lt; 1 to change the minimum coverage of the shorter sequence, which will allow clipping at start or end.
+Changing <code>G</code> = 0 changes the meaning of the <code>identity</code> to be the number of
 identical characters in the alignment divided by the length of the alignment.
-In this case, you must also set the alignment coverage controls `aL`, `AL`, `aS`, `AS`.</p>
+In this case, you must also set the alignment coverage controls <code>aL</code>, <code>AL</code>, <code>aS</code>, <code>AS</code>.</p>
     
     </div>
 
     <pre class="usage"><span class='fu'>cdhit</span>(<span class='no'>seqs</span>, <span class='kw'>identity</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>kmerSize</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>min_length</span> <span class='kw'>=</span> <span class='fl'>6</span>,
-  <span class='kw'>s</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>name</span> <span class='kw'>=</span> <span class='st'>"CD-Hit"</span>, <span class='kw'>only_index</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>showProgress</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/interactive'>interactive</a></span>(), <span class='no'>...</span>)
-
-<span class='fu'>cdhit_ccdb</span>(<span class='no'>object</span>, <span class='no'>sequence_key</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"DNA"</span>, <span class='st'>"AA"</span>),
-  <span class='kw'>cluster_name</span> <span class='kw'>=</span> <span class='st'>"cluster_idx"</span>, <span class='no'>...</span>)</pre>
+  <span class='kw'>s</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>only_index</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>showProgress</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/interactive'>interactive</a></span>(), <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -171,10 +167,6 @@ You may need to lower it below 5 for AAseq with identity less than .7.</p></td>
       <td><p>fraction of shorter sequence covered by alignment.</p></td>
     </tr>
     <tr>
-      <th>name</th>
-      <td><p>program name (?)</p></td>
-    </tr>
-    <tr>
       <th>only_index</th>
       <td><p>if TRUE only return the integer cluster indices, otherwise return a tibble.</p></td>
     </tr>
@@ -186,38 +178,16 @@ You may need to lower it below 5 for AAseq with identity less than .7.</p></td>
       <th>...</th>
       <td><p>other arguments that can be passed to cdhit, see https://github.com/weizhongli/cdhit/wiki/3.-User's-Guide#CDHIT for details.  These will override any default values.</p></td>
     </tr>
-    <tr>
-      <th>object</th>
-      <td><p>An object of class `ClusterContigDB`</p></td>
-    </tr>
-    <tr>
-      <th>sequence_key</th>
-      <td><p>`character` naming the column in the `contig_tbl` containing the sequence to be clustered</p></td>
-    </tr>
-    <tr>
-      <th>type</th>
-      <td><p>one of 'DNA' or 'AA'</p></td>
-    </tr>
-    <tr>
-      <th>cluster_name</th>
-      <td><p>`character` specifying key, and name for the clustering.</p></td>
-    </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>vector of <code>integer</code> of length <code>seqs</code> providing the cluster ID for each sequence, or a `tibble`.  See details.</p>
+    <p>vector of <code>integer</code> of length <code>seqs</code> providing the cluster ID for each sequence, or a <code>tibble</code>.  See details.</p>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>CDHit is by Fu, Niu, Zhu, Wu and Li (2012).  The R interface is originally by
 Thomas Lin Pedersen and was transcribed here because it is not exported from the package FindMyFriends, which is orphaned.</p>
-    
-    <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
-
-    <ul>
-<li><p><code>cdhit_ccdb</code>: Run `cdhit` on `ClusterContigDB` object</p></li>
-</ul>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -227,39 +197,7 @@ Thomas Lin Pedersen and was transcribed here because it is not exported from the
 <span class='fu'>cdhit</span>(<span class='no'>aaseq</span>, <span class='kw'>identity</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>only_index</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)[<span class='fl'>1</span>:<span class='fl'>10</span>]</div><div class='output co'>#&gt;  [1] 100 101 162 102   6 245 103  49 163 164</div><div class='input'><span class='co'># 100% identity, local alignment with no padding of endpoints</span>
 <span class='fu'>cdhit</span>(<span class='no'>aaseq</span>,<span class='kw'>identity</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>G</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>aL</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>aS</span> <span class='kw'>=</span> <span class='fl'>1</span>,  <span class='kw'>only_index</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)[<span class='fl'>1</span>:<span class='fl'>10</span>]</div><div class='output co'>#&gt;  [1] 100 101 162 102   6 245 103  49 163 164</div><div class='input'><span class='co'># 100% identity, local alignment with .9 padding of endpoints</span>
 <span class='fu'>cdhit</span>(<span class='no'>aaseq</span>,<span class='kw'>identity</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>G</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>aL</span> <span class='kw'>=</span> <span class='fl'>.9</span>, <span class='kw'>aS</span> <span class='kw'>=</span> <span class='fl'>.9</span>,  <span class='kw'>only_index</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)[<span class='fl'>1</span>:<span class='fl'>10</span>]</div><div class='output co'>#&gt;  [1] 100 101 162 102   6 245 103  49 163 164</div><div class='input'><span class='co'># a tibble</span>
-<span class='no'>tbl</span> <span class='kw'>=</span> <span class='fu'>cdhit</span>(<span class='no'>aaseq</span>, <span class='kw'>identity</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>G</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>aL</span> <span class='kw'>=</span> <span class='fl'>.9</span>, <span class='kw'>aS</span> <span class='kw'>=</span> <span class='fl'>.9</span>, <span class='kw'>only_index</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
-<span class='no'>res</span> <span class='kw'>=</span> <span class='kw pkg'>CellaRepertorium</span><span class='kw ns'>:::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/CellaRepertorium/topics/cdhit'>cdhit_ccdb</a></span>(<span class='no'>ccdb_ex</span>, <span class='st'>'cdr3_nt'</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>'DNA'</span>,
-<span class='kw'>cluster_name</span> <span class='kw'>=</span> <span class='st'>'DNA97'</span>, <span class='kw'>identity</span> <span class='kw'>=</span> <span class='fl'>.965</span>, <span class='kw'>min_length</span> <span class='kw'>=</span> <span class='fl'>12</span>, <span class='kw'>G</span> <span class='kw'>=</span> <span class='fl'>1</span>)
-<span class='no'>res</span>$<span class='no'>cluster_tbl</span></div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 1,354 x 1</span><span>
-#&gt;    DNA97
-#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'> 1</span><span>  </span><span style='text-decoration: underline;'>1</span><span>094
-#&gt; </span><span style='color: #555555;'> 2</span><span>   784
-#&gt; </span><span style='color: #555555;'> 3</span><span>   785
-#&gt; </span><span style='color: #555555;'> 4</span><span>   388
-#&gt; </span><span style='color: #555555;'> 5</span><span>   125
-#&gt; </span><span style='color: #555555;'> 6</span><span>   786
-#&gt; </span><span style='color: #555555;'> 7</span><span>   126
-#&gt; </span><span style='color: #555555;'> 8</span><span>  </span><span style='text-decoration: underline;'>1</span><span>322
-#&gt; </span><span style='color: #555555;'> 9</span><span>   389
-#&gt; </span><span style='color: #555555;'>10</span><span>  </span><span style='text-decoration: underline;'>1</span><span>095
-#&gt; </span><span style='color: #555555;'># … with 1,344 more rows</span><span></div><div class='input'><span class='no'>res</span>$<span class='no'>contig_tbl</span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 1,508 x 23</span><span>
-#&gt;    anno_file pop   sample barcode is_cell contig_id high_confidence length chain
-#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>     </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>     </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span>            </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>
-#&gt; </span><span style='color: #555555;'> 1</span><span> /Users/a… b6    4      AAAGTA… TRUE    AAAGTAGT… TRUE               611 TRB  
-#&gt; </span><span style='color: #555555;'> 2</span><span> /Users/a… b6    4      AAAGTA… TRUE    AAAGTAGT… TRUE               609 TRB  
-#&gt; </span><span style='color: #555555;'> 3</span><span> /Users/a… b6    4      AAAGTA… TRUE    AAAGTAGT… TRUE               538 TRA  
-#&gt; </span><span style='color: #555555;'> 4</span><span> /Users/a… b6    4      AACCAT… TRUE    AACCATGC… TRUE               799 TRA  
-#&gt; </span><span style='color: #555555;'> 5</span><span> /Users/a… b6    4      AACTGG… TRUE    AACTGGTG… TRUE               634 TRB  
-#&gt; </span><span style='color: #555555;'> 6</span><span> /Users/a… b6    4      AACTGG… TRUE    AACTGGTG… TRUE               923 TRA  
-#&gt; </span><span style='color: #555555;'> 7</span><span> /Users/a… b6    4      AAGCCG… TRUE    AAGCCGCA… TRUE               693 TRB  
-#&gt; </span><span style='color: #555555;'> 8</span><span> /Users/a… b6    4      AAGTCT… TRUE    AAGTCTGG… TRUE               658 TRB  
-#&gt; </span><span style='color: #555555;'> 9</span><span> /Users/a… b6    4      AAGTCT… TRUE    AAGTCTGG… TRUE               558 TRA  
-#&gt; </span><span style='color: #555555;'>10</span><span> /Users/a… b6    4      ACACCA… TRUE    ACACCAAA… TRUE               614 TRB  
-#&gt; </span><span style='color: #555555;'># … with 1,498 more rows, and 14 more variables: v_gene </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, d_gene </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>,
-#&gt; #   j_gene </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, c_gene </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, full_length </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span style='color: #555555;'>, productive </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>,
-#&gt; #   cdr3 </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, cdr3_nt </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, reads </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, umis </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, raw_clonotype_id </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>,
-#&gt; #   raw_consensus_id </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, celltype </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, DNA97 </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span></div><div class='input'><span class='no'>res</span>$<span class='no'>cluster_pk</span></div><div class='output co'>#&gt; [1] "DNA97"</div></span></pre>
+<span class='no'>tbl</span> <span class='kw'>=</span> <span class='fu'>cdhit</span>(<span class='no'>aaseq</span>, <span class='kw'>identity</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>G</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>aL</span> <span class='kw'>=</span> <span class='fl'>.9</span>, <span class='kw'>aS</span> <span class='kw'>=</span> <span class='fl'>.9</span>, <span class='kw'>only_index</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -269,8 +207,6 @@ Thomas Lin Pedersen and was transcribed here because it is not exported from the
       <li><a href="#value">Value</a></li>
 
       <li><a href="#details">Details</a></li>
-
-      <li><a href="#functions">Functions</a></li>
       
       <li><a href="#examples">Examples</a></li>
     </ul>

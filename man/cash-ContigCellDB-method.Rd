@@ -3,17 +3,23 @@
 \docType{methods}
 \name{$,ContigCellDB-method}
 \alias{$,ContigCellDB-method}
+\alias{ContigCellDB-mutate}
+\alias{$<-,ContigCellDB-method}
 \title{Access public members of ContigCellDB object}
 \usage{
 \S4method{$}{ContigCellDB}(x, name)
+
+\S4method{$}{ContigCellDB}(x, name) <- value
 }
 \arguments{
 \item{x}{A ContigCellDB object}
 
-\item{name}{a slot of a ContigCellDB object (one of  `c('contig_tbl', 'cell_tbl', 'contig_pk', 'cell_pk', 'cluster_tbl', 'cluster_pk')`)}
+\item{name}{a slot of a ContigCellDB object (one of  \code{c('contig_tbl', 'cell_tbl', 'contig_pk', 'cell_pk', 'cluster_tbl', 'cluster_pk')})}
+
+\item{value}{The value assigned to a slot of ContigCellDB object}
 }
 \value{
-Slot of ContigCellDB
+Update or return a slot of \code{\link[=ContigCellDB]{ContigCellDB()}}
 }
 \description{
 Access public members of ContigCellDB object
@@ -22,4 +28,9 @@ Access public members of ContigCellDB object
 ccdb_ex$contig_tbl
 ccdb_ex$cell_tbl
 ccdb_ex$cluster_tbl
+ccdb_ex$contig_pk = c("sample","barcode","contig_id") # 'pop' is technically redundant with 'sample'
+# Take a subset of ccdb_ex
+ccdb_ex
+ccdb_ex$contig_tbl = dplyr::filter(ccdb_ex$contig_tbl, pop == 'b6')
+ccdb_ex
 }

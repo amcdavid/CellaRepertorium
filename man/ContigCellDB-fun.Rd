@@ -14,15 +14,15 @@ ContigCellDB_10XVDJ(contig_tbl, contig_pk = c("barcode", "contig_id"),
 \arguments{
 \item{contig_tbl}{a data frame of contigs, and additional fields describing their properties}
 
-\item{contig_pk}{character vector naming fields in `contig_tbl` that uniquely identify a row/contig}
+\item{contig_pk}{character vector naming fields in \code{contig_tbl} that uniquely identify a row/contig}
 
 \item{cell_tbl}{a data frame of cell barcodes, and (optional) additional fields describing their properties}
 
-\item{cell_pk}{character vector naming fields in `cell_tbl` that uniquely identify a cell barcode}
+\item{cell_pk}{character vector naming fields in \code{cell_tbl} that uniquely identify a cell barcode}
 
 \item{cluster_tbl}{A data frame that provide cluster assignments for each contig}
 
-\item{cluster_pk}{If `cluster_tbl` was provided, a character vector naming fields in `cluster_tbl` that uniquely identify a cluster}
+\item{cluster_pk}{If \code{cluster_tbl} was provided, a character vector naming fields in \code{cluster_tbl} that uniquely identify a cluster}
 }
 \value{
 \code{ContigCellDB}
@@ -35,8 +35,30 @@ Construct a ContigCellDB
 \item \code{ContigCellDB_10XVDJ}: provide defaults that correspond to identifiers in 10X VDJ data
 }}
 
+\section{Accessors/mutators}{
+
+See \code{\link[=ContigCellDB-mutate]{$,ContigCellDB-method}} for more on how to access and mutate slots.
+At the moment, there is not a good way to combine objects without manually touching slots with \code{@},
+but a \code{rbind} method is in the offing.
+}
+
 \examples{
 data(contigs_qc)
-ContigCellDB(contigs_qc, contig_pk = c('barcode', 'pop', 'sample', 'contig_id'),
+head(contigs_qc)
+cdb = ContigCellDB(contigs_qc, contig_pk = c('barcode', 'pop', 'sample', 'contig_id'),
  cell_pk = c('barcode', 'pop', 'sample'))
+ cdb
+ # everything that was in contigs_qc
+ cdb$contig_tbl
+ # Only the cell_pk are included by default (until clustering/canonicalization)
+ cdb$cell_tbl
+ # Empty, since no cluster_pk was specified
+ cdb$cluster_tbl
+ # Keys
+ cdb$contig_pk
+ cdb$cell_pk
+ cdb$cluster_pk
+}
+\seealso{
+\code{\link[=ContigCellDB-mutate]{$,ContigCellDB-method}}
 }

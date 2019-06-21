@@ -15,19 +15,19 @@ enumerate_pairing(ccdb, chain_key = "chain", chain_recode_fun = NULL)
 \arguments{
 \item{tbl}{output from enumerate_pairing containing TRA/TRB or IGH/IHK/IHL columns}
 
-\item{ccdb}{`ContigCellDB`}
+\item{ccdb}{\code{ContigCellDB}}
 
-\item{chain_key}{`character` naming the field in the `contig_tbl` identifying chain}
+\item{chain_key}{\code{character} naming the field in the \code{contig_tbl} identifying chain}
 
-\item{chain_recode_fun}{a function that operates on the output of this function that further reduces the chain combinations to some other summary.  Set to 'guess' to apply functions that may work for 10X data or `NULL` to skip.  See `CellaRepertorium::tcr_chain_recode` for an example.}
+\item{chain_recode_fun}{a function that operates on the output of this function that further reduces the chain combinations to some other summary.  Set to 'guess' to apply functions that may work for 10X data or \code{NULL} to skip.  See \code{CellaRepertorium::tcr_chain_recode} for an example.}
 }
 \value{
-a `tibble` keyed by cells.
+a \code{tibble} keyed by cells.
 }
 \description{
-For each cell (defined by `ccdb$cell_pk`) count the number of each level of `chain_key` occurs, and cross tabulate.
-Also for each cell, paste together all values `chain_key`.
-Return a tibble, keyed by cells that includes the counts of the chains, the `raw_chain_type` and any additional output from running `chain_recode_fun`.
+For each cell (defined by \code{ccdb$cell_pk}) count the number of each level of \code{chain_key} occurs, and cross tabulate.
+Also for each cell, paste together all values \code{chain_key}.
+Return a tibble, keyed by cells that includes the counts of the chains, the \code{raw_chain_type} and any additional output from running \code{chain_recode_fun}.
 }
 \section{Functions}{
 \itemize{

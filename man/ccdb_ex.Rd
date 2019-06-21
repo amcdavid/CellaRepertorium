@@ -3,7 +3,7 @@
 \docType{data}
 \name{ccdb_ex}
 \alias{ccdb_ex}
-\title{A preconstructed `ContigClusterDB` from the `contigs_qc` data}
+\title{A preconstructed \code{ContigClusterDB} from the \code{contigs_qc} data}
 \format{\code{ccdb_ex = ContigCellDB_10XVDJ(contigs_qc, contig_pk = c('pop',   'sample', 'barcode', 'contig_id'), cell_pk = c('pop',   'sample', 'barcode'))}}
 \usage{
 ccdb_ex

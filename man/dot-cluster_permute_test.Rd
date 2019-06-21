@@ -16,7 +16,7 @@
 
 \item{n_perm}{number of permutations.}
 
-\item{alternative}{`character` naming the direction `statistic` should be fall under the alternative hypothesis}
+\item{alternative}{\code{character} naming the direction \code{statistic} should be fall under the alternative hypothesis}
 
 \item{...}{passed to \code{statistic}}
 }

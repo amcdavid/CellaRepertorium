@@ -32,9 +32,9 @@
 
 <meta property="og:title" content="Find a canonical contig to represent a cell — canonicalize_cell" />
 
-<meta property="og:description" content="Using filtering in `...` and sorting in `tie_break_keys` and `order` find a
+<meta property="og:description" content="Using filtering in contig_filter_args and sorting in tie_break_keys and order find a
 single, canonical contig to represent each cell
-Fields in `contig_fields` will be copied over to the `cell_tbl`." />
+Fields in contig_fields will be copied over to the cell_tbl." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -65,7 +65,7 @@ Fields in `contig_fields` will be copied over to the `cell_tbl`." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CellaRepertorium</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
       </span>
     </div>
 
@@ -123,9 +123,9 @@ Fields in `contig_fields` will be copied over to the `cell_tbl`." />
 
     <div class="ref-description">
     
-    <p>Using filtering in `...` and sorting in `tie_break_keys` and `order` find a
+    <p>Using filtering in <code>contig_filter_args</code> and sorting in <code>tie_break_keys</code> and <code>order</code> find a
 single, canonical contig to represent each cell
-Fields in `contig_fields` will be copied over to the `cell_tbl`.</p>
+Fields in <code>contig_fields</code> will be copied over to the <code>cell_tbl</code>.</p>
     
     </div>
 
@@ -137,39 +137,41 @@ Fields in `contig_fields` will be copied over to the `cell_tbl`.</p>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>ccdb</th>
-      <td><p>`ContigCellDB`</p></td>
+      <td><p><code><a href='ContigCellDB-fun.html'>ContigCellDB()</a></code></p></td>
     </tr>
     <tr>
       <th>contig_filter_args</th>
-      <td><p>an expression passed to dplyr::filter.  Unlike `filter`, multiple criteria must be `&amp;` together, rather than using commas to separate.
-that act on `ccdb$contig_tbl``</p></td>
+      <td><p>an expression passed to <code><a href='https://dplyr.tidyverse.org/reference/filter.html'>dplyr::filter()</a></code>.
+Unlike <code>filter</code>, multiple criteria must be <code>&amp;</code> together, rather than using
+commas to separate. These act on <code>ccdb$contig_tbl</code></p></td>
     </tr>
     <tr>
       <th>tie_break_keys</th>
-      <td><p>(optional) `character` naming fields in `contig_tbl`
+      <td><p>(optional) <code>character</code> naming fields in <code>contig_tbl</code>
 that are used sort the contig table in descending order.
-Used to break ties if `contig_filter_args` does not return a unique contig
+Used to break ties if <code>contig_filter_args</code> does not return a unique contig
 for each cluster</p></td>
     </tr>
     <tr>
       <th>contig_fields</th>
-      <td><p>Optional fields from `contig_tbl` that will be copied into
-the `cluster_tbl` from the canonical contig.</p></td>
+      <td><p>Optional fields from <code>contig_tbl</code> that will be copied into
+the <code>cluster_tbl</code> from the canonical contig.</p></td>
     </tr>
     <tr>
       <th>order</th>
-      <td><p>The rank order of the contig, based on `tie_break_keys`
-to return</p></td>
+      <td><p>The rank order of the contig, based on <code>tie_break_keys</code>
+to return.  If <code>tie_break_keys</code> included an ordered factor (such as chain)
+this could be used to return the second chain.</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>`ContigCellDB` with additional fields in `cell_tbl`</p>
+    <p><code>ContigCellDB</code> with additional fields in <code>cell_tbl</code></p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>canonicalize_cluster</p></div>
+    <div class='dont-index'><p><code><a href='canonicalize_cluster.html'>canonicalize_cluster()</a></code></p></div>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>

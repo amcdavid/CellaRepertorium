@@ -18,19 +18,18 @@ Requires R \>= 3.5.
 The fundamental unit this package operates on is the **contig**, which
 is a section of contiguously stitched reads from a single **cell**. Each
 contig belongs to one (and only one) cell, however, cells generate
-multiple contigs.
-
-![](vignettes/img/contig_schematic.png)<!-- -->
+multiple contigs.  
+<img src = man/figures/contig_schematic.png />
 
 Contigs can also belong to a **cluster**. Because of these two
 many-to-one mappings, these data can be thought as a series of ragged
 arrays. The links between them mean they are relational data. A
-`ContigCellDB` object wraps each of these objects as a sequence of three
-`data.frames` (well, `tibbles`, actually). `ContigCellDB` also tracks
-columns (the primary keys) that unique identify each row in each of
-these tables. The `contig_tbl` is the `tibble` containing **contigs**,
-the `cell_tbl` contains the **cells**, and the `cluster_tbl` contains
-the **clusters**.
+`ContigCellDB()` object wraps each of these objects as a sequence of
+three `data.frames` (well, `tibbles`, actually). `ContigCellDB` also
+tracks columns (the primary keys) that unique identify each row in each
+of these tables. The `contig_tbl` is the `tibble` containing
+**contigs**, the `cell_tbl` contains the **cells**, and the
+`cluster_tbl` contains the **clusters**.
 
 The `contig_pk`, `cell_pk` and `cluster_pk` identify the columns that
 identify a contig, cell and cluster, respectively. These will serve as
@@ -38,7 +37,7 @@ foreign keys that link the three tables together. The tables are kept in
 sync so that subsetting the contigs will subset the cells, and clusters,
 and vice-versa.
 
-![](vignettes/img/table_schematic.png)<!-- -->
+<img src = man/figures/table_schematic.png />
 
 Of course, each of these tables can contain many other columns that will
 serve as covariates for various analyses, such as the CDR3 sequence, or

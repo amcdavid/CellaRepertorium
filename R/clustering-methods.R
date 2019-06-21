@@ -1,11 +1,11 @@
 
 #' Cluster contigs by germline properties
 #'
-#' @param ccdb `ContigCellDB`
+#' @param ccdb [ContigCellDB()]
 #' @param segment_keys fields in `contig_tbl` that identify a cluster
 #' @param cluster_name name of cluster to be added to `cluster_tbl`
 #'
-#' @return `ContigCellDB`
+#' @return [ContigCellDB()]
 #' @export
 #'
 #' @examples
@@ -24,16 +24,16 @@ globalVariables(c('fc', 'd(medoid)', 'is_medoid', 'n_cluster'))
 # Also canonicalize..
 #' Perform additional clustering of sequences within groups
 #'
-#' @param ccdb A ContigCellDB object
+#' @param ccdb A [ContigCellDB()] object
 #' @param sequence_key `character` naming column in `contig_tbl` with sequence
 #' @param type 'AA' or 'DNA'
 #' @param max_affinity `numeric` naming the maximal affinity for the sparse affinity matrix that is constructed.  Not currently used.
 #' @param keep_clustering_details `logical` -- should output of `fine_cluster_seqs` be kept as a list column
-#' @param ... passed to `fine_cluster_seqs`
+#' @inheritDotParams fine_cluster_seqs -seqs -type -cluster_fun -cluster_method
 #' @importFrom dplyr select bind_cols
 #'
 #' @example inst/examples/small_cluster_example.R
-#' @return `ContigCellDB` object with updated `contig_tbl` and `cluster_tbl`
+#' @return [ContigCellDB()] object with updated `contig_tbl` and `cluster_tbl`
 #' @export
 fine_clustering = function(ccdb, sequence_key, type, max_affinity = NULL, keep_clustering_details = FALSE, ...){
     contig_tbl = ccdb$contig_tbl
@@ -89,23 +89,25 @@ left_join_warn = function(x, y, by, overwrite = FALSE, join = left_join, ...){
 
 #' Find a canonical contig to represent a cluster
 #'
-#' @param ccdb `ContigCellDB`
-#' @param contig_filter_args an expression passed to dplyr::filter.  Unlike `filter`, multiple criteria must be `&` together, rather than using commas to separate.
-#' that act on `ccdb$contig_tbl``
+#' @param ccdb [ContigCellDB()]
+#' @param contig_filter_args an expression passed to [dplyr::filter()].
+#' Unlike `filter`, multiple criteria must be `&` together, rather than using
+#' commas to separate. These act on `ccdb$contig_tbl`
 #' @param tie_break_keys (optional) `character` naming fields in `contig_tbl`
 #' that are used sort the contig table in descending order.
 #' Used to break ties if `contig_filter_args` does not return a unique contig
 #' for each cluster
 #' @param order The rank order of the contig, based on `tie_break_keys`
-#' to return
+#' to return.  If `tie_break_keys` included an ordered factor (such as chain)
+#' this could be used to return the second chain.
 #' @param representative an optional field from `contig_tbl` that will be made
 #' unique. Serve as a surrogate `cluster_pk`.
 #' @param contig_fields Optional fields from `contig_tbl` that will be copied into
 #' the `cluster_tbl` from the canonical contig.
 #'
-#' @return `ContigCellDB`
+#' @return [ContigCellDB()]
 #' @export
-#' @seealso canonicalize_cell
+#' @seealso [canonicalize_cell()]
 #' @example inst/examples/small_cluster_example.R
 canonicalize_cluster = function(ccdb, contig_filter_args = is_medoid,
 tie_break_keys = character(), order = 1, representative = ccdb$cluster_pk[1], contig_fields = c('cdr3', 'cdr3_nt', 'chain', 'v_gene', 'd_gene', 'j_gene')){
@@ -140,20 +142,20 @@ tie_break_keys = character(), order = 1, representative = ccdb$cluster_pk[1], co
 #' @param type character either `AA` or `DNA` specifying type of `seqs`
 #' @param big_memory_brute attempt to cluster more than 4000 sequences?  Clustering is quadratic, so this will take a long time and might exhaust memory
 #' @param method one of 'substitutionMatrix' or 'levenshtein'
-#' @param substitution_matrix a character vector naming a substition matrix available in Biostrings, or a substitution matrix itself
+#' @param substitution_matrix a character vector naming a substitution matrix available in Biostrings, or a  substitution matrix itself
 #' @param cluster_fun `character`, one of "hclust" or "none", determining if distance matrices should also be clustered with `hclust`
 #' @param cluster_method character passed to `hclust`
 #'
-#' @seealso hclust, stringDist
-#' @return `list` containing
+#' @seealso [hclust()], [Biostrings::stringDist()]
+#' @return `list`
 #' @export
 #' @import Biostrings
 #' @examples
 #' fasta_path = system.file('extdata', 'demo.fasta', package='CellaRepertorium')
 #' aaseq = Biostrings::readAAStringSet(fasta_path)[1:100]
-#' cls = fine_cluster_seqs(aaseq)
+#' cls = fine_cluster_seqs(aaseq, cluster_fun = 'hclust')
 #' plot(cls$cluster)
-fine_cluster_seqs = function(seqs, type = 'AA', big_memory_brute = FALSE, method = 'levenshtein', substitution_matrix = 'BLOSUM100', cluster_fun = 'hclust', cluster_method = 'complete'){
+fine_cluster_seqs = function(seqs, type = 'AA', big_memory_brute = FALSE, method = 'levenshtein', substitution_matrix = 'BLOSUM100', cluster_fun = 'none', cluster_method = 'complete'){
     if(length(seqs) > 4000 & !big_memory_brute) stop("Won't try to cluster ", length(seqs), " sequences unless `big_memory_brute` = TRUE.  (Make sure you actually have lots of memory!)")
     type = match.arg(type, choices = c('AA', 'DNA'))
     cluster_fun = match.arg(cluster_fun, c('hclust', 'none'))
@@ -204,7 +206,7 @@ fine_cluster_seqs = function(seqs, type = 'AA', big_memory_brute = FALSE, method
 #' Calculate the entropy of a vector
 #'
 #' @param v categorical vector
-#' @param pseudo_count number of pseudo counts to add on, to stablize empty categories
+#' @param pseudo_count number of pseudo counts to add on, to stabilize empty categories
 #' @param na.action how to handle NA values
 #'
 #' @return the sample entropy

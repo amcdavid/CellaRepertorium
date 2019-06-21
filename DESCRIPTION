@@ -57,3 +57,4 @@ NeedsCompilation: yes
 RoxygenNote: 6.1.1
 URL: https://github.com/amcdavid/CellaRepertorium
 BugReports: https://github.com/amcdavid/CellaRepertorium/issues
+Roxygen: list(markdown = TRUE)

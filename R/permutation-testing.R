@@ -1,4 +1,4 @@
-#' Calculate number of cluster-subject singletons
+#' Calculate number of cluster-subject singletons for the purposes of permutation testing
 #'
 #' @param cluster_idx factor-like cluster variable
 #' @param subject factor-like subject
@@ -6,7 +6,7 @@
 #' @return average number of singletons
 #' @export
 #'
-#' @seealso cluster_permute_test
+#' @seealso [cluster_permute_test()]
 purity = function(cluster_idx, subject) {
     n_label_cluster = dplyr::bind_cols(cluster_idx = cluster_idx, subject = subject) %>%
         group_by(cluster_idx, subject) %>% summarize(n = n()) %>% ungroup()
@@ -31,7 +31,7 @@ purity = function(cluster_idx, subject) {
 #' @param alternative `character` naming the direction `statistic` should be fall under the alternative hypothesis
 #'
 #' @return a list containing the observed value of the statistic, its expectation (under independence), a p-value, and the monte carlo standard error (of the expected value).
-#' @seealso purity
+#' @seealso [purity()]
 #' @export
 #'
 #' @examples

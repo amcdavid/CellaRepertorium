@@ -10,39 +10,39 @@ pairing_tables(ccdb, canonicalize_fun = canonicalize_by_chain,
   cluster_blacklist = NULL)
 }
 \arguments{
-\item{ccdb}{`ContigCellDB`}
+\item{ccdb}{\code{ContigCellDB}}
 
-\item{canonicalize_fun}{a function with signature `canonicalize_fun(ContigCellDB, order = i)` that for each cell, returns a single contig that depends on the `order`.  For instance \link{canonicalize_by_prevalence} or \link{canonicalize_by_chain}.}
+\item{canonicalize_fun}{a function with signature \code{canonicalize_fun(ContigCellDB, order = i)} that for each cell, returns a single contig that depends on the \code{order}.  For instance \link{canonicalize_by_prevalence} or \link{canonicalize_by_chain}.}
 
 \item{table_order}{Integer larger than 1. What order of cluster_idx will be paired, eg, order = 2 means that the most common and second most common cluster_idx will be sought for each cell}
 
 \item{min_expansion}{the minimal number of times a pairing needs to occur for it to be reported}
 
-\item{orphan_level}{Integer larger than 0 and less than or equal to `table_order`.  Given that at least `min_expansion` cells are found that have `table_order` chains identical, how many `cluster_idx` pairs will we match on to select other cells.  Example: `ophan_level=1` means that cells that share just a single chain with the}
+\item{orphan_level}{Integer larger than 0 and less than or equal to \code{table_order}.  Given that at least \code{min_expansion} cells are found that have \code{table_order} chains identical, how many \code{cluster_idx} pairs will we match on to select other cells.  Example: \code{ophan_level=1} means that cells that share just a single chain with the}
 
-\item{cluster_keys}{optional `character` naming additional columns in `ccdb$cluster_tbl` to be reported in the pairing}
+\item{cluster_keys}{optional \code{character} naming additional columns in \code{ccdb$cluster_tbl} to be reported in the pairing}
 
 \item{cluster_whitelist}{a table of pairings or clusters that should always be reported.  Here the clusters must be named "cluster_idx.1", "cluster_idx.2" (if order-2 pairs are being selected) rather than with `ccdb$cluster_pk``}
 
-\item{cluster_blacklist}{a table of pairings or clusters that will never be reported.  Must be named as per `cluster_whitelist`.}
+\item{cluster_blacklist}{a table of pairings or clusters that will never be reported.  Must be named as per \code{cluster_whitelist}.}
 }
 \value{
-list of tables.  The `cell_tbl` is keyed by the `cell_identifiers`, with fields "cluster_idx.1", "cluster_idx.2", etc, IDing the contigs present in each cell. "cluster_idx.1_fct" and "cluster_idx.2_fct" cast these fields to factors and are reordered to maximize the number of pairs along the diagonal. The `idx1_tbl` and `idx2_tbl` report information (passed in about the `cluster_idx` by `feature_tbl`.)  The `cluster_pair_tbl` reports all pairings found of contigs, and the number of times observed.
+list of tables.  The \code{cell_tbl} is keyed by the \code{cell_identifiers}, with fields "cluster_idx.1", "cluster_idx.2", etc, IDing the contigs present in each cell. "cluster_idx.1_fct" and "cluster_idx.2_fct" cast these fields to factors and are reordered to maximize the number of pairs along the diagonal. The \code{idx1_tbl} and \code{idx2_tbl} report information (passed in about the \code{cluster_idx} by \code{feature_tbl}.)  The \code{cluster_pair_tbl} reports all pairings found of contigs, and the number of times observed.
 }
 \description{
-A contingency table of every combination of `cluster_idx` up to `table_order` is generated.
-Combinations that are found in at least `min_expansion` number of cells are reported.  All cells that have these combinations are returned, as well as cells that only have `orphan_level` of matching `cluster_idx`.
+A contingency table of every combination of \code{cluster_idx} up to \code{table_order} is generated.
+Combinations that are found in at least \code{min_expansion} number of cells are reported.  All cells that have these combinations are returned, as well as cells that only have \code{orphan_level} of matching \code{cluster_idx}.
 }
 \details{
-For example, if `table_order=2` and `min_expansion=2` then heavy/light or alpha/beta pairs found two or more times will be returned (as well as alpha-alpha pairs, etc, if those are present).
-If `orphan_level=1` then all cells that share just a single chain with an expanded clone will be returned.
+For example, if \code{table_order=2} and \code{min_expansion=2} then heavy/light or alpha/beta pairs found two or more times will be returned (as well as alpha-alpha pairs, etc, if those are present).
+If \code{orphan_level=1} then all cells that share just a single chain with an expanded clone will be returned.
 
-The `cluster_idx.1_fct` and `cluster_idx.2_fct` fields in `cell_tbl`, `idx1_tbl`, `idx2_tbl` are cast to factors and ordered such that pairings will tend to occur along the diagonal when they are cross-tabulated.
+The \code{cluster_idx.1_fct} and \code{cluster_idx.2_fct} fields in \code{cell_tbl}, \code{idx1_tbl}, \code{idx2_tbl} are cast to factors and ordered such that pairings will tend to occur along the diagonal when they are cross-tabulated.
 This facilitates plotting.
 }
 \section{Caveats and warnings}{
 
- The cell_idx -> cluster_idx map is generally one-to-many, and is resolved by `canonicalize_fun`.  For `table_order>1`, few collisions are expected as most cells will contain no more than 2 clusters.  Any collisions are resolved by returning the most prevalent cluster, across samples.  When two clusters are tied for most prevalent within a cell, the `cluster_idx` returned is arbitrary. Therefore, when `table_order=1`, it is strongly recommended to subset the `cluster_tbl` to just a single chain.
+The cell_idx -> cluster_idx map is generally one-to-many, and is resolved by \code{canonicalize_fun}.  For \code{table_order>1}, few collisions are expected as most cells will contain no more than 2 clusters.  Any collisions are resolved by returning the most prevalent cluster, across samples.  When two clusters are tied for most prevalent within a cell, the \code{cluster_idx} returned is arbitrary. Therefore, when \code{table_order=1}, it is strongly recommended to subset the \code{cluster_tbl} to just a single chain.
 }
 
 \examples{
@@ -68,5 +68,5 @@ ccdb2$contig_tbl = ccdb2$contig_tbl \%>\%
 pt4 = pairing_tables(ccdb2, canonicalize_by_chain, min_expansion = 1, table_order = 2)
 }
 \seealso{
-canonicalize_by_prevalence, canonicalize_by_chain
+\code{\link[=canonicalize_by_prevalence]{canonicalize_by_prevalence()}}, \code{\link[=canonicalize_by_chain]{canonicalize_by_chain()}}
 }

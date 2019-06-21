@@ -32,9 +32,9 @@
 
 <meta property="og:title" content="Categorize the pairing present in a cell — ig_chain_recode" />
 
-<meta property="og:description" content="For each cell (defined by `ccdb$cell_pk`) count the number of each level of `chain_key` occurs, and cross tabulate.
-Also for each cell, paste together all values `chain_key`.
-Return a tibble, keyed by cells that includes the counts of the chains, the `raw_chain_type` and any additional output from running `chain_recode_fun`." />
+<meta property="og:description" content="For each cell (defined by ccdb$cell_pk) count the number of each level of chain_key occurs, and cross tabulate.
+Also for each cell, paste together all values chain_key.
+Return a tibble, keyed by cells that includes the counts of the chains, the raw_chain_type and any additional output from running chain_recode_fun." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -65,7 +65,7 @@ Return a tibble, keyed by cells that includes the counts of the chains, the `raw
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CellaRepertorium</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
       </span>
     </div>
 
@@ -123,9 +123,9 @@ Return a tibble, keyed by cells that includes the counts of the chains, the `raw
 
     <div class="ref-description">
     
-    <p>For each cell (defined by `ccdb$cell_pk`) count the number of each level of `chain_key` occurs, and cross tabulate.
-Also for each cell, paste together all values `chain_key`.
-Return a tibble, keyed by cells that includes the counts of the chains, the `raw_chain_type` and any additional output from running `chain_recode_fun`.</p>
+    <p>For each cell (defined by <code>ccdb$cell_pk</code>) count the number of each level of <code>chain_key</code> occurs, and cross tabulate.
+Also for each cell, paste together all values <code>chain_key</code>.
+Return a tibble, keyed by cells that includes the counts of the chains, the <code>raw_chain_type</code> and any additional output from running <code>chain_recode_fun</code>.</p>
     
     </div>
 
@@ -144,21 +144,21 @@ Return a tibble, keyed by cells that includes the counts of the chains, the `raw
     </tr>
     <tr>
       <th>ccdb</th>
-      <td><p>`ContigCellDB`</p></td>
+      <td><p><code>ContigCellDB</code></p></td>
     </tr>
     <tr>
       <th>chain_key</th>
-      <td><p>`character` naming the field in the `contig_tbl` identifying chain</p></td>
+      <td><p><code>character</code> naming the field in the <code>contig_tbl</code> identifying chain</p></td>
     </tr>
     <tr>
       <th>chain_recode_fun</th>
-      <td><p>a function that operates on the output of this function that further reduces the chain combinations to some other summary.  Set to 'guess' to apply functions that may work for 10X data or `NULL` to skip.  See `CellaRepertorium::tcr_chain_recode` for an example.</p></td>
+      <td><p>a function that operates on the output of this function that further reduces the chain combinations to some other summary.  Set to 'guess' to apply functions that may work for 10X data or <code>NULL</code> to skip.  See <code>CellaRepertorium::tcr_chain_recode</code> for an example.</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a `tibble` keyed by cells.</p>
+    <p>a <code>tibble</code> keyed by cells.</p>
     
     <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
 

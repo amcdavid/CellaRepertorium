@@ -28,18 +28,39 @@ valid_KeyedTbl = function(tbl, keys){
 #' @param cell_pk character vector naming fields in `cell_tbl` that uniquely identify a cell barcode
 #' @param cluster_tbl A data frame that provide cluster assignments for each contig
 #' @param cluster_pk If `cluster_tbl` was provided, a character vector naming fields in `cluster_tbl` that uniquely identify a cluster
-#'
 #' @return \code{ContigCellDB}
+#'
+#' @section Accessors/mutators:
+#' See \code{\link[=ContigCellDB-mutate]{$,ContigCellDB-method}} for more on how to access and mutate slots.
+#' At the moment, there is not a good way to combine objects without manually touching slots with `@`,
+#' but a `rbind` method is in the offing.
 #' @export
 #' @importFrom S4Vectors List SimpleList
 #' @importFrom tibble as_tibble
 #' @importFrom methods new slot slot<- validObject
 #' @rdname ContigCellDB-fun
-#'
+#' @seealso \code{\link[=ContigCellDB-mutate]{$,ContigCellDB-method}}
 #' @examples
 #' data(contigs_qc)
-#' ContigCellDB(contigs_qc, contig_pk = c('barcode', 'pop', 'sample', 'contig_id'),
+#' contigs_qc
+#'
+#' cdb = ContigCellDB(contigs_qc, contig_pk = c('barcode', 'pop', 'sample', 'contig_id'),
 #'  cell_pk = c('barcode', 'pop', 'sample'))
+#'  cdb
+#'
+#'  # everything that was in contigs_qc
+#'  cdb$contig_tbl
+#'
+#'  # Only the cell_pk are included by default (until clustering/canonicalization)
+#'  cdb$cell_tbl
+#'
+#'  # Empty, since no cluster_pk was specified
+#'  cdb$cluster_tbl
+#'
+#'  # Keys
+#'  cdb$contig_pk
+#'  cdb$cell_pk
+#'  cdb$cluster_pk
 ContigCellDB = function(contig_tbl, contig_pk, cell_tbl, cell_pk, cluster_tbl, cluster_pk = character()){
     valid_KeyedTbl(contig_tbl, contig_pk)
     equalized = FALSE
@@ -73,9 +94,9 @@ ContigCellDB_10XVDJ = function(contig_tbl, contig_pk = c('barcode', 'contig_id')
 #' @param x A ContigCellDB object
 #' @param name a slot of a ContigCellDB object (one of  `c('contig_tbl', 'cell_tbl', 'contig_pk', 'cell_pk', 'cluster_tbl', 'cluster_pk')`)
 #'
-#' @return Slot of ContigCellDB
+#' @return Update or return a slot of [ContigCellDB()]
 #' @export
-#'
+#' @aliases ContigCellDB-mutate
 #' @examples
 #' ccdb_ex$contig_tbl
 #' ccdb_ex$cell_tbl
@@ -88,13 +109,8 @@ setMethod("$", signature = c(x = 'ContigCellDB'), function(x, name){
     }
 })
 
-#' Access public members of ContigCellDB object
-#'
-#' @param x A ContigCellDB object
-#' @param name Name of a slot for a ContigCellDB object (one of  `c('contig_tbl', 'cell_tbl', 'contig_pk', 'cell_pk', 'cluster_tbl', 'cluster_pk')`)
 #' @param value The value assigned to a slot of ContigCellDB object
-#'
-#' @return A ContigCellDB object
+#' @rdname cash-ContigCellDB-method
 #' @export
 #'
 #' @examples

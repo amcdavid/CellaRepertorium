@@ -60,7 +60,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CellaRepertorium</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
       </span>
     </div>
 
@@ -138,13 +138,7 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="cash-ContigCellDB-method.html">`$`(<i>&lt;ContigCellDB&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Access public members of ContigCellDB object</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="cash-set-ContigCellDB-method.html">`$<-`(<i>&lt;ContigCellDB&gt;</i>)</a></code> </p>
+          <p><code><a href="cash-ContigCellDB-method.html">`$`(<i>&lt;ContigCellDB&gt;</i>)</a></code> <code><a href="cash-ContigCellDB-method.html">`$<-`(<i>&lt;ContigCellDB&gt;</i>)</a></code> </p>
         </td>
         <td><p>Access public members of ContigCellDB object</p></td>
       </tr>
@@ -170,9 +164,9 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="cdhit.html">cdhit()</a></code> <code><a href="cdhit.html">cdhit_ccdb()</a></code> </p>
+          <p><code><a href="cdhit_ccdb.html">cdhit_ccdb()</a></code> </p>
         </td>
-        <td><p>R interface to CDHIT/CDHITest</p></td>
+        <td><p>Use <code>cdhit()</code> to cluster a <code>ContigCellDB()</code></p></td>
       </tr><tr>
         
         <td>
@@ -199,6 +193,12 @@
           <p><code><a href="canonicalize_cluster.html">canonicalize_cluster()</a></code> </p>
         </td>
         <td><p>Find a canonical contig to represent a cluster</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="enumerate_pairing.html">ig_chain_recode()</a></code> <code><a href="enumerate_pairing.html">tcr_chain_recode()</a></code> <code><a href="enumerate_pairing.html">enumerate_pairing()</a></code> </p>
+        </td>
+        <td><p>Categorize the pairing present in a cell</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -218,7 +218,7 @@
         <td>
           <p><code><a href="purity.html">purity()</a></code> </p>
         </td>
-        <td><p>Calculate number of cluster-subject singletons</p></td>
+        <td><p>Calculate number of cluster-subject singletons for the purposes of permutation testing</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -232,19 +232,13 @@
         <td>
           <p><code><a href="ccdb_ex.html">ccdb_ex</a></code> </p>
         </td>
-        <td><p>A preconstructed `ContigClusterDB` from the `contigs_qc` data</p></td>
+        <td><p>A preconstructed <code>ContigClusterDB</code> from the <code>contigs_qc</code> data</p></td>
       </tr><tr>
         
         <td>
           <p><code><a href="contigs_qc.html">contigs_qc</a></code> </p>
         </td>
         <td><p>Filtered and annotated contigs of TCR from mice</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="canonicalize_by_prevalence.html">canonicalize_by_prevalence()</a></code> <code><a href="canonicalize_by_prevalence.html">canonicalize_by_chain()</a></code> </p>
-        </td>
-        <td><p>For each cell, return a single, canonical chain-cluster</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -256,15 +250,9 @@
       <tr>
         
         <td>
-          <p><code><a href="cluster_germline.html">cluster_germline()</a></code> </p>
+          <p><code><a href="canonicalize_by_prevalence.html">canonicalize_by_prevalence()</a></code> <code><a href="canonicalize_by_prevalence.html">canonicalize_by_chain()</a></code> </p>
         </td>
-        <td><p>Cluster contigs by germline properties</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="cluster_permute_test.html">cluster_permute_test()</a></code> </p>
-        </td>
-        <td><p>Tests for independence between labels and covariates using permutation of cells</p></td>
+        <td><p>For each cell, return a single, canonical chain-cluster</p></td>
       </tr><tr>
         
         <td>
@@ -277,12 +265,6 @@
           <p><code><a href="entropy.html">entropy()</a></code> <code><a href="entropy.html">np()</a></code> <code><a href="entropy.html">modal_category()</a></code> </p>
         </td>
         <td><p>Calculate the entropy of a vector</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="enumerate_pairing.html">ig_chain_recode()</a></code> <code><a href="enumerate_pairing.html">tcr_chain_recode()</a></code> <code><a href="enumerate_pairing.html">enumerate_pairing()</a></code> </p>
-        </td>
-        <td><p>Categorize the pairing present in a cell</p></td>
       </tr><tr>
         
         <td>

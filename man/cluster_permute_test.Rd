@@ -9,17 +9,17 @@ cluster_permute_test(ccdb, cell_covariate_keys,
   alternative = c("two.sided", "less", "greater"), ...)
 }
 \arguments{
-\item{ccdb}{`ContigCellDB`}
+\item{ccdb}{\code{ContigCellDB}}
 
-\item{cell_covariate_keys}{`character` naming fields in `ccdb$cell_tbl`}
+\item{cell_covariate_keys}{\code{character} naming fields in \code{ccdb$cell_tbl}}
 
-\item{cell_label_key}{`character` naming a single field in `ccdb$cell_tbl`}
+\item{cell_label_key}{\code{character} naming a single field in \code{ccdb$cell_tbl}}
 
-\item{statistic}{function of \code{covariates} (a `data.frame`), \code{labels} (a `vector`) that returns a \code{numeric} of length 1.}
+\item{statistic}{function of \code{covariates} (a \code{data.frame}), \code{labels} (a \code{vector}) that returns a \code{numeric} of length 1.}
 
 \item{n_perm}{number of permutations.}
 
-\item{alternative}{`character` naming the direction `statistic` should be fall under the alternative hypothesis}
+\item{alternative}{\code{character} naming the direction \code{statistic} should be fall under the alternative hypothesis}
 
 \item{...}{passed to \code{statistic}}
 }
@@ -29,7 +29,7 @@ a list containing the observed value of the statistic, its expectation (under in
 \description{
 This tests a statistic for association between labels (for instance, cluster/clonal ID) and covariates (for instance, subject or treatment) by permuting the link between the two.
 Each observation represents a cell.
-\code{statistic} is any function of `labels`
+\code{statistic} is any function of \code{labels}
 }
 \examples{
 library(dplyr)
@@ -54,5 +54,5 @@ statistic = purity, n_perm  = 50)
 
 }
 \seealso{
-purity
+\code{\link[=purity]{purity()}}
 }

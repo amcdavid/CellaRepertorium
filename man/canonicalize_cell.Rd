@@ -8,29 +8,31 @@ canonicalize_cell(ccdb, contig_filter_args, tie_break_keys = c("umis",
   "reads"), contig_fields = tie_break_keys, order = 1)
 }
 \arguments{
-\item{ccdb}{`ContigCellDB`}
+\item{ccdb}{\code{\link[=ContigCellDB]{ContigCellDB()}}}
 
-\item{contig_filter_args}{an expression passed to dplyr::filter.  Unlike `filter`, multiple criteria must be `&` together, rather than using commas to separate.
-that act on `ccdb$contig_tbl``}
+\item{contig_filter_args}{an expression passed to \code{\link[dplyr:filter]{dplyr::filter()}}.
+Unlike \code{filter}, multiple criteria must be \code{&} together, rather than using
+commas to separate. These act on \code{ccdb$contig_tbl}}
 
-\item{tie_break_keys}{(optional) `character` naming fields in `contig_tbl`
+\item{tie_break_keys}{(optional) \code{character} naming fields in \code{contig_tbl}
 that are used sort the contig table in descending order.
-Used to break ties if `contig_filter_args` does not return a unique contig
+Used to break ties if \code{contig_filter_args} does not return a unique contig
 for each cluster}
 
-\item{contig_fields}{Optional fields from `contig_tbl` that will be copied into
-the `cluster_tbl` from the canonical contig.}
+\item{contig_fields}{Optional fields from \code{contig_tbl} that will be copied into
+the \code{cluster_tbl} from the canonical contig.}
 
-\item{order}{The rank order of the contig, based on `tie_break_keys`
-to return}
+\item{order}{The rank order of the contig, based on \code{tie_break_keys}
+to return.  If \code{tie_break_keys} included an ordered factor (such as chain)
+this could be used to return the second chain.}
 }
 \value{
-`ContigCellDB` with additional fields in `cell_tbl`
+\code{ContigCellDB} with additional fields in \code{cell_tbl}
 }
 \description{
-Using filtering in `...` and sorting in `tie_break_keys` and `order` find a
+Using filtering in \code{contig_filter_args} and sorting in \code{tie_break_keys} and \code{order} find a
 single, canonical contig to represent each cell
-Fields in `contig_fields` will be copied over to the `cell_tbl`.
+Fields in \code{contig_fields} will be copied over to the \code{cell_tbl}.
 }
 \examples{
 # Report beta chain with highest umi-count, breaking ties with reads
@@ -49,5 +51,5 @@ tie_break_keys = c('umis', 'reads'), contig_fields = c('umis', 'cdr3'))
 stopifnot(all(umi5$cell_tbl$umis > 5, na.rm = TRUE))
 }
 \seealso{
-canonicalize_cluster
+\code{\link[=canonicalize_cluster]{canonicalize_cluster()}}
 }

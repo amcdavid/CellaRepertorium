@@ -19,7 +19,6 @@ globalVariables('cluster_idx')
 #' You may need to lower it below 5 for AAseq with identity less than .7.
 #' @param min_length Minimum length for sequences to be clustered.  An error if something smaller is passed.
 #' @param s fraction of shorter sequence covered by alignment.
-#' @param name program name (?)
 #' @param showProgress show a status bar
 #' @param only_index if TRUE only return the integer cluster indices, otherwise return a tibble.
 #' @param ... other arguments that can be passed to cdhit, see https://github.com/weizhongli/cdhit/wiki/3.-User's-Guide#CDHIT for details.  These will override any default values.
@@ -41,8 +40,9 @@ globalVariables('cluster_idx')
 #' cdhit(aaseq,identity = 1, G = 0, aL = .9, aS = .9,  only_index = TRUE)[1:10]
 #' # a tibble
 #' tbl = cdhit(aaseq, identity = 1, G = 0, aL = .9, aS = .9, only_index = FALSE)
-cdhit = function(seqs, identity = NULL, kmerSize = NULL, min_length = 6, s = 1, name = 'CD-Hit', only_index = FALSE, showProgress = interactive(), ...) {
+cdhit = function(seqs, identity = NULL, kmerSize = NULL, min_length = 6, s = 1, only_index = FALSE, showProgress = interactive(), ...) {
     if(any(width(seqs) < min_length)) stop("Some sequences shorter than `min_length`; remove these or decrease min_length")
+    name = 'CD-Hit'
     uopts = list(...)
     options = list()
     options$i <- tempfile()
@@ -78,12 +78,17 @@ cdhit = function(seqs, identity = NULL, kmerSize = NULL, min_length = 6, s = 1, 
         dplyr::group_by(cluster_idx) %>% dplyr::mutate(n_cluster = dplyr::n())
 }
 
-##' @describeIn cdhit Run `cdhit` on `ClusterContigDB` object
-##' @param object An object of class `ClusterContigDB`
+
+##' Use [cdhit()] to cluster a [ContigCellDB()]
+##'
+##' @param object An object of class [ContigCellDB()]
 ##' @param sequence_key `character` naming the column in the `contig_tbl` containing the sequence to be clustered
 ##' @param type one of 'DNA' or 'AA'
 ##' @param cluster_name `character` specifying key, and name for the clustering.
+##' @return [ContigCellDB()]
+##' @inheritDotParams cdhit -seqs -only_index
 ##' @export
+##' @seealso [cdhit()]
 ##' @examples
 ##' res = CellaRepertorium:::cdhit_ccdb(ccdb_ex, 'cdr3_nt', type = 'DNA',
 ##' cluster_name = 'DNA97', identity = .965, min_length = 12, G = 1)

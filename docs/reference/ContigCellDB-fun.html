@@ -63,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CellaRepertorium</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
       </span>
     </div>
 
@@ -140,7 +140,7 @@
     </tr>
     <tr>
       <th>contig_pk</th>
-      <td><p>character vector naming fields in `contig_tbl` that uniquely identify a row/contig</p></td>
+      <td><p>character vector naming fields in <code>contig_tbl</code> that uniquely identify a row/contig</p></td>
     </tr>
     <tr>
       <th>cell_tbl</th>
@@ -148,7 +148,7 @@
     </tr>
     <tr>
       <th>cell_pk</th>
-      <td><p>character vector naming fields in `cell_tbl` that uniquely identify a cell barcode</p></td>
+      <td><p>character vector naming fields in <code>cell_tbl</code> that uniquely identify a cell barcode</p></td>
     </tr>
     <tr>
       <th>cluster_tbl</th>
@@ -156,7 +156,7 @@
     </tr>
     <tr>
       <th>cluster_pk</th>
-      <td><p>If `cluster_tbl` was provided, a character vector naming fields in `cluster_tbl` that uniquely identify a cluster</p></td>
+      <td><p>If <code>cluster_tbl</code> was provided, a character vector naming fields in <code>cluster_tbl</code> that uniquely identify a cluster</p></td>
     </tr>
     </table>
     
@@ -170,12 +170,69 @@
 <li><p><code>ContigCellDB_10XVDJ</code>: provide defaults that correspond to identifiers in 10X VDJ data</p></li>
 </ul>
     
+    <h2 class="hasAnchor" id="accessors-mutators"><a class="anchor" href="#accessors-mutators"></a>Accessors/mutators</h2>
+
+    
+    <p>See <code><a href='cash-ContigCellDB-method.html'>$,ContigCellDB-method</a></code> for more on how to access and mutate slots.
+At the moment, there is not a good way to combine objects without manually touching slots with <code>@</code>,
+but a <code>rbind</code> method is in the offing.</p>
+    
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p><code><a href='cash-ContigCellDB-method.html'>$,ContigCellDB-method</a></code></p></div>
+    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/data'>data</a></span>(<span class='no'>contigs_qc</span>)
-<span class='fu'>ContigCellDB</span>(<span class='no'>contigs_qc</span>, <span class='kw'>contig_pk</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>'barcode'</span>, <span class='st'>'pop'</span>, <span class='st'>'sample'</span>, <span class='st'>'contig_id'</span>),
- <span class='kw'>cell_pk</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>'barcode'</span>, <span class='st'>'pop'</span>, <span class='st'>'sample'</span>))</div><div class='output co'>#&gt; ContigCellDB of 1508 contigs; 832 cells; and 0 clusters.
-#&gt; Contigs keyed by barcode, pop, sample, contig_id; cells keyed by barcode, pop, sample.</div></pre>
+<span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/head'>head</a></span>(<span class='no'>contigs_qc</span>)</div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 6 x 22</span><span>
+#&gt;   anno_file pop   sample barcode is_cell contig_id high_confidence length chain
+#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>     </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>     </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span>            </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>
+#&gt; </span><span style='color: #555555;'>1</span><span> /Users/a… b6    4      AAAGTA… TRUE    AAAGTAGT… TRUE               611 TRB  
+#&gt; </span><span style='color: #555555;'>2</span><span> /Users/a… b6    4      AAAGTA… TRUE    AAAGTAGT… TRUE               609 TRB  
+#&gt; </span><span style='color: #555555;'>3</span><span> /Users/a… b6    4      AAAGTA… TRUE    AAAGTAGT… TRUE               538 TRA  
+#&gt; </span><span style='color: #555555;'>4</span><span> /Users/a… b6    4      AACCAT… TRUE    AACCATGC… TRUE               799 TRA  
+#&gt; </span><span style='color: #555555;'>5</span><span> /Users/a… b6    4      AACTGG… TRUE    AACTGGTG… TRUE               634 TRB  
+#&gt; </span><span style='color: #555555;'>6</span><span> /Users/a… b6    4      AACTGG… TRUE    AACTGGTG… TRUE               923 TRA  
+#&gt; </span><span style='color: #555555;'># … with 13 more variables: v_gene </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, d_gene </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, j_gene </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>,
+#&gt; #   c_gene </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, full_length </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span style='color: #555555;'>, productive </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, cdr3 </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>,
+#&gt; #   cdr3_nt </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, reads </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, umis </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, raw_clonotype_id </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>,
+#&gt; #   raw_consensus_id </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, celltype </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span></div><div class='input'><span class='no'>cdb</span> <span class='kw'>=</span> <span class='fu'>ContigCellDB</span>(<span class='no'>contigs_qc</span>, <span class='kw'>contig_pk</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>'barcode'</span>, <span class='st'>'pop'</span>, <span class='st'>'sample'</span>, <span class='st'>'contig_id'</span>),
+ <span class='kw'>cell_pk</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>'barcode'</span>, <span class='st'>'pop'</span>, <span class='st'>'sample'</span>))
+ <span class='no'>cdb</span></div><div class='output co'>#&gt; ContigCellDB of 1508 contigs; 832 cells; and 0 clusters.
+#&gt; Contigs keyed by barcode, pop, sample, contig_id; cells keyed by barcode, pop, sample.</div><div class='input'> <span class='co'># everything that was in contigs_qc</span>
+ <span class='no'>cdb</span>$<span class='no'>contig_tbl</span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 1,508 x 22</span><span>
+#&gt;    anno_file pop   sample barcode is_cell contig_id high_confidence length chain
+#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>     </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>     </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span>            </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>
+#&gt; </span><span style='color: #555555;'> 1</span><span> /Users/a… b6    4      AAAGTA… TRUE    AAAGTAGT… TRUE               611 TRB  
+#&gt; </span><span style='color: #555555;'> 2</span><span> /Users/a… b6    4      AAAGTA… TRUE    AAAGTAGT… TRUE               609 TRB  
+#&gt; </span><span style='color: #555555;'> 3</span><span> /Users/a… b6    4      AAAGTA… TRUE    AAAGTAGT… TRUE               538 TRA  
+#&gt; </span><span style='color: #555555;'> 4</span><span> /Users/a… b6    4      AACCAT… TRUE    AACCATGC… TRUE               799 TRA  
+#&gt; </span><span style='color: #555555;'> 5</span><span> /Users/a… b6    4      AACTGG… TRUE    AACTGGTG… TRUE               634 TRB  
+#&gt; </span><span style='color: #555555;'> 6</span><span> /Users/a… b6    4      AACTGG… TRUE    AACTGGTG… TRUE               923 TRA  
+#&gt; </span><span style='color: #555555;'> 7</span><span> /Users/a… b6    4      AAGCCG… TRUE    AAGCCGCA… TRUE               693 TRB  
+#&gt; </span><span style='color: #555555;'> 8</span><span> /Users/a… b6    4      AAGTCT… TRUE    AAGTCTGG… TRUE               658 TRB  
+#&gt; </span><span style='color: #555555;'> 9</span><span> /Users/a… b6    4      AAGTCT… TRUE    AAGTCTGG… TRUE               558 TRA  
+#&gt; </span><span style='color: #555555;'>10</span><span> /Users/a… b6    4      ACACCA… TRUE    ACACCAAA… TRUE               614 TRB  
+#&gt; </span><span style='color: #555555;'># … with 1,498 more rows, and 13 more variables: v_gene </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, d_gene </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>,
+#&gt; #   j_gene </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, c_gene </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, full_length </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span style='color: #555555;'>, productive </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>,
+#&gt; #   cdr3 </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, cdr3_nt </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, reads </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, umis </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, raw_clonotype_id </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>,
+#&gt; #   raw_consensus_id </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, celltype </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span></div><div class='input'> <span class='co'># Only the cell_pk are included by default (until clustering/canonicalization)</span>
+ <span class='no'>cdb</span>$<span class='no'>cell_tbl</span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 832 x 3</span><span>
+#&gt;    barcode            pop   sample
+#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>              </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> 
+#&gt; </span><span style='color: #555555;'> 1</span><span> AAAGTAGTCGCGCCAA-1 b6    4     
+#&gt; </span><span style='color: #555555;'> 2</span><span> AACCATGCATTTGCCC-1 b6    4     
+#&gt; </span><span style='color: #555555;'> 3</span><span> AACTGGTGTCTGATCA-1 b6    4     
+#&gt; </span><span style='color: #555555;'> 4</span><span> AAGCCGCAGTAAGTAC-1 b6    4     
+#&gt; </span><span style='color: #555555;'> 5</span><span> AAGTCTGGTTCAACCA-1 b6    4     
+#&gt; </span><span style='color: #555555;'> 6</span><span> ACACCAAAGTCCAGGA-1 b6    4     
+#&gt; </span><span style='color: #555555;'> 7</span><span> ACATGGTAGTGTTTGC-1 b6    4     
+#&gt; </span><span style='color: #555555;'> 8</span><span> ACCCACTTCCACGACG-1 b6    4     
+#&gt; </span><span style='color: #555555;'> 9</span><span> ACGCCAGGTCCGAATT-1 b6    4     
+#&gt; </span><span style='color: #555555;'>10</span><span> ACGCCAGTCCAATGGT-1 b6    4     
+#&gt; </span><span style='color: #555555;'># … with 822 more rows</span><span></div><div class='input'> <span class='co'># Empty, since no cluster_pk was specified</span>
+ <span class='no'>cdb</span>$<span class='no'>cluster_tbl</span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 0 x 0</span><span></div><div class='input'> <span class='co'># Keys</span>
+ <span class='no'>cdb</span>$<span class='no'>contig_pk</span></div><div class='output co'>#&gt; [1] "barcode"   "pop"       "sample"    "contig_id"</div><div class='input'> <span class='no'>cdb</span>$<span class='no'>cell_pk</span></div><div class='output co'>#&gt; [1] "barcode" "pop"     "sample" </div><div class='input'> <span class='no'>cdb</span>$<span class='no'>cluster_pk</span></div><div class='output co'>#&gt; character(0)</div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -185,6 +242,10 @@
       <li><a href="#value">Value</a></li>
 
       <li><a href="#functions">Functions</a></li>
+
+      <li><a href="#accessors-mutators">Accessors/mutators</a></li>
+
+      <li><a href="#see-also">See also</a></li>
       
       <li><a href="#examples">Examples</a></li>
     </ul>

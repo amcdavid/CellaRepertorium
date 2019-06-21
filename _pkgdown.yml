@@ -12,13 +12,14 @@ reference:
   contents:
    - '`cluster_germline`'
    - '`fine_clustering`'
-   - '`cdhit`'
+   - '`cdhit_ccdb`'
    - '`pairing_tables`'
 - title: Canonicalization
   desc: "Methods to return single contigs for cells or clusters"
   contents:
    - '`canonicalize_cell`'
    - '`canonicalize_cluster`'
+   - '`ig_chain_recode`'
 - title: Statistical testing
   contents:
    - '`cluster_permute_test`'
@@ -27,15 +28,12 @@ reference:
   contents:
    - '`ccdb_ex`'
    - '`contigs_qc`'
-   - '`canonicalize_by_prevalence`'
 - title: Internal or WIP
   desc: "Functions that may be made internal, removed, or with interfaces subject to change."
   contents:
-  - '`cluster_germline`'
-  - '`cluster_permute_test`'
+  - '`canonicalize_by_prevalence`'
   - '`.cluster_permute_test`'
   - '`entropy`'
-  - '`ig_chain_recode`'
   - '`fancy_name_contigs`'
   - '`fine_cluster_seqs`'
   - '`get_canonical_representative`'

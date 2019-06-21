@@ -7,7 +7,7 @@
 fancy_name_contigs(contig_tbl, prefix)
 }
 \arguments{
-\item{contig_tbl}{An `all_contig_annotations.csv` file, output from VDJ Cell ranger.  Importantly, this should contain columns `chain`, `v_gene`, `d_gene`, `j_gene`}
+\item{contig_tbl}{An \code{all_contig_annotations.csv} file, output from VDJ Cell ranger.  Importantly, this should contain columns \code{chain}, \code{v_gene}, \code{d_gene}, \code{j_gene}}
 
 \item{prefix}{an optional prefix added to each contig, eg, possibly a sample id.}
 }

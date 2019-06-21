@@ -8,14 +8,14 @@ cluster_germline(ccdb, segment_keys = c("v_gene", "j_gene", "chain"),
   cluster_name = "cluster_idx")
 }
 \arguments{
-\item{ccdb}{`ContigCellDB`}
+\item{ccdb}{\code{\link[=ContigCellDB]{ContigCellDB()}}}
 
-\item{segment_keys}{fields in `contig_tbl` that identify a cluster}
+\item{segment_keys}{fields in \code{contig_tbl} that identify a cluster}
 
-\item{cluster_name}{name of cluster to be added to `cluster_tbl`}
+\item{cluster_name}{name of cluster to be added to \code{cluster_tbl}}
 }
 \value{
-`ContigCellDB`
+\code{\link[=ContigCellDB]{ContigCellDB()}}
 }
 \description{
 Cluster contigs by germline properties

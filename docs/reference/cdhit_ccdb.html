@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Access public members of ContigCellDB object — $,ContigCellDB-method • CellaRepertorium</title>
+<title>Use <code><a href='cdhit.html'>cdhit()</a></code> to cluster a <code><a href='ContigCellDB-fun.html'>ContigCellDB()</a></code> — cdhit_ccdb • CellaRepertorium</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,9 +30,9 @@
 
 
 
-<meta property="og:title" content="Access public members of ContigCellDB object — $,ContigCellDB-method" />
+<meta property="og:title" content="Use <code><a href='cdhit.html'>cdhit()</a></code> to cluster a <code><a href='ContigCellDB-fun.html'>ContigCellDB()</a></code> — cdhit_ccdb" />
 
-<meta property="og:description" content="Access public members of ContigCellDB object" />
+<meta property="og:description" content="Use cdhit() to cluster a ContigCellDB()" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -114,47 +114,78 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Access public members of ContigCellDB object</h1>
-    <small class="dont-index">Source: <a href='https://github.com/amcdavid/CellaRepertorium/blob/master/R/ContigCellDB-methods.R'><code>R/ContigCellDB-methods.R</code></a></small>
-    <div class="hidden name"><code>cash-ContigCellDB-method.Rd</code></div>
+    <h1>Use <code><a href='cdhit.html'>cdhit()</a></code> to cluster a <code><a href='ContigCellDB-fun.html'>ContigCellDB()</a></code></h1>
+    <small class="dont-index">Source: <a href='https://github.com/amcdavid/CellaRepertorium/blob/master/R/cdhit-methods.R'><code>R/cdhit-methods.R</code></a></small>
+    <div class="hidden name"><code>cdhit_ccdb.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Access public members of ContigCellDB object</p>
+    <p>Use <code><a href='cdhit.html'>cdhit()</a></code> to cluster a <code><a href='ContigCellDB-fun.html'>ContigCellDB()</a></code></p>
     
     </div>
 
-    <pre class="usage"># S4 method for ContigCellDB
-$(x, name)
-
-# S4 method for ContigCellDB
-$(x, name) <- value</pre>
+    <pre class="usage"><span class='fu'>cdhit_ccdb</span>(<span class='no'>object</span>, <span class='no'>sequence_key</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"DNA"</span>, <span class='st'>"AA"</span>),
+  <span class='kw'>cluster_name</span> <span class='kw'>=</span> <span class='st'>"cluster_idx"</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>x</th>
-      <td><p>A ContigCellDB object</p></td>
+      <th>object</th>
+      <td><p>An object of class <code><a href='ContigCellDB-fun.html'>ContigCellDB()</a></code></p></td>
     </tr>
     <tr>
-      <th>name</th>
-      <td><p>a slot of a ContigCellDB object (one of  <code><a href='https://www.rdocumentation.org/packages/base/topics/c'>c('contig_tbl', 'cell_tbl', 'contig_pk', 'cell_pk', 'cluster_tbl', 'cluster_pk')</a></code>)</p></td>
+      <th>sequence_key</th>
+      <td><p><code>character</code> naming the column in the <code>contig_tbl</code> containing the sequence to be clustered</p></td>
     </tr>
     <tr>
-      <th>value</th>
-      <td><p>The value assigned to a slot of ContigCellDB object</p></td>
+      <th>type</th>
+      <td><p>one of 'DNA' or 'AA'</p></td>
+    </tr>
+    <tr>
+      <th>cluster_name</th>
+      <td><p><code>character</code> specifying key, and name for the clustering.</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>Arguments passed on to <code>cdhit</code></p><dl class='dl-horizontal'>
+  <dt>identity</dt><dd><p>minimum proportion identity</p></dd>
+  <dt>kmerSize</dt><dd><p>word size.  If NULL, it will be chosen automatically based on the identity.
+You may need to lower it below 5 for AAseq with identity less than .7.</p></dd>
+  <dt>min_length</dt><dd><p>Minimum length for sequences to be clustered.  An error if something smaller is passed.</p></dd>
+  <dt>s</dt><dd><p>fraction of shorter sequence covered by alignment.</p></dd>
+  <dt>showProgress</dt><dd><p>show a status bar</p></dd>
+</dl></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Update or return a slot of <code><a href='ContigCellDB-fun.html'>ContigCellDB()</a></code></p>
+    <p><code><a href='ContigCellDB-fun.html'>ContigCellDB()</a></code></p>
+    
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p><code><a href='cdhit.html'>cdhit()</a></code></p></div>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>ccdb_ex</span>$<span class='no'>contig_tbl</span></div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 1,508 x 22</span><span>
+    <pre class="examples"><div class='input'><span class='no'>res</span> <span class='kw'>=</span> <span class='kw pkg'>CellaRepertorium</span><span class='kw ns'>:::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/CellaRepertorium/topics/cdhit_ccdb'>cdhit_ccdb</a></span>(<span class='no'>ccdb_ex</span>, <span class='st'>'cdr3_nt'</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>'DNA'</span>,
+<span class='kw'>cluster_name</span> <span class='kw'>=</span> <span class='st'>'DNA97'</span>, <span class='kw'>identity</span> <span class='kw'>=</span> <span class='fl'>.965</span>, <span class='kw'>min_length</span> <span class='kw'>=</span> <span class='fl'>12</span>, <span class='kw'>G</span> <span class='kw'>=</span> <span class='fl'>1</span>)
+<span class='no'>res</span>$<span class='no'>cluster_tbl</span></div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 1,354 x 1</span><span>
+#&gt;    DNA97
+#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
+#&gt; </span><span style='color: #555555;'> 1</span><span>  </span><span style='text-decoration: underline;'>1</span><span>094
+#&gt; </span><span style='color: #555555;'> 2</span><span>   784
+#&gt; </span><span style='color: #555555;'> 3</span><span>   785
+#&gt; </span><span style='color: #555555;'> 4</span><span>   388
+#&gt; </span><span style='color: #555555;'> 5</span><span>   125
+#&gt; </span><span style='color: #555555;'> 6</span><span>   786
+#&gt; </span><span style='color: #555555;'> 7</span><span>   126
+#&gt; </span><span style='color: #555555;'> 8</span><span>  </span><span style='text-decoration: underline;'>1</span><span>322
+#&gt; </span><span style='color: #555555;'> 9</span><span>   389
+#&gt; </span><span style='color: #555555;'>10</span><span>  </span><span style='text-decoration: underline;'>1</span><span>095
+#&gt; </span><span style='color: #555555;'># … with 1,344 more rows</span><span></div><div class='input'><span class='no'>res</span>$<span class='no'>contig_tbl</span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 1,508 x 23</span><span>
 #&gt;    anno_file pop   sample barcode is_cell contig_id high_confidence length chain
 #&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>     </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>     </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span>            </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>
 #&gt; </span><span style='color: #555555;'> 1</span><span> /Users/a… b6    4      AAAGTA… TRUE    AAAGTAGT… TRUE               611 TRB  
@@ -167,28 +198,10 @@ $(x, name) <- value</pre>
 #&gt; </span><span style='color: #555555;'> 8</span><span> /Users/a… b6    4      AAGTCT… TRUE    AAGTCTGG… TRUE               658 TRB  
 #&gt; </span><span style='color: #555555;'> 9</span><span> /Users/a… b6    4      AAGTCT… TRUE    AAGTCTGG… TRUE               558 TRA  
 #&gt; </span><span style='color: #555555;'>10</span><span> /Users/a… b6    4      ACACCA… TRUE    ACACCAAA… TRUE               614 TRB  
-#&gt; </span><span style='color: #555555;'># … with 1,498 more rows, and 13 more variables: v_gene </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, d_gene </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>,
+#&gt; </span><span style='color: #555555;'># … with 1,498 more rows, and 14 more variables: v_gene </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, d_gene </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>,
 #&gt; #   j_gene </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, c_gene </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, full_length </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span style='color: #555555;'>, productive </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>,
 #&gt; #   cdr3 </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, cdr3_nt </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, reads </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, umis </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, raw_clonotype_id </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>,
-#&gt; #   raw_consensus_id </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, celltype </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span></div><div class='input'><span class='no'>ccdb_ex</span>$<span class='no'>cell_tbl</span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 832 x 3</span><span>
-#&gt;    pop   sample barcode           
-#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>             
-#&gt; </span><span style='color: #555555;'> 1</span><span> b6    4      AAAGTAGTCGCGCCAA-1
-#&gt; </span><span style='color: #555555;'> 2</span><span> b6    4      AACCATGCATTTGCCC-1
-#&gt; </span><span style='color: #555555;'> 3</span><span> b6    4      AACTGGTGTCTGATCA-1
-#&gt; </span><span style='color: #555555;'> 4</span><span> b6    4      AAGCCGCAGTAAGTAC-1
-#&gt; </span><span style='color: #555555;'> 5</span><span> b6    4      AAGTCTGGTTCAACCA-1
-#&gt; </span><span style='color: #555555;'> 6</span><span> b6    4      ACACCAAAGTCCAGGA-1
-#&gt; </span><span style='color: #555555;'> 7</span><span> b6    4      ACATGGTAGTGTTTGC-1
-#&gt; </span><span style='color: #555555;'> 8</span><span> b6    4      ACCCACTTCCACGACG-1
-#&gt; </span><span style='color: #555555;'> 9</span><span> b6    4      ACGCCAGGTCCGAATT-1
-#&gt; </span><span style='color: #555555;'>10</span><span> b6    4      ACGCCAGTCCAATGGT-1
-#&gt; </span><span style='color: #555555;'># … with 822 more rows</span><span></div><div class='input'><span class='no'>ccdb_ex</span>$<span class='no'>cluster_tbl</span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 0 x 0</span><span></div><div class='input'><span class='no'>ccdb_ex</span>$<span class='no'>contig_pk</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"sample"</span>,<span class='st'>"barcode"</span>,<span class='st'>"contig_id"</span>) <span class='co'># 'pop' is technically redundant with 'sample'</span>
-<span class='co'># Take a subset of ccdb_ex</span>
-<span class='no'>ccdb_ex</span></div><div class='output co'>#&gt; ContigCellDB of 1508 contigs; 832 cells; and 0 clusters.
-#&gt; Contigs keyed by sample, barcode, contig_id; cells keyed by pop, sample, barcode.</div><div class='input'><span class='no'>ccdb_ex</span>$<span class='no'>contig_tbl</span> <span class='kw'>=</span> <span class='kw pkg'>dplyr</span><span class='kw ns'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span>(<span class='no'>ccdb_ex</span>$<span class='no'>contig_tbl</span>, <span class='no'>pop</span> <span class='kw'>==</span> <span class='st'>'b6'</span>)
-<span class='no'>ccdb_ex</span></div><div class='output co'>#&gt; ContigCellDB of 767 contigs; 426 cells; and 0 clusters.
-#&gt; Contigs keyed by sample, barcode, contig_id; cells keyed by pop, sample, barcode.</div></span></pre>
+#&gt; #   raw_consensus_id </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, celltype </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, DNA97 </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span></div><div class='input'><span class='no'>res</span>$<span class='no'>cluster_pk</span></div><div class='output co'>#&gt; [1] "DNA97"</div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -196,6 +209,8 @@ $(x, name) <- value</pre>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
+
+      <li><a href="#see-also">See also</a></li>
       
       <li><a href="#examples">Examples</a></li>
     </ul>

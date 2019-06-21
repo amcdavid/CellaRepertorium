@@ -6,7 +6,7 @@ globalVariables(c('prev'))
 #' If order = 1 then the canonical chain-cluster will be the most prevalent, and if order = 2, it will be the 2nd most prevalent, and so on.  Ties are broken arbitrarily (possibly by lexicographic order of `cluster_idx`).
 #' @param tbl `data.frame` containing columns specified in `cell_identifiers`, `cluster_idx` and optionally `chain_identifiers`
 #' @param cell_identifiers `character` vector specifying columns in `tbl` that identify a cell
-#' @param cluster_idx `character` specifying the column in `tbl` that identifies a clsuter
+#' @param cluster_idx `character` specifying the column in `tbl` that identifies a cluster
 #' @param order return the 1st, 2nd, 3rd, etc, most common chain-cluster
 #'
 #' @return `data.frame` with columns from `cell_identifiers` and a single `cluster_idx` for each cell
@@ -38,14 +38,14 @@ canonicalize_by_chain = function(tbl,  cell_identifiers = 'barcode', sort_factor
 
 #' Find a canonical contig to represent a cell
 #'
-#' Using filtering in `...` and sorting in `tie_break_keys` and `order` find a
+#' Using filtering in `contig_filter_args` and sorting in `tie_break_keys` and `order` find a
 #' single, canonical contig to represent each cell
 #' Fields in `contig_fields` will be copied over to the `cell_tbl`.
 #' @inheritParams canonicalize_cluster
 #'
 #' @return `ContigCellDB` with additional fields in `cell_tbl`
 #' @export
-#' @seealso canonicalize_cluster
+#' @seealso [canonicalize_cluster()]
 #' @examples
 #' # Report beta chain with highest umi-count, breaking ties with reads
 #' beta = canonicalize_cell(ccdb_ex, chain == 'TRB',
@@ -136,7 +136,7 @@ get_canonical_representative = function(seqs, medoid_idx, warn_if_distinct = FAL
 #' @return list of tables.  The `cell_tbl` is keyed by the `cell_identifiers`, with fields "cluster_idx.1", "cluster_idx.2", etc, IDing the contigs present in each cell. "cluster_idx.1_fct" and "cluster_idx.2_fct" cast these fields to factors and are reordered to maximize the number of pairs along the diagonal. The `idx1_tbl` and `idx2_tbl` report information (passed in about the `cluster_idx` by `feature_tbl`.)  The `cluster_pair_tbl` reports all pairings found of contigs, and the number of times observed.
 #' @export
 #'
-#' @seealso canonicalize_by_prevalence, canonicalize_by_chain
+#' @seealso [canonicalize_by_prevalence()], [canonicalize_by_chain()]
 #' @importFrom tibble as_data_frame
 #' @importFrom dplyr bind_rows left_join ungroup summarize anti_join
 #' @importFrom stringr str_length str_c

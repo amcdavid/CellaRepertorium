@@ -64,7 +64,7 @@ The distances between nucleotide sequences is defined to be edit_distance/max(ed
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CellaRepertorium</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
       </span>
     </div>
 
@@ -129,7 +129,7 @@ The distances between nucleotide sequences is defined to be edit_distance/max(ed
 
     <pre class="usage"><span class='fu'>fine_cluster_seqs</span>(<span class='no'>seqs</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>"AA"</span>, <span class='kw'>big_memory_brute</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"levenshtein"</span>, <span class='kw'>substitution_matrix</span> <span class='kw'>=</span> <span class='st'>"BLOSUM100"</span>,
-  <span class='kw'>cluster_fun</span> <span class='kw'>=</span> <span class='st'>"hclust"</span>, <span class='kw'>cluster_method</span> <span class='kw'>=</span> <span class='st'>"complete"</span>)</pre>
+  <span class='kw'>cluster_fun</span> <span class='kw'>=</span> <span class='st'>"none"</span>, <span class='kw'>cluster_method</span> <span class='kw'>=</span> <span class='st'>"complete"</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -140,7 +140,7 @@ The distances between nucleotide sequences is defined to be edit_distance/max(ed
     </tr>
     <tr>
       <th>type</th>
-      <td><p>character either `AA` or `DNA` specifying type of `seqs`</p></td>
+      <td><p>character either <code>AA</code> or <code>DNA</code> specifying type of <code>seqs</code></p></td>
     </tr>
     <tr>
       <th>big_memory_brute</th>
@@ -152,31 +152,31 @@ The distances between nucleotide sequences is defined to be edit_distance/max(ed
     </tr>
     <tr>
       <th>substitution_matrix</th>
-      <td><p>a character vector naming a substition matrix available in Biostrings, or a substitution matrix itself</p></td>
+      <td><p>a character vector naming a substitution matrix available in Biostrings, or a  substitution matrix itself</p></td>
     </tr>
     <tr>
       <th>cluster_fun</th>
-      <td><p>`character`, one of "hclust" or "none", determining if distance matrices should also be clustered with `hclust`</p></td>
+      <td><p><code>character</code>, one of "hclust" or "none", determining if distance matrices should also be clustered with <code>hclust</code></p></td>
     </tr>
     <tr>
       <th>cluster_method</th>
-      <td><p>character passed to `hclust`</p></td>
+      <td><p>character passed to <code>hclust</code></p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>`list` containing</p>
+    <p><code>list</code></p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>hclust, stringDist</p></div>
+    <div class='dont-index'><p><code><a href='https://www.rdocumentation.org/packages/stats/topics/hclust'>hclust()</a></code>, <code><a href='https://www.rdocumentation.org/packages/Biostrings/topics/stringDist'>Biostrings::stringDist()</a></code></p></div>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='no'>fasta_path</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/system.file'>system.file</a></span>(<span class='st'>'extdata'</span>, <span class='st'>'demo.fasta'</span>, <span class='kw'>package</span><span class='kw'>=</span><span class='st'>'CellaRepertorium'</span>)
 <span class='no'>aaseq</span> <span class='kw'>=</span> <span class='kw pkg'>Biostrings</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/Biostrings/topics/XStringSet-io'>readAAStringSet</a></span>(<span class='no'>fasta_path</span>)[<span class='fl'>1</span>:<span class='fl'>100</span>]
-<span class='no'>cls</span> <span class='kw'>=</span> <span class='fu'>fine_cluster_seqs</span>(<span class='no'>aaseq</span>)
+<span class='no'>cls</span> <span class='kw'>=</span> <span class='fu'>fine_cluster_seqs</span>(<span class='no'>aaseq</span>, <span class='kw'>cluster_fun</span> <span class='kw'>=</span> <span class='st'>'hclust'</span>)
 <span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/plot'>plot</a></span>(<span class='no'>cls</span>$<span class='no'>cluster</span>)</div><div class='img'><img src='fine_cluster_seqs-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

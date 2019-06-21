@@ -15,7 +15,7 @@ modal_category(v, na.action = na.fail)
 \arguments{
 \item{v}{categorical vector}
 
-\item{pseudo_count}{number of pseudo counts to add on, to stablize empty categories}
+\item{pseudo_count}{number of pseudo counts to add on, to stabilize empty categories}
 
 \item{na.action}{how to handle NA values}
 
@@ -29,7 +29,7 @@ Calculate the entropy of a vector
 }
 \section{Functions}{
 \itemize{
-\item \code{np}: The number of categories exceeding `p` proportion of the total
+\item \code{np}: The number of categories exceeding \code{p} proportion of the total
 
 \item \code{modal_category}: The modal category of v.  Ties are broken by lexicographic order of the factor levels.
 }}
