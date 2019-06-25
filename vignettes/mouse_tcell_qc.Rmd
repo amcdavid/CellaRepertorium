@@ -23,11 +23,6 @@ library(tidyr)
 library(stringr)
 ```
 
-# General questions
-
-1. Can/should elements of this script be included as package functionality (cell calling/filtering?)
-2. Can the QC be made more statistically principaled?
-
 # Load contig files
 
 ```{r}
@@ -38,7 +33,7 @@ samp_map = tibble(anno_file = files, pop = str_match(files, 'b6|balbc')[,1], sam
 knitr::kable(samp_map)
 ```
 
-PBMC pooled from Balb/C and C57BL/6 mice [were assayed on 10X genomics V3 chemistry](https://support.10xgenomics.com/single-cell-vdj/datasets/3.0.0/vdj_v1_mm_c57bl6_pbmc_t) and a library enriched for TCR were run.  For the purposes of illustrating functionality in this package, cell barcodes were subsampled 3 times for each of the Balb/C and Black6 pools to generate distinct `samples`, which is reflected in the `sample` column. More details are available in the scripts in the `data-raw` directory of this package.
+PBMC pooled from BALB/c and C57BL/6 mice [were assayed on 10X genomics V3 chemistry](https://support.10xgenomics.com/single-cell-vdj/datasets/3.0.0/vdj_v1_mm_c57bl6_pbmc_t) and a library enriched for TCR were run.  For the purposes of illustrating functionality in this package, cell barcodes were subsampled 3 times for each of the BALB/c and Black6 pools to generate distinct `samples`, which is reflected in the `sample` column. More details are available in the scripts in the `data-raw` directory of this package.
 
 ```{r}
 # read in CSV
@@ -82,7 +77,7 @@ total_umi = all_anno  %>% group_by(sample, pop, barcode, is_cell, high_confidenc
 ggplot(filter(total_umi, high_confidence, is_T), aes(color = factor(is_cell), x = total_umi, group = interaction(is_cell, sample, pop))) + stat_ecdf() + coord_cartesian(xlim = c(0, 10)) + ylab('Fraction of barcodes') + theme_minimal() + scale_color_discrete('10X called cell?')
 ```
 
-10X defines [a procedure](https://support.10xgenomics.com/single-cell-vdj/software/pipelines/latest/algorithms/cell-calling)  to separate cells from background that fits a Gaussian mixture model to the UMI distributions for each sample.  However in saome cases, it may be desirable to implement a common QC threshold with a different stringency, such as:
+10X defines [a procedure](https://support.10xgenomics.com/single-cell-vdj/software/pipelines/latest/algorithms/cell-calling)  to separate cells from background that fits a Gaussian mixture model to the UMI distributions for each sample.  However in some cases, it may be desirable to implement a common QC threshold with a different stringency, such as:
 
 *  Comparing across multiple samples
 *  When a sample has been enriched for a particular cell type (eg with pre-sequencing flow cytometry).
@@ -130,5 +125,8 @@ ggplot(n_productive, aes(x = interaction(sample,pop), fill = factor(n_productive
 
 Number of productive chains per replicate.
 
-# Add a plot showing chain breakdowns alpha-alpha/alpha-beta, alpha-alpha-beta, etc
+# Questions
+
+1. Can/should elements of this script be included as package functionality (cell calling/filtering?)
+2. Can the QC be made more statistically principled?
 

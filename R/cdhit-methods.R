@@ -90,7 +90,7 @@ cdhit = function(seqs, identity = NULL, kmerSize = NULL, min_length = 6, s = 1, 
 ##' @export
 ##' @seealso [cdhit()]
 ##' @examples
-##' res = CellaRepertorium:::cdhit_ccdb(ccdb_ex, 'cdr3_nt', type = 'DNA',
+##' res = cdhit_ccdb(ccdb_ex, 'cdr3_nt', type = 'DNA',
 ##' cluster_name = 'DNA97', identity = .965, min_length = 12, G = 1)
 ##' res$cluster_tbl
 ##' res$contig_tbl

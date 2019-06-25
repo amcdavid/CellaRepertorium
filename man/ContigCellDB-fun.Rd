@@ -44,16 +44,21 @@ but a \code{rbind} method is in the offing.
 
 \examples{
 data(contigs_qc)
-head(contigs_qc)
+contigs_qc
+
 cdb = ContigCellDB(contigs_qc, contig_pk = c('barcode', 'pop', 'sample', 'contig_id'),
  cell_pk = c('barcode', 'pop', 'sample'))
  cdb
+
  # everything that was in contigs_qc
  cdb$contig_tbl
+
  # Only the cell_pk are included by default (until clustering/canonicalization)
  cdb$cell_tbl
+
  # Empty, since no cluster_pk was specified
  cdb$cluster_tbl
+
  # Keys
  cdb$contig_pk
  cdb$cell_pk

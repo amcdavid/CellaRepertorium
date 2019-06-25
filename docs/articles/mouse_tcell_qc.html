@@ -110,14 +110,6 @@
 <a class="sourceLine" id="cb1-18" data-line-number="18"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(readr)</a>
 <a class="sourceLine" id="cb1-19" data-line-number="19"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(tidyr)</a>
 <a class="sourceLine" id="cb1-20" data-line-number="20"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(stringr)</a></code></pre></div>
-<div id="general-questions" class="section level1">
-<h1 class="hasAnchor">
-<a href="#general-questions" class="anchor"></a>General questions</h1>
-<ol style="list-style-type: decimal">
-<li>Can/should elements of this script be included as package functionality (cell calling/filtering?)</li>
-<li>Can the QC be made more statistically principaled?</li>
-</ol>
-</div>
 <div id="load-contig-files" class="section level1">
 <h1 class="hasAnchor">
 <a href="#load-contig-files" class="anchor"></a>Load contig files</h1>
@@ -165,7 +157,7 @@
 </tr>
 </tbody>
 </table>
-<p>PBMC pooled from Balb/C and C57BL/6 mice <a href="https://support.10xgenomics.com/single-cell-vdj/datasets/3.0.0/vdj_v1_mm_c57bl6_pbmc_t">were assayed on 10X genomics V3 chemistry</a> and a library enriched for TCR were run. For the purposes of illustrating functionality in this package, cell barcodes were subsampled 3 times for each of the Balb/C and Black6 pools to generate distinct <code>samples</code>, which is reflected in the <code>sample</code> column. More details are available in the scripts in the <code>data-raw</code> directory of this package.</p>
+<p>PBMC pooled from BALB/c and C57BL/6 mice <a href="https://support.10xgenomics.com/single-cell-vdj/datasets/3.0.0/vdj_v1_mm_c57bl6_pbmc_t">were assayed on 10X genomics V3 chemistry</a> and a library enriched for TCR were run. For the purposes of illustrating functionality in this package, cell barcodes were subsampled 3 times for each of the BALB/c and Black6 pools to generate distinct <code>samples</code>, which is reflected in the <code>sample</code> column. More details are available in the scripts in the <code>data-raw</code> directory of this package.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="co"># read in CSV</span></a>
 <a class="sourceLine" id="cb3-2" data-line-number="2">all_anno =<span class="st"> </span>samp_map <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/rowwise.html">rowwise</a></span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="dt">anno =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="kw"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span>(anno_file, <span class="dt">col_types =</span> <span class="kw"><a href="https://readr.tidyverse.org/reference/cols.html">cols</a></span>(</a>
 <a class="sourceLine" id="cb3-3" data-line-number="3">  <span class="dt">barcode =</span> <span class="kw"><a href="https://readr.tidyverse.org/reference/parse_atomic.html">col_character</a></span>(),</a>
@@ -202,7 +194,7 @@
 <a class="sourceLine" id="cb4-2" data-line-number="2"></a>
 <a class="sourceLine" id="cb4-3" data-line-number="3"><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="kw"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(total_umi, high_confidence, is_T), <span class="kw"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="dt">color =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">factor</a></span>(is_cell), <span class="dt">x =</span> total_umi, <span class="dt">group =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/interaction">interaction</a></span>(is_cell, sample, pop))) <span class="op">+</span><span class="st"> </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/stat_ecdf.html">stat_ecdf</a></span>() <span class="op">+</span><span class="st"> </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/coord_cartesian.html">coord_cartesian</a></span>(<span class="dt">xlim =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">0</span>, <span class="dv">10</span>)) <span class="op">+</span><span class="st"> </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span>(<span class="st">'Fraction of barcodes'</span>) <span class="op">+</span><span class="st"> </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span>() <span class="op">+</span><span class="st"> </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/scale_hue.html">scale_color_discrete</a></span>(<span class="st">'10X called cell?'</span>)</a></code></pre></div>
 <p><img src="mouse_tcell_qc_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
-<p>10X defines <a href="https://support.10xgenomics.com/single-cell-vdj/software/pipelines/latest/algorithms/cell-calling">a procedure</a> to separate cells from background that fits a Gaussian mixture model to the UMI distributions for each sample. However in saome cases, it may be desirable to implement a common QC threshold with a different stringency, such as:</p>
+<p>10X defines <a href="https://support.10xgenomics.com/single-cell-vdj/software/pipelines/latest/algorithms/cell-calling">a procedure</a> to separate cells from background that fits a Gaussian mixture model to the UMI distributions for each sample. However in some cases, it may be desirable to implement a common QC threshold with a different stringency, such as:</p>
 <ul>
 <li>Comparing across multiple samples</li>
 <li>When a sample has been enriched for a particular cell type (eg with pre-sequencing flow cytometry).</li>
@@ -282,9 +274,13 @@
 <p><img src="mouse_tcell_qc_files/figure-html/unnamed-chunk-8-1.png" width="700"></p>
 <p>Number of productive chains per replicate.</p>
 </div>
-<div id="add-a-plot-showing-chain-breakdowns-alpha-alphaalpha-beta-alpha-alpha-beta-etc" class="section level1">
+<div id="questions" class="section level1">
 <h1 class="hasAnchor">
-<a href="#add-a-plot-showing-chain-breakdowns-alpha-alphaalpha-beta-alpha-alpha-beta-etc" class="anchor"></a>Add a plot showing chain breakdowns alpha-alpha/alpha-beta, alpha-alpha-beta, etc</h1>
+<a href="#questions" class="anchor"></a>Questions</h1>
+<ol style="list-style-type: decimal">
+<li>Can/should elements of this script be included as package functionality (cell calling/filtering?)</li>
+<li>Can the QC be made more statistically principled?</li>
+</ol>
 </div>
   </div>
 
@@ -293,13 +289,12 @@
       <h2 class="hasAnchor">
 <a href="#tocnav" class="anchor"></a>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
-<li><a href="#general-questions">General questions</a></li>
-      <li><a href="#load-contig-files">Load contig files</a></li>
+<li><a href="#load-contig-files">Load contig files</a></li>
       <li><a href="#high-confidence-umis-belonging-to-t-cells-per-cell">High confidence UMIs belonging to T cells per cell</a></li>
       <li><a href="#reads-umis">Reads / UMIs</a></li>
       <li><a href="#apply-t-cell-contig-umi-filter">Apply T-cell contig UMI filter</a></li>
       <li><a href="#multi-chain-t-cells">“Multi-chain” T cells</a></li>
-      <li><a href="#add-a-plot-showing-chain-breakdowns-alpha-alphaalpha-beta-alpha-alpha-beta-etc">Add a plot showing chain breakdowns alpha-alpha/alpha-beta, alpha-alpha-beta, etc</a></li>
+      <li><a href="#questions">Questions</a></li>
       </ul>
 </div>
       </div>

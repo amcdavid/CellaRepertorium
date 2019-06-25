@@ -1,6 +1,6 @@
 setClass('FineCluster', contains = 'list', slots = c(cluster = 'ANY', distance = 'matrix', medoid = 'integer', homology = 'numeric'))
 
-setClass("ContigCellDB", slots = c(contig_tbl = 'data.frame', contig_pk = 'character', cell_tbl = 'data.frame', cell_pk = 'character', cluster_pk = 'character', cluster_tbl = 'data.frame', cluster_type = 'character', equalized = 'logical'), prototype = )
+setClass("ContigCellDB", slots = c(contig_tbl = 'data.frame', contig_pk = 'character', cell_tbl = 'data.frame', cell_pk = 'character', cluster_pk = 'character', cluster_tbl = 'data.frame', cluster_type = 'character', equalized = 'logical'))
 
 
 valid_ContigCellDB = function(object){

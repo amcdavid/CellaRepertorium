@@ -97,7 +97,7 @@ Number of pairs
 ggplot(germline_cluster$cluster_tbl %>% filter(chain == 'TRB'), aes(x = v_gene, y = j_gene, fill = avg_distance)) + geom_tile() + theme(axis.text.x = element_text(angle = 90))
 ```
 
-Average Levenstein distance of CDR3 within each pair.  This might be turned into a z-score by fitting a weighted linear model with sum-to-zero contrasts and returning the pearson residuals.  This could determine if a pairing has an unexpected small, or large, within cluster distance.
+Average Levenshtein distance of CDR3 within each pair.  This might be turned into a z-score by fitting a weighted linear model with sum-to-zero contrasts and returning the pearson residuals.  This could determine if a pairing has an unexpected small, or large, within cluster distance.
 
 
 
@@ -241,7 +241,7 @@ ggplot(aa80$contig_tbl, aes(fill = pop, x= cdr3_length)) + geom_histogram(binwid
 
 ```
 
-Plot the CDR3 length distribution for each sample and pop.  There doesn't appear to be a noticable difference between Balbc and Black6 mice, but if we needed to make sure, an appropriate procedure would be to run a mixed model with a random `sample` effect (assumed to represent a biological replicate).
+Plot the CDR3 length distribution for each sample and pop.  There doesn't appear to be a noticeable difference between BALB/c and C57BL/6J (b6) mice, but if we needed to make sure, an appropriate procedure would be to run a mixed model with a random `sample` effect (assumed to represent a biological replicate).
 
 
 ```{r cdr3_len, fig.width = 3, fig.height = 3}
