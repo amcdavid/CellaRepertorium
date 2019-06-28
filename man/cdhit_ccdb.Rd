@@ -33,7 +33,7 @@ You may need to lower it below 5 for AAseq with identity less than .7.}
 Use \code{\link[=cdhit]{cdhit()}} to cluster a \code{\link[=ContigCellDB]{ContigCellDB()}}
 }
 \examples{
-res = CellaRepertorium:::cdhit_ccdb(ccdb_ex, 'cdr3_nt', type = 'DNA',
+res = cdhit_ccdb(ccdb_ex, 'cdr3_nt', type = 'DNA',
 cluster_name = 'DNA97', identity = .965, min_length = 12, G = 1)
 res$cluster_tbl
 res$contig_tbl

@@ -65,8 +65,26 @@ fine_clustering = function(ccdb, sequence_key, type, max_affinity = NULL, keep_c
 
 }
 
+#' @describeIn left_join_warn perform a `dplyr::right_join()`
+#' @export
 right_join_warn = function(...) left_join_warn(..., join = right_join)
 
+#' Perform a `dplyr::left_join()` but check for non-key overlapping fields
+#'
+#' Perform a dplyr join, but either warn if the two tables
+#' share non-key fields  If `overwrite = TRUE`, then shared columns will pull from `x` otherwise a suffix will be added to `y`.  To perform this check, `by` must be specified, and it is an error if it is not.
+#' @inheritParams dplyr::left_join
+#' @param overwrite `logical` -- should non-key fields in y be overwritten using x, or should a suffix (".y") be added
+#' @param by `character` specifying columns in `x` and `y` to key on.
+#' @param join function giving the type of join to perform, eg, left, right, inner, outer.
+#' @param ... passed to joining function
+#'
+#' @return `data.frame` or `tibble`
+#' @export
+#'
+#' @examples
+#' left_join_warn(mtcars, mtcars, by  = 'mpg')
+#' left_join_warn(mtcars, mtcars, by = 'mpg', overwrite = TRUE)
 left_join_warn = function(x, y, by, overwrite = FALSE, join = left_join, ...){
     if(missing(by)) stop('by must be provided')
     nx = setdiff(names(x), by)
@@ -105,12 +123,13 @@ left_join_warn = function(x, y, by, overwrite = FALSE, join = left_join, ...){
 #' @param contig_fields Optional fields from `contig_tbl` that will be copied into
 #' the `cluster_tbl` from the canonical contig.
 #'
+#' @inheritParams left_join_warn
 #' @return [ContigCellDB()]
 #' @export
-#' @seealso [canonicalize_cell()]
+#' @seealso [canonicalize_cell()] [left_join_warn()]
 #' @example inst/examples/small_cluster_example.R
 canonicalize_cluster = function(ccdb, contig_filter_args = is_medoid,
-tie_break_keys = character(), order = 1, representative = ccdb$cluster_pk[1], contig_fields = c('cdr3', 'cdr3_nt', 'chain', 'v_gene', 'd_gene', 'j_gene')){
+tie_break_keys = character(), order = 1, representative = ccdb$cluster_pk[1], contig_fields = c('cdr3', 'cdr3_nt', 'chain', 'v_gene', 'd_gene', 'j_gene'), overwrite = TRUE){
     sub_contig_tbl = filter(.data = ccdb$contig_tbl, !!rlang::enexpr(contig_filter_args))
 
     if(nrow(sub_contig_tbl) != nrow(ccdb$cluster_tbl)){
@@ -127,7 +146,7 @@ tie_break_keys = character(), order = 1, representative = ccdb$cluster_pk[1], co
     cluster_tbl = cluster_tbl %>% dplyr::select(!!!syms(unique(c(ccdb$cluster_pk, contig_fields, representative))))
 
     # fill any missing clusters after the filtering
-    cluster_tbl = cluster_tbl  %>% ungroup() %>% right_join_warn(ccdb$cluster_tbl, by = ccdb$cluster_pk)
+    cluster_tbl = cluster_tbl  %>% ungroup() %>% right_join_warn(ccdb$cluster_tbl, by = ccdb$cluster_pk, overwrite = overwrite)
     cluster_tbl = cluster_tbl %>% mutate(representative = make.unique(as.character(!!sym(representative))), representative = forcats::fct_reorder(representative, n_cluster))
     contig_tbl = left_join_warn(ccdb$contig_tbl, cluster_tbl %>% dplyr::select(!!!syms(ccdb$cluster_pk), representative), by = ccdb$cluster_pk)
     replace_cluster_tbl(ccdb, cluster_tbl, contig_tbl)

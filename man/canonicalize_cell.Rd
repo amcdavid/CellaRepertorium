@@ -5,7 +5,8 @@
 \title{Find a canonical contig to represent a cell}
 \usage{
 canonicalize_cell(ccdb, contig_filter_args, tie_break_keys = c("umis",
-  "reads"), contig_fields = tie_break_keys, order = 1)
+  "reads"), contig_fields = tie_break_keys, order = 1,
+  overwrite = TRUE)
 }
 \arguments{
 \item{ccdb}{\code{\link[=ContigCellDB]{ContigCellDB()}}}
@@ -25,6 +26,8 @@ the \code{cluster_tbl} from the canonical contig.}
 \item{order}{The rank order of the contig, based on \code{tie_break_keys}
 to return.  If \code{tie_break_keys} included an ordered factor (such as chain)
 this could be used to return the second chain.}
+
+\item{overwrite}{\code{logical} -- should non-key fields in y be overwritten using x, or should a suffix (".y") be added}
 }
 \value{
 \code{ContigCellDB} with additional fields in \code{cell_tbl}
@@ -41,7 +44,7 @@ tie_break_keys = c('umis', 'reads'),
 contig_fields = c('umis', 'reads', 'chain', 'v_gene', 'd_gene', 'j_gene'))
 head(beta$cell_tbl)
 
-# Only adds fields to `cell_tbl`
+# Stable: only adds fields to `cell_tbl`
 stopifnot(all.equal(beta$cell_tbl[ccdb_ex$cell_pk],
 ccdb_ex$cell_tbl[ccdb_ex$cell_pk]))
 

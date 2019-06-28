@@ -53,7 +53,7 @@ canonicalize_by_chain = function(tbl,  cell_identifiers = 'barcode', sort_factor
 #' contig_fields = c('umis', 'reads', 'chain', 'v_gene', 'd_gene', 'j_gene'))
 #' head(beta$cell_tbl)
 #'
-#' # Only adds fields to `cell_tbl`
+#' # Stable: only adds fields to `cell_tbl`
 #' stopifnot(all.equal(beta$cell_tbl[ccdb_ex$cell_pk],
 #' ccdb_ex$cell_tbl[ccdb_ex$cell_pk]))
 #'
@@ -61,7 +61,7 @@ canonicalize_by_chain = function(tbl,  cell_identifiers = 'barcode', sort_factor
 #' umi5 = canonicalize_cell(ccdb_ex, umis > 5,
 #' tie_break_keys = c('umis', 'reads'), contig_fields = c('umis', 'cdr3'))
 #' stopifnot(all(umi5$cell_tbl$umis > 5, na.rm = TRUE))
-canonicalize_cell = function(ccdb, contig_filter_args,  tie_break_keys = c('umis', 'reads'), contig_fields = tie_break_keys, order = 1){
+canonicalize_cell = function(ccdb, contig_filter_args,  tie_break_keys = c('umis', 'reads'), contig_fields = tie_break_keys, order = 1, overwrite = TRUE){
     tbl = ccdb$contig_tbl
     # Filter with expressions in contig_filter_args
     ft = filter(.data = tbl, !!rlang::enexpr(contig_filter_args))
@@ -71,7 +71,7 @@ canonicalize_cell = function(ccdb, contig_filter_args,  tie_break_keys = c('umis
     ft2 = ft %>% group_by(!!!syms(ccdb$cell_pk)) %>% dplyr::arrange(!!!arranging) %>% dplyr::do(dplyr::slice(., order))
     cell_tbl = ccdb$cell_tbl
     # join with cell tbl (so same number of cells)
-    ccdb$cell_tbl = right_join_warn(ft2[unique(c(contig_fields, ccdb$cell_pk))], cell_tbl, by = ccdb$cell_pk)
+    ccdb$cell_tbl = right_join_warn(ft2[unique(c(contig_fields, ccdb$cell_pk))], cell_tbl, by = ccdb$cell_pk, overwrite = overwrite)
     ccdb
 }
 

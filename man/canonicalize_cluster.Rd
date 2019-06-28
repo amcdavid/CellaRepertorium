@@ -7,7 +7,7 @@
 canonicalize_cluster(ccdb, contig_filter_args = is_medoid,
   tie_break_keys = character(), order = 1,
   representative = ccdb$cluster_pk[1], contig_fields = c("cdr3",
-  "cdr3_nt", "chain", "v_gene", "d_gene", "j_gene"))
+  "cdr3_nt", "chain", "v_gene", "d_gene", "j_gene"), overwrite = TRUE)
 }
 \arguments{
 \item{ccdb}{\code{\link[=ContigCellDB]{ContigCellDB()}}}
@@ -30,6 +30,8 @@ unique. Serve as a surrogate \code{cluster_pk}.}
 
 \item{contig_fields}{Optional fields from \code{contig_tbl} that will be copied into
 the \code{cluster_tbl} from the canonical contig.}
+
+\item{overwrite}{\code{logical} -- should non-key fields in y be overwritten using x, or should a suffix (".y") be added}
 }
 \value{
 \code{\link[=ContigCellDB]{ContigCellDB()}}
@@ -57,5 +59,5 @@ contig_fields = c('chain', 'length'))
 ccdb_umi$cluster_tbl \%>\% dplyr::select(chain, length) \%>\% summary()
 }
 \seealso{
-\code{\link[=canonicalize_cell]{canonicalize_cell()}}
+\code{\link[=canonicalize_cell]{canonicalize_cell()}} \code{\link[=left_join_warn]{left_join_warn()}}
 }
