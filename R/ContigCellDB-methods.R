@@ -11,6 +11,9 @@ valid_KeyedTbl = function(tbl, keys){
         stop(sprintf("In %s, rows %s... have identical `keys`, which must uniquely identify a row.", tbl_nm,
                      paste(head(which(dups)), collapse = ',')))
     }
+    if(tibble::has_rownames(tbl)){
+        warning(sprintf('rownames in %s will be ignored.', tbl_nm))
+    }
     invisible(TRUE)
 }
 
@@ -55,14 +58,15 @@ valid_KeyedTbl = function(tbl, keys){
 #'  cdb$contig_pk
 #'  cdb$cell_pk
 #'  cdb$cluster_pk
-ContigCellDB = function(contig_tbl, contig_pk, cell_tbl, cell_pk, cluster_tbl, cluster_pk = character()){
+ContigCellDB = function(contig_tbl, contig_pk, cell_tbl, cell_pk, cluster_tbl, cluster_pk = character(),  equalize = TRUE){
+    contig_tbl = as_tibble(contig_tbl)
     valid_KeyedTbl(contig_tbl, contig_pk)
-    equalized = FALSE
     if(missing(cell_tbl)){
         if(missing(cell_pk) || !is.character(cell_pk)) stop("If `cell_tbl` missing then `cell_pk` must name columns in `contig_tbl` that identify cells")
         cell_tbl = as_tibble(unique(contig_tbl[cell_pk]))
-        equalized = TRUE
+        equalize = TRUE
     } else{
+        cell_tbl = as_tibble(cell_tbl)
         valid_KeyedTbl(cell_tbl, cell_pk)
     }
     if(missing(cluster_tbl)){
@@ -73,8 +77,8 @@ ContigCellDB = function(contig_tbl, contig_pk, cell_tbl, cell_pk, cluster_tbl, c
         }
     }
     valid_KeyedTbl(cluster_tbl, cluster_pk)
-    obj = new('ContigCellDB', contig_tbl = contig_tbl, contig_pk = contig_pk, cell_tbl = cell_tbl, cell_pk = cell_pk, cluster_tbl = cluster_tbl, cluster_pk = cluster_pk, equalized = equalized)
-    if(!equalized) equalize_ccdb(obj) else obj
+    obj = new('ContigCellDB', contig_tbl = contig_tbl, contig_pk = contig_pk, cell_tbl = cell_tbl, cell_pk = cell_pk, cluster_tbl = cluster_tbl, cluster_pk = cluster_pk, equalized = equalize)
+    if(equalize) equalize_ccdb(obj) else obj
 }
 
 #' @describeIn ContigCellDB-fun provide defaults that correspond to identifiers in 10X VDJ data
@@ -104,11 +108,11 @@ replace_cdb = function(x, name, value){
     }
     if(name %in% c('cell_tbl','cell_pk')){
         valid_KeyedTbl(x$cell_tbl, x$cell_pk)
-        x = equalize_ccdb(x)
+        x = equalize_ccdb(x, contig = TRUE, cell = FALSE, cluster = FALSE)
     }
     if(name %in% c('cluster_tbl','cluster_pk')){
         valid_KeyedTbl(x$cluster_tbl, x$cluster_pk)
-        x = equalize_ccdb(x)
+        x = equalize_ccdb(x, contig = TRUE, cell = FALSE, cluster = FALSE)
     }
     invisible(x)
 }
@@ -148,13 +152,54 @@ setMethod('show', signature = c(object = 'ContigCellDB'), function(object){
     cat(paste(object@cell_pk, collapse = ', '), '.\n', sep = '')
 })
 
+setMethod('[', signature = c(x = 'ContigCellDB', i = 'ANY', j = 'missing'), function(x, i, ...){
+    i = S4Vectors::NSBS(i, x)
+    y = x
+    y$cell_tbl = x$cell_tbl[i@subscript,]
+    y
+})
+
+# Should this be c(ncol(x$cell_tbl), nrow(x$cell_tbl))? Seems unlikely..
+setMethod('dim', signature = c(x = 'ContigCellDB'), function(x) dim(x$cell_tbl))
+
+setMethod('dimnames', signature = c(x = 'ContigCellDB'), function(x){
+   dimnames(x$cell_tbl)
+})
+
+setMethod('nrow', signature = c(x = 'ContigCellDB'), function(x){
+    nrow(x$cell_tbl)
+})
+
+setMethod('ncol', signature = c(x = 'ContigCellDB'), function(x){
+    ncol(x$cell_tbl)
+})
+
+setMethod('NROW', signature = c(x = 'ContigCellDB'), function(x){
+    NROW(x$cell_tbl)
+})
+
+setMethod('NCOL', signature = c(x = 'ContigCellDB'), function(x){
+    NCOL(x$cell_tbl)
+})
+
+setMethod('showAsCell', signature = c(object = 'ContigCellDB'), function(object){
+    not_cellkey = setdiff(names(object$cell_tbl), object$cell_pk)
+    showAsCell(object$cell_tbl[not_cellkey])
+})
+
+setAs('ContigCellDB', 'data.frame', function(from){
+    from$cell_tbl
+})
+
+as.data.frame.ContigCellDB = function(object) as(object, 'data.frame')
+
+
 #' @importFrom dplyr semi_join left_join right_join
-equalize_ccdb = function(x, equalize_by_cluster = TRUE){
+equalize_ccdb = function(x, cell = TRUE, contig = TRUE, cluster = TRUE){
     # Must use @ to avoid infinite loop!
-    if(nrow(x$cluster_tbl) > 0 && equalize_by_cluster) x@contig_tbl = semi_join(x$contig_tbl, x$cluster_tbl, by = x$cluster_pk)
-    x@cell_tbl = semi_join(x$cell_tbl, x$contig_tbl, by = x$cell_pk)
-    x@contig_tbl = semi_join(x$contig_tbl, x$cell_tbl, by = x$cell_pk)
-    if(nrow(x$cluster_tbl) > 0) x@cluster_tbl = semi_join(x$cluster_tbl, x$contig_tbl, by = x$cluster_pk)
+    if(cell) x@cell_tbl = semi_join(x$cell_tbl, x$contig_tbl, by = x$cell_pk)
+    if(contig) x@contig_tbl = semi_join(x$contig_tbl, x$cell_tbl, by = x$cell_pk)
+    if(nrow(x$cluster_tbl) > 0 && cluster) x@cluster_tbl = semi_join(x$cluster_tbl, x$contig_tbl, by = x$cluster_pk)
     x@equalized = TRUE
     x
 }
@@ -168,9 +213,9 @@ replace_cluster_tbl = function(ccdb, cluster_tbl, contig_tbl, cluster_pk){
     if(!missing(contig_tbl)){
         ccdb@contig_tbl = contig_tbl
         valid_KeyedTbl(ccdb$contig_tbl, ccdb$contig_pk)
+        ccdb = equalize_ccdb(ccdb, cell = FALSE, cluster = FALSE, contig = TRUE)
     }
     valid_KeyedTbl(ccdb$cluster_tbl, ccdb$cluster_pk)
-    ccdb = equalize_ccdb(ccdb)
     validObject(ccdb)
     ccdb
 }
