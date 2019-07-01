@@ -42,20 +42,27 @@ mutate_cdb <- function(ccdb, ..., which_tbl='contig_tbl'){
 }
 
 
-#' Implement cell QC
+#' make the cross table by celltype
 #'
-#' @param contig_tbl contig tbl
-#' @param contig_keys names of the slots in the tbl
-#' @param plot logic variable. If TRUE, then plot the figure.
+#' @param ccdb A ContigCellDB object
+#' @param type the cell type, the default one is "T_ab"
 #'
-#' @return a tbl or data frame
+#' @return a cross table
 #' @export
 #'
 #' @examples
-cellqc <- function(contig_tbl, contig_keys, plot = TRUE){
-  total_umi <- contig_tbl %>% group_by(!!!syms(contig_keys)) %>% summarize(total_umi = sum(umis)) %>% rename(is_T = 'celltype == "T_ab')
-  if (plot){
-    ggplot(filter(total_umi, high_confidence, is_T), aes(color = factor(is_cell), x = total_umi, group = interaction(is_cell, sample, pop))) + stat_ecdf() + coord_cartesian(xlim = c(0, 10)) + ylab('Fraction of barcodes') + theme_minimal() + scale_color_discrete('10X called cell?')
-  }
+#' cdb = ContigCellDB(all_anno,contig_pk = c('barcode','pop','sample','contig_id'),cell_pk = c('barcode','pop','sample'))
+#' total_umi <- crosstab_by_celltype(cdb)
+crosstab_by_celltype <- function(ccdb,type="T_ab"){
+  # add celltype column
+  ccdb$contig_tbl <- ccdb$contig_tbl %>% dplyr::mutate(celltype = case_when(chain %in% c('TRA', 'TRB') ~ "T_ab", chain %in% c('TRD', 'TRG') ~ 'T_gd', chain == 'Multi' ~ 'Multi', chain %in% c('IGH','IGK', 'IGL') ~ 'B', TRUE ~ NA_character_))
+  
+  # group by cell_keys
+  cell_keys <- union(ccdb$cell_pk,'celltype')
+  total_umi <- ccdb$contig_tbl %>% group_by(!!!syms(cell_keys)) %>% summarize(total_umi = sum(umis))
+  
+  # filtering
+  total_umi <- filter(total_umi,celltype == type)
+  
   return(total_umi)
 }
