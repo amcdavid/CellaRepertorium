@@ -45,7 +45,6 @@ mutate_cdb <- function(ccdb, ..., which_tbl='contig_tbl'){
 #' make the cross table by celltype
 #'
 #' @param ccdb A ContigCellDB object
-#' @param type the cell type, the default one is "T_ab"
 #'
 #' @return a cross table
 #' @export
@@ -53,16 +52,14 @@ mutate_cdb <- function(ccdb, ..., which_tbl='contig_tbl'){
 #' @examples
 #' cdb = ContigCellDB(all_anno,contig_pk = c('barcode','pop','sample','contig_id'),cell_pk = c('barcode','pop','sample'))
 #' total_umi <- crosstab_by_celltype(cdb)
-crosstab_by_celltype <- function(ccdb,type="T_ab"){
+crosstab_by_celltype <- function(ccdb){
   # add celltype column
   ccdb$contig_tbl <- ccdb$contig_tbl %>% dplyr::mutate(celltype = case_when(chain %in% c('TRA', 'TRB') ~ "T_ab", chain %in% c('TRD', 'TRG') ~ 'T_gd', chain == 'Multi' ~ 'Multi', chain %in% c('IGH','IGK', 'IGL') ~ 'B', TRUE ~ NA_character_))
   
   # group by cell_keys
   cell_keys <- union(ccdb$cell_pk,'celltype')
-  total_umi <- ccdb$contig_tbl %>% group_by(!!!syms(cell_keys)) %>% summarize(total_umi = sum(umis))
+  total_umi <- ccdb$contig_tbl %>% group_by(!!!syms(cell_keys)) %>% summarize(total_umi = sum(umis)) %>% tidyr::spread(celltype, 'total_umi', fill = 0)
   
-  # filtering
-  total_umi <- filter(total_umi,celltype == type)
   
   return(total_umi)
 }
