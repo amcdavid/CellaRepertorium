@@ -89,37 +89,15 @@ ContigCellDB_10XVDJ = function(contig_tbl, contig_pk = c('barcode', 'contig_id')
     ContigCellDB(contig_tbl = contig_tbl, contig_pk = contig_pk, cell_pk = cell_pk)
 }
 
-#' Access public members of ContigCellDB object
-#'
-#' @param x A ContigCellDB object
-#' @param name a slot of a ContigCellDB object (one of  `c('contig_tbl', 'cell_tbl', 'contig_pk', 'cell_pk', 'cluster_tbl', 'cluster_pk')`)
-#'
-#' @return Update or return a slot of [ContigCellDB()]
-#' @export
-#' @aliases ContigCellDB-mutate
-#' @examples
-#' ccdb_ex$contig_tbl
-#' ccdb_ex$cell_tbl
-#' ccdb_ex$cluster_tbl
-setMethod("$", signature = c(x = 'ContigCellDB'), function(x, name){
+access_cdb = function(x, name){
     if(name %in% c('contig_tbl', 'cell_tbl', 'contig_pk', 'cell_pk', 'cluster_tbl', 'cluster_pk')){
         slot(x, name)
     } else{
         stop("Cannot access member ", name)
     }
-})
+}
 
-#' @param value The value assigned to a slot of ContigCellDB object
-#' @rdname cash-ContigCellDB-method
-#' @export
-#'
-#' @examples
-#' ccdb_ex$contig_pk = c("sample","barcode","contig_id") # 'pop' is technically redundant with 'sample'
-#' # Take a subset of ccdb_ex
-#' ccdb_ex
-#' ccdb_ex$contig_tbl = dplyr::filter(ccdb_ex$contig_tbl, pop == 'b6')
-#' ccdb_ex
-setReplaceMethod("$", signature = c(x = 'ContigCellDB'), function(x, name, value){
+replace_cdb = function(x, name, value){
     if(name %in% c('contig_tbl', 'cell_tbl', 'contig_pk', 'cell_pk', 'cluster_tbl', 'cluster_pk')){
         slot(x, name) <- value
         x@equalized = FALSE
@@ -139,7 +117,33 @@ setReplaceMethod("$", signature = c(x = 'ContigCellDB'), function(x, name, value
         x = equalize_ccdb(x)
     }
     invisible(x)
-})
+}
+
+#' Access public members of ContigCellDB object
+#'
+#' @param x A ContigCellDB object
+#' @param name a slot of a ContigCellDB object (one of  `c('contig_tbl', 'cell_tbl', 'contig_pk', 'cell_pk', 'cluster_tbl', 'cluster_pk')`)
+#'
+#' @return Update or return a slot of [ContigCellDB()]
+#' @export
+#' @aliases ContigCellDB-mutate
+#' @examples
+#' ccdb_ex$contig_tbl
+#' ccdb_ex$cell_tbl
+#' ccdb_ex$cluster_tbl
+setMethod("$", signature = c(x = 'ContigCellDB'), access_cdb)
+
+#' @param value The value assigned to a slot of ContigCellDB object
+#' @rdname cash-ContigCellDB-method
+#' @export
+#'
+#' @examples
+#' ccdb_ex$contig_pk = c("sample","barcode","contig_id") # 'pop' is technically redundant with 'sample'
+#' # Take a subset of ccdb_ex
+#' ccdb_ex
+#' ccdb_ex$contig_tbl = dplyr::filter(ccdb_ex$contig_tbl, pop == 'b6')
+#' ccdb_ex
+setReplaceMethod("$", signature = c(x = 'ContigCellDB'), replace_cdb)
 
 setMethod('show', signature = c(object = 'ContigCellDB'), function(object){
     cat(class(object), "of", nrow(object$contig_tbl), "contigs")
