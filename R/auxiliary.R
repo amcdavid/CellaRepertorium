@@ -14,9 +14,9 @@
 #' cdb <- ContigCellDB_10XVDJ(contigs_qc, contig_pk = c('barcode', 'pop', 'sample', 'contig_id'), cell_pk = c('barcode', 'pop', 'sample'))
 #' new_cdb <- filter_cdb(cdb,full_length, productive == 'True', high_confidence, chain != 'Multi', str_length(cdr3) > MIN_CDR3_AA)
 filter_cdb <- function(ccdb, ..., which_tbl='contig_tbl'){
-  tbl <- slot(ccdb,which_tbl)
+  tbl <- access_cdb(ccdb,which_tbl)
   tbl <- dplyr::filter(.data=tbl,!!!rlang::quos(...))
-  slot(ccdb,which_tbl) <- tbl
+  ccdb <- replace_cdb(ccdb,which_tbl,tbl)
   return(ccdb)
 }
 
@@ -35,9 +35,9 @@ filter_cdb <- function(ccdb, ..., which_tbl='contig_tbl'){
 #' cdb <- ContigCellDB_10XVDJ(contigs_qc, contig_pk = c('barcode', 'pop', 'sample', 'contig_id'), cell_pk = c('barcode', 'pop', 'sample'))
 #' new_cdb <- mutate_cdb(cdb, new_col = 1)
 mutate_cdb <- function(ccdb, ..., which_tbl='contig_tbl'){
-  tbl <- slot(ccdb,which_tbl)
+  tbl <- access_cdb(ccdb,which_tbl)
   tbl <- tbl %>% dplyr::mutate(!!!rlang::quos(...))
-  slot(ccdb,which_tbl) <- tbl
+  ccdb <- replace_cdb(ccdb,which_tbl,tbl)
   return(ccdb)
 }
 
@@ -54,12 +54,12 @@ mutate_cdb <- function(ccdb, ..., which_tbl='contig_tbl'){
 #' total_umi <- crosstab_by_celltype(cdb)
 crosstab_by_celltype <- function(ccdb){
   # add celltype column
-  ccdb$contig_tbl <- ccdb$contig_tbl %>% dplyr::mutate(celltype = case_when(chain %in% c('TRA', 'TRB') ~ "T_ab", chain %in% c('TRD', 'TRG') ~ 'T_gd', chain == 'Multi' ~ 'Multi', chain %in% c('IGH','IGK', 'IGL') ~ 'B', TRUE ~ NA_character_))
+  ccdb$contig_tbl <- ccdb$contig_tbl %>% dplyr::mutate(celltype = case_when(chain %in% c('TRA', 'TRB') ~ "T_ab", chain %in% c('TRD', 'TRG') ~ 'T_gd', chain == 'Multi' ~ 'Multi', chain %in% c('IGH','IGK', 'IGL') ~ 'B', TRUE ~ 'Others'))
   
   # group by cell_keys
   cell_keys <- union(ccdb$cell_pk,'celltype')
   total_umi <- ccdb$contig_tbl %>% group_by(!!!syms(cell_keys)) %>% summarize(total_umi = sum(umis)) %>% tidyr::spread(celltype, 'total_umi', fill = 0)
-  
+  total_umi <- left_join_warn(ccdb$cell_tbl,total_umi, by = ccdb$cell_pk)
   
   return(total_umi)
 }

@@ -59,13 +59,10 @@ all_anno = samp_map %>% rowwise() %>% mutate(anno = list(read_csv(anno_file, col
 ))))
 
 all_anno = all_anno %>% unnest() 
-# %>% 
-#     # write a column specifying what cell type the contig belonged to
-#     mutate(celltype = case_when(chain %in% c('TRA', 'TRB') ~ "T_ab", chain %in% c('TRD', 'TRG') ~ 'T_gd', chain == 'Multi' ~ 'Multi', chain %in% c('IGH','IGK', 'IGL') ~ 'B', TRUE ~ NA_character_))
 
-cdb = ContigCellDB(all_anno,contig_pk = c('barcode','pop','sample','contig_id'),cell_pk = c('barcode','pop','sample'))
+cdb = ContigCellDB(all_anno,contig_pk = c('barcode','pop','sample','contig_id'),cell_tbl = unique(all_anno[c("barcode","pop","sample","is_cell")]),cell_pk = c('barcode','pop','sample'))
 
-cdb$contig_tbl = dplyr::mutate(cdb$contig_tbl,celltype = case_when(chain %in% c('TRA', 'TRB') ~ "T_ab", chain %in% c('TRD', 'TRG') ~ 'T_gd', chain == 'Multi' ~ 'Multi', chain %in% c('IGH','IGK', 'IGL') ~ 'B', TRUE ~ NA_character_))
+cdb = filter_cdb(cdb,high_confidence)
 
 ```
 
@@ -78,9 +75,10 @@ We read in the contig annotation file for each of the samples, and annotate the 
 # High confidence UMIs belonging to T cells per cell
 
 ```{r}
-total_umi = cdb$contig_tbl  %>% group_by(sample, pop, barcode, is_cell, high_confidence, celltype == 'T_ab') %>% summarize(total_umi = sum(umis)) %>% rename(is_T = `celltype == "T_ab"`)
+total_umi = crosstab_by_celltype(cdb)
+T_ab_umi = total_umi[c(cdb$cell_pk,"is_cell","T_ab")]
 
-ggplot(filter(total_umi, high_confidence, is_T), aes(color = factor(is_cell), x = total_umi, group = interaction(is_cell, sample, pop))) + stat_ecdf() + coord_cartesian(xlim = c(0, 10)) + ylab('Fraction of barcodes') + theme_minimal() + scale_color_discrete('10X called cell?')
+ggplot(T_ab_umi, aes(color = factor(is_cell), x = T_ab, group = interaction(is_cell, sample, pop))) + stat_ecdf() + coord_cartesian(xlim = c(0, 10)) + ylab('Fraction of barcodes') + theme_minimal() + scale_color_discrete('10X called cell?')
 ```
 
 10X defines [a procedure](https://support.10xgenomics.com/single-cell-vdj/software/pipelines/latest/algorithms/cell-calling)  to separate cells from background that fits a Gaussian mixture model to the UMI distributions for each sample.  However in some cases, it may be desirable to implement a common QC threshold with a different stringency, such as:
