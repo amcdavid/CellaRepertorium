@@ -58,9 +58,15 @@ all_anno = samp_map %>% rowwise() %>% mutate(anno = list(read_csv(anno_file, col
   raw_consensus_id = col_character()
 ))))
 
-all_anno = all_anno %>% unnest() %>% 
-    # write a column specifying what cell type the contig belonged to
-    mutate(celltype = case_when(chain %in% c('TRA', 'TRB') ~ "T_ab", chain %in% c('TRD', 'TRG') ~ 'T_gd', chain == 'Multi' ~ 'Multi', chain %in% c('IGH','IGK', 'IGL') ~ 'B', TRUE ~ NA_character_))
+all_anno = all_anno %>% unnest() 
+# %>% 
+#     # write a column specifying what cell type the contig belonged to
+#     mutate(celltype = case_when(chain %in% c('TRA', 'TRB') ~ "T_ab", chain %in% c('TRD', 'TRG') ~ 'T_gd', chain == 'Multi' ~ 'Multi', chain %in% c('IGH','IGK', 'IGL') ~ 'B', TRUE ~ NA_character_))
+
+cdb = ContigCellDB(all_anno,contig_pk = c('barcode','pop','sample','contig_id'),cell_pk = c('barcode','pop','sample'))
+
+cdb$contig_tbl = dplyr::mutate(cdb$contig_tbl,celltype = case_when(chain %in% c('TRA', 'TRB') ~ "T_ab", chain %in% c('TRD', 'TRG') ~ 'T_gd', chain == 'Multi' ~ 'Multi', chain %in% c('IGH','IGK', 'IGL') ~ 'B', TRUE ~ NA_character_))
+
 ```
 
 The pipeline for assembling reads into contigs, and mapping them to UMIs and cells is described in [the 10X genomics documentation](https://support.10xgenomics.com/single-cell-vdj/software/pipelines/latest/algorithms/overview), and its source code is available [here](https://github.com/10XGenomics/cellranger/tree/5f5a6293bbc067e1965e50f0277286914b96c908).
@@ -72,7 +78,7 @@ We read in the contig annotation file for each of the samples, and annotate the 
 # High confidence UMIs belonging to T cells per cell
 
 ```{r}
-total_umi = all_anno  %>% group_by(sample, pop, barcode, is_cell, high_confidence, celltype == 'T_ab') %>% summarize(total_umi = sum(umis)) %>% rename(is_T = `celltype == "T_ab"`)
+total_umi = cdb$contig_tbl  %>% group_by(sample, pop, barcode, is_cell, high_confidence, celltype == 'T_ab') %>% summarize(total_umi = sum(umis)) %>% rename(is_T = `celltype == "T_ab"`)
 
 ggplot(filter(total_umi, high_confidence, is_T), aes(color = factor(is_cell), x = total_umi, group = interaction(is_cell, sample, pop))) + stat_ecdf() + coord_cartesian(xlim = c(0, 10)) + ylab('Fraction of barcodes') + theme_minimal() + scale_color_discrete('10X called cell?')
 ```
@@ -87,7 +93,7 @@ When we consider only high confidence UMIs that unambiguous map to T cells, most
 # Reads / UMIs
 
 ```{r}
-qual_plot = ggplot(all_anno, aes(x = celltype, y= umis)) + geom_violin() + geom_jitter() + facet_wrap(~sample + pop) + scale_y_log10() + xlab("Annotated cell type")
+qual_plot = ggplot(cdb$contig_tbl, aes(x = celltype, y= umis)) + geom_violin() + geom_jitter() + facet_wrap(~sample + pop) + scale_y_log10() + xlab("Annotated cell type")
 
 qual_plot 
 qual_plot + aes(y = reads)
@@ -107,7 +113,7 @@ knitr::kable(total_cells)
 Apply a filter on UMIs.
 
 ```{r}
-contigs_qc = semi_join(all_anno, good_bc %>% select(sample, pop, barcode)) %>% 
+contigs_qc = semi_join(cdb$contig_tbl, good_bc %>% select(sample, pop, barcode)) %>% 
   filter(full_length, productive == 'True', high_confidence, chain != 'Multi')
 ```
 
