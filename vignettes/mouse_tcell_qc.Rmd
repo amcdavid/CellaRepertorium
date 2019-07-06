@@ -59,16 +59,24 @@ all_anno = samp_map %>% rowwise() %>% mutate(anno = list(read_csv(anno_file, col
 ))))
 
 all_anno = all_anno %>% unnest() 
-
-cdb = ContigCellDB(all_anno,contig_pk = c('barcode','pop','sample','contig_id'),cell_tbl = unique(all_anno[c("barcode","pop","sample","is_cell")]),cell_pk = c('barcode','pop','sample'))
-
-cdb = filter_cdb(cdb,high_confidence)
-
 ```
 
+We read in several files of annotated "contigs" output from 10X genomics VDJ version 3.0.
 The pipeline for assembling reads into contigs, and mapping them to UMIs and cells is described in [the 10X genomics documentation](https://support.10xgenomics.com/single-cell-vdj/software/pipelines/latest/algorithms/overview), and its source code is available [here](https://github.com/10XGenomics/cellranger/tree/5f5a6293bbc067e1965e50f0277286914b96c908).
 
-[Comment in greater depth on what output we are using, maybe make a schematic?]
+```{r}
+cell_tbl = unique(all_anno[c("barcode","pop","sample","is_cell")])
+cdb = ContigCellDB(all_anno,contig_pk = c('barcode','pop','sample','contig_id'),cell_tbl = cell_tbl, cell_pk = c('barcode','pop','sample'))
+```
+
+Note that initially there are `r nrow(cdb$contig_tbl)` contigs.
+
+```{r}
+cdb = mutate_cdb(cdb, celltype = guess_celltype(chain))
+cdb = filter_cdb(cdb,high_confidence)
+```
+
+After filtering for only high_confidence contigs there are `r nrow(cdb$contig_tbl)` contigs.
 
 We read in the contig annotation file for each of the samples, and annotate the contig as a alpha-beta T cell, gamma-delta T cell, B cell or chimeric "multi" cell type based on where various 
 
@@ -103,7 +111,7 @@ The number of UMIs and reads by sample and annotated cell type.
 
 ```{r, results = 'asis'}
 # At least 2 UMI mapping to high confidence T cell contigs.
-good_bc = total_umi %>% ungroup() %>% filter(is_cell) %>% filter(total_umi >= 2, is_T) %>% filter(high_confidence)
+good_bc = total_umi %>% ungroup() %>% filter(is_cell) %>% filter(T_ab >= 2)
 total_cells = good_bc %>% group_by(sample, pop) %>% summarize(good_bc = n())
 knitr::kable(total_cells)
 ```

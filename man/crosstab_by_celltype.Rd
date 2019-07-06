@@ -2,7 +2,7 @@
 % Please edit documentation in R/auxiliary.R
 \name{crosstab_by_celltype}
 \alias{crosstab_by_celltype}
-\title{make the cross table by celltype}
+\title{Count contig UMIs by celltype}
 \usage{
 crosstab_by_celltype(ccdb)
 }
@@ -10,12 +10,17 @@ crosstab_by_celltype(ccdb)
 \item{ccdb}{A ContigCellDB object}
 }
 \value{
-a cross table
+a table, keyed by \code{cell_pk} counting UMIs per celltype
 }
 \description{
-make the cross table by celltype
+Count contig UMIs by celltype
 }
 \examples{
-cdb = ContigCellDB(all_anno,contig_pk = c('barcode','pop','sample','contig_id'),cell_pk = c('barcode','pop','sample'))
-total_umi <- crosstab_by_celltype(cdb)
+data(ccdb_ex)
+nrow(ccdb_ex$cell_tbl)
+total_umi = crosstab_by_celltype(ccdb_ex)
+nrow(total_umi)
+}
+\seealso{
+\code{\link[=guess_celltype]{guess_celltype()}}
 }
