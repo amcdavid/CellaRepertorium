@@ -104,15 +104,15 @@ replace_cdb = function(x, name, value){
     } else{
         stop("Cannot access member ", name)
     }
-    if(name == 'contig_tbl'){
+    if(name %in% c('contig_tbl','contig_pk')){
         valid_KeyedTbl(x$contig_tbl, x$contig_pk)
         x = equalize_ccdb(x)
     }
-    if(name == 'cell_tbl'){
+    if(name %in% c('cell_tbl','cell_pk')){
         valid_KeyedTbl(x$cell_tbl, x$cell_pk)
         x = equalize_ccdb(x)
     }
-    if(name == 'cluster_tbl'){
+    if(name %in% c('cluster_tbl','cluster_pk')){
         valid_KeyedTbl(x$cluster_tbl, x$cluster_pk)
         x = equalize_ccdb(x)
     }
