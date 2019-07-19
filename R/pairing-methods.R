@@ -312,7 +312,7 @@ enumerate_pairing = function(ccdb, chain_key = 'chain', chain_recode_fun = NULL)
     if(!is.function(chain_recode_fun)) stop("`chain_recode_fun` must be a function, NULL, or 'guess'")
 
     chain_keys = union(chain_key, ccdb$cell_pk)
-    chain_count = ccdb$contig_tbl %>% group_by(!!!syms(chain_keys)) %>% summarize(n_chains = n()) %>% tidyr::spread(chain_key, 'n_chains', fill = 0)
+    chain_count = ccdb$contig_tbl %>% group_by(!!!syms(chain_keys)) %>% summarize(n_chains = dplyr::n()) %>% tidyr::spread(chain_key, 'n_chains', fill = 0)
     chain_type = ccdb$contig_tbl %>% group_by(!!!syms(ccdb$cell_pk)) %>% summarize(raw_chain_type = paste(sort(!!sym(chain_key)), collapse = '_'))
     chain_summary = left_join(chain_type, chain_count, by = ccdb$cell_pk) %>% ungroup()
     chain_recode_fun(chain_summary)
