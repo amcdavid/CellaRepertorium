@@ -44,7 +44,7 @@ ccdb_test$cell_tbl
 
 purity_ex = function(cluster_idx, subject) {
 n_label_cluster = tibble(cluster_idx = cluster_idx, subject = subject) \%>\%
-group_by(cluster_idx, subject) \%>\% summarize(n = n()) \%>\% ungroup()
+group_by(cluster_idx, subject) \%>\% summarize(n = dplyr::n()) \%>\% ungroup()
 #Average number of singleton clusters for each subject
 singletons = mean(n_label_cluster$n == 1)
 singletons

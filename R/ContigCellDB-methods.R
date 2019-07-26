@@ -168,7 +168,7 @@ replace_cluster_tbl = function(ccdb, cluster_tbl, contig_tbl, cluster_pk){
     if(nrow(ccdb$cluster_tbl)>0 && !missing(cluster_pk)){
         warning("Replacing `cluster_tbl` with ", paste(ccdb$cluster_pk, sep = ', ', '.'))
     }
-    if(!missing(cluster_pk)) ccdb$cluster_pk = cluster_pk
+    if(!missing(cluster_pk)) ccdb@cluster_pk = cluster_pk
     ccdb@cluster_tbl = cluster_tbl
     if(!missing(contig_tbl)){
         ccdb@contig_tbl = contig_tbl
