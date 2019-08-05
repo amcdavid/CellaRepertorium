@@ -1,10 +1,4 @@
-# To Document
-# primary_keys, primary_keys<- -- use `$` to access/replace. Table not checked for validity, but I think should be?
-# subset (subset a table, then equalize...)
-
-
 # Todo
-# canonicalize contigs on clusters
 # combine methods
 
 valid_KeyedTbl = function(tbl, keys){
@@ -155,8 +149,9 @@ setMethod('show', signature = c(object = 'ContigCellDB'), function(object){
 })
 
 #' @importFrom dplyr semi_join left_join right_join
-equalize_ccdb = function(x){
+equalize_ccdb = function(x, equalize_by_cluster = TRUE){
     # Must use @ to avoid infinite loop!
+    if(nrow(x$cluster_tbl) > 0 && equalize_by_cluster) x@contig_tbl = semi_join(x$contig_tbl, x$cluster_tbl, by = x$cluster_pk)
     x@cell_tbl = semi_join(x$cell_tbl, x$contig_tbl, by = x$cell_pk)
     x@contig_tbl = semi_join(x$contig_tbl, x$cell_tbl, by = x$cell_pk)
     if(nrow(x$cluster_tbl) > 0) x@cluster_tbl = semi_join(x$cluster_tbl, x$contig_tbl, by = x$cluster_pk)
