@@ -124,12 +124,19 @@ left_join_warn = function(x, y, by, overwrite = FALSE, join = left_join, ...){
 #' the `cluster_tbl` from the canonical contig.
 #'
 #' @inheritParams left_join_warn
-#' @return [ContigCellDB()]
+#' @return [ContigCellDB()] with some number of clusters/contigs/cells but with "canonical" values copied into `cluster_tbl`
 #' @export
 #' @seealso [canonicalize_cell()] [left_join_warn()]
 #' @example inst/examples/small_cluster_example.R
-canonicalize_cluster = function(ccdb, contig_filter_args = is_medoid,
+canonicalize_cluster = function(ccdb, contig_filter_args,
 tie_break_keys = character(), order = 1, representative = ccdb$cluster_pk[1], contig_fields = c('cdr3', 'cdr3_nt', 'chain', 'v_gene', 'd_gene', 'j_gene'), overwrite = TRUE){
+    if(missing(contig_filter_args) && 'is_medoid' %in% names(ccdb$contig_tbl)){
+        message("Filtering `contig_tbl` by `is_medoid`, override by setting `contig_filter_args == TRUE`")
+        contig_filter_args = quote(is_medoid)
+    }
+    if(!('is_medoid' %in% names(ccdb$contig_tbl))){
+        stop('Run `fine_clustering` first.')
+    }
     sub_contig_tbl = filter(.data = ccdb$contig_tbl, !!rlang::enexpr(contig_filter_args))
 
     if(nrow(sub_contig_tbl) != nrow(ccdb$cluster_tbl)){

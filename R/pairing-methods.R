@@ -43,7 +43,7 @@ canonicalize_by_chain = function(tbl,  cell_identifiers = 'barcode', sort_factor
 #' Fields in `contig_fields` will be copied over to the `cell_tbl`.
 #' @inheritParams canonicalize_cluster
 #'
-#' @return `ContigCellDB` with additional fields in `cell_tbl`
+#' @return [ContigCellDB()] with some number of clusters/contigs/cells but with "canonical" values copied into `cell_tbl`
 #' @export
 #' @seealso [canonicalize_cluster()]
 #' @examples
@@ -61,10 +61,11 @@ canonicalize_by_chain = function(tbl,  cell_identifiers = 'barcode', sort_factor
 #' umi5 = canonicalize_cell(ccdb_ex, umis > 5,
 #' tie_break_keys = c('umis', 'reads'), contig_fields = c('umis', 'cdr3'))
 #' stopifnot(all(umi5$cell_tbl$umis > 5, na.rm = TRUE))
-canonicalize_cell = function(ccdb, contig_filter_args,  tie_break_keys = c('umis', 'reads'), contig_fields = tie_break_keys, order = 1, overwrite = TRUE){
+canonicalize_cell = function(ccdb, contig_filter_args = TRUE,  tie_break_keys = c('umis', 'reads'), contig_fields = tie_break_keys, order = 1, overwrite = TRUE){
     tbl = ccdb$contig_tbl
     # Filter with expressions in contig_filter_args
-    ft = filter(.data = tbl, !!rlang::enexpr(contig_filter_args))
+    filter_arg = rlang::enexpr(contig_filter_args)
+    ft = filter(.data = tbl, !!filter_arg)
     # setup quosures to arrange the data
     arranging = purrr::map(tie_break_keys, ~ rlang::quo(desc(!!sym(.x))))
     # take first row of each cell
