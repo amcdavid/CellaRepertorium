@@ -4,9 +4,9 @@
 \alias{canonicalize_cell}
 \title{Find a canonical contig to represent a cell}
 \usage{
-canonicalize_cell(ccdb, contig_filter_args, tie_break_keys = c("umis",
-  "reads"), contig_fields = tie_break_keys, order = 1,
-  overwrite = TRUE)
+canonicalize_cell(ccdb, contig_filter_args = TRUE,
+  tie_break_keys = c("umis", "reads"), contig_fields = tie_break_keys,
+  order = 1, overwrite = TRUE)
 }
 \arguments{
 \item{ccdb}{\code{\link[=ContigCellDB]{ContigCellDB()}}}
@@ -30,7 +30,7 @@ this could be used to return the second chain.}
 \item{overwrite}{\code{logical} -- should non-key fields in y be overwritten using x, or should a suffix (".y") be added}
 }
 \value{
-\code{ContigCellDB} with additional fields in \code{cell_tbl}
+\code{\link[=ContigCellDB]{ContigCellDB()}} with some number of clusters/contigs/cells but with "canonical" values copied into \code{cell_tbl}
 }
 \description{
 Using filtering in \code{contig_filter_args} and sorting in \code{tie_break_keys} and \code{order} find a

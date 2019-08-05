@@ -2,7 +2,7 @@ Type: Package
 Package: CellaRepertorium
 Title: Methods for clustering and analyzing high-throughput
     single cell immune cell repertoires (RepSeq)
-Version: 0.3.3
+Version: 0.3.4
 Authors@R: 
     c(person(given = "Andrew",
              family = "McDavid",
