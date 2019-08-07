@@ -63,6 +63,9 @@ canonicalize_by_chain = function(tbl,  cell_identifiers = 'barcode', sort_factor
 #' stopifnot(all(umi5$cell_tbl$umis > 5, na.rm = TRUE))
 canonicalize_cell = function(ccdb, contig_filter_args = TRUE,  tie_break_keys = c('umis', 'reads'), contig_fields = tie_break_keys, order = 1, overwrite = TRUE){
     tbl = ccdb$contig_tbl
+    req_contig_fields = unique(c(contig_fields, tie_break_keys))
+    if (length(missing_contig <- setdiff(req_contig_fields, names(tbl))) > 0) stop('`contig_tbl` is missing fields, ', paste(missing_contig, collapse = ', '), '.')
+
     # Filter with expressions in contig_filter_args
     filter_arg = rlang::enexpr(contig_filter_args)
     ft = filter(.data = tbl, !!filter_arg)

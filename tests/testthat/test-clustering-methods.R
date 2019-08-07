@@ -36,22 +36,18 @@ test_that("additional clustering of sequences within groups",{
 
 cdb_fine <- fine_clustering(cdb,sequence_key = 'seq',type = 'DNA')
 test_that("whether fine_cluster's calculation is correct",{
-  is_medoid <- cdb_fine$contig_tbl['is_medoid']
-  expect_true(is_medoid[1,1]==TRUE)
-  expect_true(is_medoid[7,1]==TRUE)
-  expect_true(is_medoid[9,1]==TRUE)
-  avg_distance <- cdb_fine$cluster_tbl['avg_distance']
-  expect_true(avg_distance[1,1]==1)
-  expect_true(avg_distance[2,1]==1.75)
-  expect_true(avg_distance[3,1]==0.75)
+  expect_equal(dplyr::filter(cdb_fine$contig_tbl, is_medoid) %>% dplyr::pull(contig_key), c(1, 7, 9))
+  avg_distance <- cdb_fine$cluster_tbl[['avg_distance']]
+  expect_equal(avg_distance[1], 1)
+  expect_equal(avg_distance[2], 1.75)
+  expect_equal(avg_distance[3], 0.75)
 })
 
 test_that("Find a canonical contig to represent a cluster",{
   ccdb_medoid <- canonicalize_cluster(ccdb_ex_small_fine)
   expect_is(ccdb_medoid,'ContigCellDB')
-  cdb_canonicalize <- canonicalize_cluster(cdb_fine,contig_fields = 'seq')
-  representative <- cdb_canonicalize$cluster_tbl['representative']
-  expect_true(representative[1,1]==1)
-  expect_true(representative[2,1]==2)
-  expect_true(representative[3,1]==3)
+  expect_error(cdb_canonicalize <- canonicalize_cluster(cdb_fine), 'missing fields')
+  cdb_canonicalize <- canonicalize_cluster(cdb_fine,contig_fields = 'seq', representative = 'seq')
+  expect_is(cdb_canonicalize$cluster_tbl$representative, 'factor')
+ expect_equal(as.character(cdb_canonicalize$cluster_tbl$representative), dplyr::filter(cdb_fine$contig_tbl, is_medoid) %>% dplyr::pull(seq))
 })

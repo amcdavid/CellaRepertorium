@@ -137,6 +137,8 @@ tie_break_keys = character(), order = 1, representative = ccdb$cluster_pk[1], co
     if(!('is_medoid' %in% names(ccdb$contig_tbl))){
         stop('Run `fine_clustering` first.')
     }
+    req_contig_fields = unique(c(contig_fields, representative, tie_break_keys))
+    if(length(missing_contig <- setdiff(req_contig_fields, names(ccdb$contig_tbl))) > 0) stop('`contig_tbl` is missing fields, ', paste(missing_contig, collapse = ', '), '.')
     sub_contig_tbl = filter(.data = ccdb$contig_tbl, !!rlang::enexpr(contig_filter_args))
 
     if(nrow(sub_contig_tbl) != nrow(ccdb$cluster_tbl)){
