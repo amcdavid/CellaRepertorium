@@ -36,7 +36,7 @@ purity = function(cluster_idx, subject) {
 #'
 #' @examples
 #' library(dplyr)
-#' # covariate must be a vector, rather than a data.frame
+#' # covariate should name one or more columns in `cell_tbl`
 #'
 #' cluster_idx = c(1, 1, 1, 2, 2, 3, 3)
 #' subject = c('A', 'A', 'B', 'B', 'B', 'C', 'C')
@@ -62,7 +62,7 @@ cluster_permute_test = function(ccdb, cell_covariate_keys,
                                 n_perm,
                                 alternative = c("two.sided", "less","greater"),
                                 ...){
-    if(!is.character(cell_label_key) || length(cell_label_key) > 1) stop('`label_key` must name a single column in ccdb$cell_tbl')
+    if(!is.character(cell_label_key) || length(cell_label_key) > 1) stop('`cell_label_key` must name a single column in ccdb$cell_tbl')
     label = ccdb$cell_tbl[[cell_label_key]]
     if( length(na <- which(is.na(label))) > 0){
         warning('Excluding ', length(na), ' cells with missing labels.')
@@ -79,7 +79,7 @@ cluster_permute_test = function(ccdb, cell_covariate_keys,
 #' @param statistic function of label and covariate
 #' @inheritParams cluster_permute_test
 .cluster_permute_test = function(labels, covariates, statistic, n_perm, alternative,  ...){
-    permp= rep(NA, n_perm)
+    permp = rep(NA, n_perm)
     alternative = match.arg(alternative[1], c("two.sided", "less", "greater"), several.ok = FALSE)
 
     # checck that covariate nested within label
@@ -89,9 +89,9 @@ cluster_permute_test = function(ccdb, cell_covariate_keys,
         permp[i] = statistic(ci, covariates, ...)
     }
     if(alternative == 'two.sided'){
-        p_bound = min(mean(observed<permp), mean(observed>permp))*2
+        p_bound = min(mean(observed < permp), mean(observed > permp))*2
     } else{
-        p_bound = if(alternative == 'less') mean(observed<permp) else mean(observed>permp)
+        p_bound = if(alternative == 'less') mean(observed < permp) else mean(observed > permp)
     }
     list(observed = observed, expected = mean(permp), p.value = max(1/n_perm, p_bound), mc.se = sd(permp)/sqrt(n_perm))
 }

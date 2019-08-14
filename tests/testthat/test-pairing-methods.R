@@ -52,23 +52,15 @@ ccdb2 <- ContigCellDB(tbl2, contig_pk = c('cell_idx', 'contig_idx'), cell_pk = '
 
 
 test_that('Generate a list of tables representing clusters paired in cells',{
-  tmp <- tempfile()
   pt2 <- pairing_tables(ccdb, canonicalize_by_prevalence, min_expansion = 1)
-  expect_known_value(pt2$cell_tbl, tmp)
-  pt2 <- pairing_tables(ccdb, canonicalize_by_prevalence, min_expansion = 1)
-  expect_known_value(pt2$cell_tbl, tmp)
-  
-  tmp <- tempfile()
+  expect_known_value(pt2$cell_tbl, "out/pairing1.rda")
+
   pt3 <- pairing_tables(ccdb2, canonicalize_by_prevalence, min_expansion = 1)
-  expect_known_value(pt3$cell_tbl, tmp)
-  pt3 <- pairing_tables(ccdb2, canonicalize_by_prevalence, min_expansion = 1)
-  expect_known_value(pt3$cell_tbl, tmp)
-  
-  tmp <- tempfile()
+  expect_known_value(pt3$cell_tbl,  "out/pairing2.rda")
+
   ccdb2$contig_tbl = ccdb2$contig_tbl %>% mutate(umis = 1, reads = 1, chain = rep(c('TRA', 'TRB'), times = 6))
   pt4 <- pairing_tables(ccdb2, canonicalize_by_chain, min_expansion = 1, table_order = 2)
-  expect_known_value(pt4$cell_tbl, tmp)
-  pt4 <- pairing_tables(ccdb2, canonicalize_by_chain, min_expansion = 1, table_order = 2)
-  expect_known_value(pt4$cell_tbl, tmp)
+  expect_known_value(pt4$cell_tbl, "out/pairing3.rda")
+
 })
 
