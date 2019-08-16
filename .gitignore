@@ -5,6 +5,7 @@
 .Rproj.user
 data-raw/*.csv
 data-raw/*.json
+data-raw/*.h5
 inst/doc
 doc
 Meta

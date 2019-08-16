@@ -11,3 +11,4 @@ manuscript/
 ^pkgdown$
 .ignore
 README.Rmd
+data/ccdb_bcell.rda

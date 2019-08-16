@@ -20,8 +20,8 @@ library(dplyr)
 library(purrr)
 library(tidyr)
 
-csvs = list.files('data-raw', pattern = '\\.csv$', full.names = TRUE)
-jsns = list.files('data-raw', pattern = '\\.json$', full.names = TRUE)
+csvs = list.files('data-raw', pattern = '.+?t_all_contig.+?\\.csv$', full.names = TRUE)
+jsns = list.files('data-raw', pattern = '.+?t_all_contig.+?\\.json$', full.names = TRUE)
 
 # Pull out sample and population names
 contig_map = tibble(file = csvs, strain = factor(c('balbc', 'b6'), levels = c('balbc', 'b6')))
