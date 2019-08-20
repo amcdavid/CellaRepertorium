@@ -1,38 +1,3 @@
-#' @describeIn mutate_cdb Filter rows of a table in a `ContigCellDB` object
-#' @export
-#' @examples
-#' data(ccdb_ex)
-#' subset_contig = filter_cdb(ccdb_ex,full_length, productive == 'True',
-#' high_confidence, chain != 'Multi', nchar(cdr3) > 5)
-#' subset_cell = filter_cdb(ccdb_ex, sample == 4, tbl = 'cell_tbl')
-filter_cdb <- function(ccdb, ..., tbl='contig_tbl'){
-  thetbl <- access_cdb(ccdb,tbl)
-  thetbl <- dplyr::filter(.data=thetbl,!!!rlang::quos(...))
-  ccdb <- replace_cdb(ccdb,tbl,thetbl)
-  return(ccdb)
-}
-
-#' Make changes (ceate new or update existed) on columns of tables in ContigCellDB object
-#'
-#' @param ccdb A ContigCellDB object
-#' @param ... name and value pair of column that will be updated
-#' @param tbl name of the table needs to update columns
-#'
-#' @return ContigCellDB object with updated table
-#' @export
-#'
-#' @examples
-#' data(ccdb_ex)
-#' new_contig = mutate_cdb(ccdb_ex, new_col = 1)
-#' new_cell = mutate_cdb(ccdb_ex, new_col = 1, tbl = 'contig_tbl')
-mutate_cdb <- function(ccdb, ..., tbl='contig_tbl'){
-  thetbl <- access_cdb(ccdb,tbl)
-  thetbl <- thetbl %>% dplyr::mutate(!!!rlang::quos(...))
-  ccdb <- replace_cdb(ccdb,tbl,thetbl)
-  return(ccdb)
-}
-
-
 #' Guess the cell type of a contig from the chain ID
 #'
 #' This function is likely dependent on annotations from 10X and change or break

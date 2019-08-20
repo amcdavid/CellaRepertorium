@@ -33,7 +33,7 @@ Each observation represents a cell.
 }
 \examples{
 library(dplyr)
-# covariate must be a vector, rather than a data.frame
+# covariate should name one or more columns in `cell_tbl`
 
 cluster_idx = c(1, 1, 1, 2, 2, 3, 3)
 subject = c('A', 'A', 'B', 'B', 'B', 'C', 'C')

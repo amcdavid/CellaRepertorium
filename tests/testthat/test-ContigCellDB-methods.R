@@ -12,3 +12,30 @@ test_that('Can construct ContigCellDB',
       expect_equal(access_cdb(cdb,"contig_tbl"), contig_tbl)
       expect_error(replace_cdb(cdb,'cell_pk', 'cell'))
           })
+
+
+test_that('Can split', {
+   data(ccdb_ex)
+   splat = split_cdb(ccdb_ex, 'chain', 'contig_tbl')
+   expect_equal(length(splat), 2)
+   expect_equal(splat$TRA$contig_tbl$chain, rep('TRA', sum(ccdb_ex$contig_tbl$chain == 'TRA')))
+
+   splat_cell = split_cdb(ccdb_ex, c('sample', 'pop'), 'cell_tbl')
+})
+
+test_that('Can rbind', {
+   data(ccdb_ex)
+   splat = split_cdb(ccdb_ex, 'chain', 'contig_tbl')
+   unite = rbind(splat$TRA, splat$TRB)
+   expect_is(unite, 'ContigCellDB')
+   expect_equal(unite, ccdb_ex)
+
+   ccdb_ex = cluster_germline(ccdb_ex, segment_keys = 'sample')
+   splat_cell = split_cdb(ccdb_ex, c('sample', 'pop'), 'cell_tbl', drop = TRUE)
+   unite_cell = do.call(rbind, splat_cell)
+   expect_equal(unite_cell, ccdb_ex)
+
+   splat_cell[[1]] = suppressWarnings(replace_cluster_tbl(splat_cell[[1]], cluster_tbl = tibble(), cluster_pk = character()))
+   unite_cluster = do.call(rbind, splat_cell)
+   expect_equal(nrow(unite_cluster$cluster_tbl), nrow(ccdb_ex$cluster_tbl) - 1)
+})

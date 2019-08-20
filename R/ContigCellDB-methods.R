@@ -175,3 +175,104 @@ replace_cluster_tbl = function(ccdb, cluster_tbl, contig_tbl, cluster_pk){
     ccdb
 }
 
+#' @describeIn mutate_cdb Filter rows of a table in a `ContigCellDB` object
+#' @export
+#' @examples
+#' data(ccdb_ex)
+#' subset_contig = filter_cdb(ccdb_ex,full_length, productive == 'True',
+#' high_confidence, chain != 'Multi', nchar(cdr3) > 5)
+#' subset_cell = filter_cdb(ccdb_ex, sample == 4, tbl = 'cell_tbl')
+filter_cdb <- function(ccdb, ..., tbl='contig_tbl'){
+    thetbl <- access_cdb(ccdb,tbl)
+    thetbl <- dplyr::filter(.data=thetbl,!!!rlang::quos(...))
+    ccdb <- replace_cdb(ccdb,tbl,thetbl)
+    return(ccdb)
+}
+
+#' Make changes (ceate new or update existed) on columns of tables in ContigCellDB object
+#'
+#' @param ccdb A ContigCellDB object
+#' @param ... name and value pair of column that will be updated
+#' @param tbl name of the table needs to update columns
+#'
+#' @return ContigCellDB object with updated table
+#' @export
+#'
+#' @examples
+#' data(ccdb_ex)
+#' new_contig = mutate_cdb(ccdb_ex, new_col = 1)
+#' new_cell = mutate_cdb(ccdb_ex, new_col = 1, tbl = 'contig_tbl')
+mutate_cdb <- function(ccdb, ..., tbl='contig_tbl'){
+    thetbl <- access_cdb(ccdb,tbl)
+    thetbl <- thetbl %>% dplyr::mutate(!!!rlang::quos(...))
+    ccdb <- replace_cdb(ccdb,tbl,thetbl)
+    return(ccdb)
+}
+
+
+#' Split into a list of [ContigCellDB()] by named fields
+#'
+#' @param ccdb [ContigCellDB()]
+#' @param fields `character` naming fields in `tbl`
+#' @param tbl one of `contig_tbl`, `cell_tbl` or `cluster_tbl`
+#' @inheritParams base::split
+#' @return list of `ContigCellDB`
+#' @export
+#'
+#' @examples
+#' data(ccdb_ex)
+#' splat = split_cdb(ccdb_ex, 'chain', 'contig_tbl')
+#' stopifnot(all(splat$TRA$contig_tbl$chain == 'TRA'))
+#' stopifnot(all(splat$TRB$contig_tbl$chain == 'TRB'))
+split_cdb = function(ccdb, fields, tbl = 'contig_tbl', drop = FALSE){
+    thetbl = access_cdb(ccdb, tbl)
+    if(!is.character(fields)){
+        stop('`field` must be a character naming fields in `tbl`')
+    }
+    if(length(missing <- setdiff(fields, names(thetbl)))>0){
+        stop("The following fields are missing from ", tbl, ': ', paste0(missing, collapse = ', '), '.')
+    }
+    split_tbl = split(thetbl, thetbl[fields], drop = drop)
+    out = purrr::map(split_tbl, function(tt){
+        replace_cdb(ccdb, tbl, tt)
+    })
+    out
+}
+
+#' @export
+rbind.ContigCellDB <- function(..., deparse.level=1)
+{
+    objects <- list(...)
+    .bind_rows_ccdb(objects[[1L]], objects[-1L])
+}
+
+#' S4 Generics
+#'
+#' @param ... [ContigCellDB()]
+#' @param deparse.level ignored
+#' @rdname ContigCellDB-generics
+#' @export
+#' @examples
+#' data(ccdb_ex)
+#' splat = split_cdb(ccdb_ex, 'chain', 'contig_tbl')
+#' unite = rbind(splat$TRA, splat$TRB)
+#' stopifnot(all.equal(unite, ccdb_ex))
+setMethod('rbind', 'ContigCellDB', rbind.ContigCellDB)
+
+.bind_rows_ccdb = function(o1, objects, .id = NULL){
+    all_objs = c(o1, objects)
+    if(!all(purrr::map_lgl(all_objs, inherits, 'ContigCellDB'))) stop("Can't rbind heterogenous objects.")
+
+    tbls = list()
+    for(tt in c('contig_tbl', 'cell_tbl', 'cluster_tbl')){
+        tbls[[tt]] = unique(purrr::map_dfr(all_objs, access_cdb, name = tt, .id = .id))
+    }
+
+    pks = list()
+    for(tt in c('contig_pk', 'cell_pk', 'cluster_pk')){
+        pks[[tt]] = purrr::reduce(purrr::map(all_objs, access_cdb, name = tt), union)
+    }
+
+
+    ContigCellDB(tbls$contig_tbl, pks$contig_pk, tbls$cell_tbl, pks$cell_pk, tbls$cluster_tbl, pks$cluster_pk)
+}
