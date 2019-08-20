@@ -1,5 +1,16 @@
+#' @describeIn cluster_logistic_test split `ccdb` and conduct tests within strata
+#' @param ... passed to `cluster_logistic_test`
+#' @inheritParams split_cdb
+#' @param ccdb [ContigCellDB()]
+#' @export
+cluster_test_by = function(ccdb, fields  = 'chain', tbl = 'cluster_tbl', ...){
+    splat = split_cdb(ccdb, fields = fields, tbl = tbl, drop = TRUE)
+    purrr::map_dfr(splat, function(x) cluster_logistic_test(...,  ccdb = x), .id = paste0(fields, collapse = '.'))
+}
+
 #' Test clusters for differential usage
 #'
+#' Typically one will want to stratify by chain by calling `cluster_test_by`, as this will calculate the number of cell "trials" separately depending on the chain recovered.
 #' @param formula the **right-hand side** of a glmer or glm-style formula.
 #' @param ccdb [ContigCellDB()]
 #' @param replicate_keys keys naming columns in `ccdb$cell_tbl`
@@ -15,6 +26,8 @@
 #' ccdb_ex = cluster_germline(ccdb_ex)
 #' trav1 = dplyr::filter(ccdb_ex$cluster_tbl, v_gene == 'TRAV1')
 #' cluster_logistic_test(~pop + (1|sample), ccdb_ex, 'sample', cluster_whitelist = trav1)
+#' # Fixed effect analysis of each cluster, by chain
+#' cluster_test_by(ccdb = ccdb_ex, fields = 'chain', tbl = 'cluster_tbl', formula = ~ pop, replicate_keys = 'sample')
 cluster_logistic_test = function(formula, ccdb, replicate_keys, cluster_whitelist, contig_filter_args = TRUE, tie_break_keys = c('umis', 'reads'), keep_fit = FALSE, fitter = glm_glmer){
     if(!all(replicate_keys %in% names(ccdb$cell_tbl))) stop('Replicate must identify columns in `cell_tbl`.')
     if(length(ccdb$cluster_pk) == 0 || nrow(ccdb$cluster_tbl) == 0) stop("No clusters to test.")
