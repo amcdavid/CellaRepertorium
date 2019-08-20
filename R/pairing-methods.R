@@ -141,7 +141,7 @@ get_canonical_representative = function(seqs, medoid_idx, warn_if_distinct = FAL
 #' @export
 #'
 #' @seealso [canonicalize_by_prevalence()], [canonicalize_by_chain()]
-#' @importFrom tibble as_data_frame
+#' @importFrom tibble as_data_frame tibble
 #' @importFrom dplyr bind_rows left_join ungroup summarize anti_join
 #' @importFrom stringr str_length str_c
 #' @importFrom rlang sym syms :=
@@ -218,8 +218,8 @@ pairing_tables = function(ccdb,  canonicalize_fun = canonicalize_by_chain, table
 
     ci_class = class(contig_tbl[[cluster_idx]])
     as_method = if(ci_class == 'factor') as.factor else function(x) as(x, ci_class)
-    rowid = data_frame(cluster_idx = expanded_counts$cluster_idx.1 %>% as_method, plot_order = ro)
-    colid = suppressWarnings(data_frame(cluster_idx = colnames(expanded_counts)[-1] %>% as_method, plot_order = co))
+    rowid = tibble(cluster_idx = expanded_counts$cluster_idx.1 %>% as_method, plot_order = ro)
+    colid = suppressWarnings(tibble(cluster_idx = colnames(expanded_counts)[-1] %>% as_method, plot_order = co))
     rowid[['cluster_idx.1_fct']] = factor(rowid[['cluster_idx']], levels = rowid[['cluster_idx']][ro])
     colid[['cluster_idx.2_fct']] = factor(colid[['cluster_idx']], levels = colid[['cluster_idx']][co])
 
@@ -247,9 +247,9 @@ plot_pairing = function(pairing_list, color_labels_by){
     pl = pairing_list
     pairs_plt = ggplot(pairing_list$cell_tbl, aes(x = cluster_idx.1_fct, y = cluster_idx.2_fct, color = sample, shape = pop)) + geom_jitter(width = .3, height = .3)
 
-    ylab = data_frame(!!color_labels_by :=  ggplot_build(pairs_plt)$layout$panel_params[[1]]$y.label) %>% left_join(feature_tbl) %>% mutate(class_color = ifelse(is.na(class_color), '#E41A1C', class_color))
+    ylab = tibble(!!color_labels_by :=  ggplot_build(pairs_plt)$layout$panel_params[[1]]$y.label) %>% left_join(feature_tbl) %>% mutate(class_color = ifelse(is.na(class_color), '#E41A1C', class_color))
 
-    xlab = data_frame(!!color_labels_by :=  ggplot_build(pairs_plt)$layout$panel_params[[1]]$x.label) %>% left_join(feature_tbl) %>% mutate(class_color = ifelse(is.na(class_color), '#E41A1C', class_color))
+    xlab = tibble(!!color_labels_by :=  ggplot_build(pairs_plt)$layout$panel_params[[1]]$x.label) %>% left_join(feature_tbl) %>% mutate(class_color = ifelse(is.na(class_color), '#E41A1C', class_color))
 
     pairs_plt = pairs_plt + theme(axis.text.x = element_text(angle = 90, color = xlab$class_color, size = 8), axis.text.y = element_text(color = ylab$class_color, size = 8))
 
