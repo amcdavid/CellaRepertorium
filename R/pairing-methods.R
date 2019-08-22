@@ -177,7 +177,12 @@ pairing_tables = function(ccdb,  canonicalize_fun = canonicalize_by_chain, table
     cell_identifiers = ccdb$cell_pk
     cluster_idx = ccdb$cluster_pk
     cell_tbl = ccdb$cell_tbl
-    bar_chain_tbls = purrr::map(seq_len(table_order), function(i) canonicalize_fun(contig_tbl, cell_identifiers = cell_identifiers, cluster_idx = cluster_idx, order = i) %>% dplyr::select(!!!c(syms(cell_identifiers), rlang::quo(cluster_idx))) %>% dplyr::rename( !!paste0('cluster_idx.', i) := !!cluster_idx))
+    bar_chain_tbls = purrr::map(seq_len(table_order),
+        function(i){
+                    canon_cell = canonicalize_fun(contig_tbl, cell_identifiers = cell_identifiers, cluster_idx = cluster_idx, order = i)
+                    canon_cell = canon_cell[union(cell_identifiers, cluster_idx)]
+                    dplyr::rename(canon_cell, !!paste0('cluster_idx.', i) := !!cluster_idx)
+        })
     # for each cell, what clusters are present
     oligo_cluster_pairs = purrr::reduce(bar_chain_tbls, left_join, by = cell_identifiers)
 
