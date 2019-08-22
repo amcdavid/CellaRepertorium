@@ -4,11 +4,11 @@
 \alias{cdhit_ccdb}
 \title{Use \code{\link[=cdhit]{cdhit()}} to cluster a \code{\link[=ContigCellDB]{ContigCellDB()}}}
 \usage{
-cdhit_ccdb(object, sequence_key, type = c("DNA", "AA"),
+cdhit_ccdb(ccdb, sequence_key, type = c("DNA", "AA"),
   cluster_name = "cluster_idx", ...)
 }
 \arguments{
-\item{object}{An object of class \code{\link[=ContigCellDB]{ContigCellDB()}}}
+\item{ccdb}{An object of class \code{\link[=ContigCellDB]{ContigCellDB()}}}
 
 \item{sequence_key}{\code{character} naming the column in the \code{contig_tbl} containing the sequence to be clustered}
 

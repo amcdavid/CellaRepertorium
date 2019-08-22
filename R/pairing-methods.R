@@ -79,40 +79,6 @@ canonicalize_cell = function(ccdb, contig_filter_args = TRUE,  tie_break_keys = 
     ccdb
 }
 
-
-
-
-# Define canonical chain types per cell
-
-#' Given a family of similar sequences, return a "representative"
-#'
-#' This function can be deprecated.
-#' @param seqs character vector
-#' @param medoid_idx optional index into seqs
-#' @param warn_if_distinct Should a warning be emitted if there are distinct elements in seqs?
-#'
-#' If medoid_idx is supplied, the medoid sequence is returned, otherwise the longest
-#' sequence is returned
-#'
-#' @return character vector
-#'
-#' @examples
-#' CellaRepertorium:::get_canonical_representative(c('apple', 'manzana', 'pomme'))
-get_canonical_representative = function(seqs, medoid_idx, warn_if_distinct = FALSE){
-    if(!missing(medoid_idx)){
-        if(!is.integer(medoid_idx) || medoid_idx < 1 || medoid_idx > length(seqs)) stop("Illegal `medoid_idx`")
-        ii = medoid_idx
-    } else{
-        len = str_length(seqs)
-        ii = which.max(len)
-    }
-    rep = seqs[ii]
-
-    if(warn_if_distinct && length(nomatch <- which(seqs != rep)) > 0) warning("At indices ", nomatch, " sequences did not match the representative")
-
-    return(rep)
-}
-
 # This should return a ccdb or a subclass?
 #' Generate a list of tables representing clusters paired in cells
 #'

@@ -81,7 +81,7 @@ cdhit = function(seqs, identity = NULL, kmerSize = NULL, min_length = 6, s = 1, 
 
 ##' Use [cdhit()] to cluster a [ContigCellDB()]
 ##'
-##' @param object An object of class [ContigCellDB()]
+##' @param ccdb An object of class [ContigCellDB()]
 ##' @param sequence_key `character` naming the column in the `contig_tbl` containing the sequence to be clustered
 ##' @param type one of 'DNA' or 'AA'
 ##' @param cluster_name `character` specifying key, and name for the clustering.
@@ -95,8 +95,8 @@ cdhit = function(seqs, identity = NULL, kmerSize = NULL, min_length = 6, s = 1, 
 ##' res$cluster_tbl
 ##' res$contig_tbl
 ##' res$cluster_pk
-cdhit_ccdb = function(object, sequence_key, type = c('DNA', 'AA'), cluster_name = 'cluster_idx', ...){
-    seqs = object$contig_tbl[[sequence_key]]
+cdhit_ccdb = function(ccdb, sequence_key, type = c('DNA', 'AA'), cluster_name = 'cluster_idx', ...){
+    seqs = ccdb$contig_tbl[[sequence_key]]
     if(length(seqs) < 1) stop("No sequences were provided")
     type = match.arg(type, c('DNA', 'AA'))
     if(type == 'DNA'){
@@ -105,7 +105,7 @@ cdhit_ccdb = function(object, sequence_key, type = c('DNA', 'AA'), cluster_name 
         seqset = AAStringSet(seqs)
     }
     cluster_idx = cdhit(seqset, ..., only_index = TRUE)
-    contig_tbl = dplyr::mutate(object$contig_tbl, !!sym(cluster_name) := cluster_idx)
+    contig_tbl = dplyr::mutate(ccdb$contig_tbl, !!sym(cluster_name) := cluster_idx)
     cluster_tbl = as_tibble(unique(contig_tbl[cluster_name]))
-    replace_cluster_tbl(object, cluster_tbl, contig_tbl, cluster_pk = cluster_name)
+    replace_cluster_tbl(ccdb, cluster_tbl, contig_tbl, cluster_pk = cluster_name)
 }
