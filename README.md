@@ -59,14 +59,14 @@ However, there are a variety of specialized functions, as well:
   - `fine_clustering()`: clustering CDR3 by edit distances (possibly
     using empirical amino acid substitution matrices)
   - `canonicalize_cell()`: Return a single contig for each cell, e.g.,
-    for combining VDJ information with 5’-based single cell expressoin
+    for combining VDJ information with 5’-based single cell expression
   - `cluster_permute_test()`: permutation tests of cluster statistics
   - `pairing_tables()`: Generate pairings of contigs within each cell in
     a way that they can be plotted
 
-## Inferfacing related packages for clonal analyses
+## Interfacing related packages for clonal analyses
 
-  - To combine repertoire information with expression of endogenuous
+  - To combine repertoire information with expression of endogenous
     mRNAs, this package has been used with
     `SingleCellExperiment::SingleCellExperiment()` and
     [Seurat](https://satijalab.org/seurat/) after generating cell

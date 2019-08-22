@@ -71,7 +71,7 @@ right_join_warn = function(...) left_join_warn(..., join = right_join)
 
 #' Perform a `dplyr::left_join()` but check for non-key overlapping fields
 #'
-#' Perform a dplyr join, but either warn if the two tables
+#' Perform a `dplyr` join, but either warn if the two tables
 #' share non-key fields  If `overwrite = TRUE`, then shared columns will pull from `x` otherwise a suffix will be added to `y`.  To perform this check, `by` must be specified, and it is an error if it is not.
 #' @inheritParams dplyr::left_join
 #' @param overwrite `logical` -- should non-key fields in y be overwritten using x, or should a suffix (".y") be added

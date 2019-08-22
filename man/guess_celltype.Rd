@@ -13,7 +13,8 @@ guess_celltype(chain)
 contig table with \code{celltype} column
 }
 \description{
-This function is likely dependent on annotations from 10X and change or break
+This function is likely dependent on annotations from 10X and
+may change or break
 as their pipeline changes.
 }
 \seealso{

@@ -38,8 +38,8 @@ Construct a ContigCellDB
 \section{Accessors/mutators}{
 
 See \code{\link[=ContigCellDB-mutate]{$,ContigCellDB-method}} for more on how to access and mutate slots.
-At the moment, there is not a good way to combine objects without manually touching slots with \code{@},
-but a \code{rbind} method is in the offing.
+See \code{\link[=mutate_cdb]{mutate_cdb()}} and \code{\link[=filter_cdb]{filter_cdb()}} for endomorphic filtering/mutation methods
+See \code{\link[=split_cdb]{split_cdb()}} to split into a list, and \code{\link[=rbind.ContigCellDB]{rbind.ContigCellDB()}} for the inverse operation.
 }
 
 \examples{

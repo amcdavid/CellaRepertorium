@@ -3,7 +3,8 @@
 \docType{methods}
 \name{rbind,ContigCellDB-method}
 \alias{rbind,ContigCellDB-method}
-\title{S4 Generics}
+\alias{rbind.ContigCellDB}
+\title{#' Combine \code{ContigCellDB} along rows (contigs, cells or clusters)}
 \usage{
 \S4method{rbind}{ContigCellDB}(..., deparse.level = 1)
 }
@@ -13,7 +14,10 @@
 \item{deparse.level}{ignored}
 }
 \description{
-S4 Generics
+The union of the rows in each of the objects is taken,
+thus removing any rows that has an exact duplicate.  This
+includes all fields, not just the primary key for that table.
+The union of the various primary keys is taken.
 }
 \examples{
 data(ccdb_ex)

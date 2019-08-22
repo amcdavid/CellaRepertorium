@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Given a family of similar sequences, return a "representative" — get_canonical_representative • CellaRepertorium</title>
+<title>Count contig UMIs by celltype — crosstab_by_celltype • CellaRepertorium</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,9 +30,9 @@
 
 
 
-<meta property="og:title" content="Given a family of similar sequences, return a "representative" — get_canonical_representative" />
+<meta property="og:title" content="Count contig UMIs by celltype — crosstab_by_celltype" />
 
-<meta property="og:description" content="This function can be deprecated." />
+<meta property="og:description" content="Count contig UMIs by celltype" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -114,45 +114,41 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Given a family of similar sequences, return a "representative"</h1>
-    <small class="dont-index">Source: <a href='https://github.com/amcdavid/CellaRepertorium/blob/master/R/pairing-methods.R'><code>R/pairing-methods.R</code></a></small>
-    <div class="hidden name"><code>get_canonical_representative.Rd</code></div>
+    <h1>Count contig UMIs by celltype</h1>
+    <small class="dont-index">Source: <a href='https://github.com/amcdavid/CellaRepertorium/blob/master/R/auxiliary.R'><code>R/auxiliary.R</code></a></small>
+    <div class="hidden name"><code>crosstab_by_celltype.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>This function can be deprecated.</p>
+    <p>Count contig UMIs by celltype</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>get_canonical_representative</span>(<span class='no'>seqs</span>, <span class='no'>medoid_idx</span>, <span class='kw'>warn_if_distinct</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+    <pre class="usage"><span class='fu'>crosstab_by_celltype</span>(<span class='no'>ccdb</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>seqs</th>
-      <td><p>character vector</p></td>
-    </tr>
-    <tr>
-      <th>medoid_idx</th>
-      <td><p>optional index into seqs</p></td>
-    </tr>
-    <tr>
-      <th>warn_if_distinct</th>
-      <td><p>Should a warning be emitted if there are distinct elements in seqs?</p>
-<p>If medoid_idx is supplied, the medoid sequence is returned, otherwise the longest
-sequence is returned</p></td>
+      <th>ccdb</th>
+      <td><p>A ContigCellDB object</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>character vector</p>
+    <p>a table, keyed by <code>cell_pk</code> counting UMIs per celltype</p>
+    
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p><code><a href='guess_celltype.html'>guess_celltype()</a></code></p></div>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw pkg'>CellaRepertorium</span><span class='kw ns'>:::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/CellaRepertorium/topics/get_canonical_representative'>get_canonical_representative</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>'apple'</span>, <span class='st'>'manzana'</span>, <span class='st'>'pomme'</span>))</div><div class='output co'>#&gt; [1] "manzana"</div></pre>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/data'>data</a></span>(<span class='no'>ccdb_ex</span>)
+<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/nrow'>nrow</a></span>(<span class='no'>ccdb_ex</span>$<span class='no'>cell_tbl</span>)</div><div class='output co'>#&gt; [1] 832</div><div class='input'><span class='no'>total_umi</span> <span class='kw'>=</span> <span class='fu'>crosstab_by_celltype</span>(<span class='no'>ccdb_ex</span>)
+<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/nrow'>nrow</a></span>(<span class='no'>total_umi</span>)</div><div class='output co'>#&gt; [1] 832</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -160,6 +156,8 @@ sequence is returned</p></td>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
+
+      <li><a href="#see-also">See also</a></li>
       
       <li><a href="#examples">Examples</a></li>
     </ul>

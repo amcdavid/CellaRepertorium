@@ -7,9 +7,9 @@
 \usage{
 cluster_test_by(ccdb, fields = "chain", tbl = "cluster_tbl", ...)
 
-cluster_logistic_test(formula, ccdb, replicate_keys, cluster_whitelist,
+cluster_logistic_test(formula, ccdb, cluster_whitelist,
   contig_filter_args = TRUE, tie_break_keys = c("umis", "reads"),
-  keep_fit = FALSE, fitter = glm_glmer)
+  keep_fit = FALSE, fitter = glm_glmer, silent = FALSE)
 }
 \arguments{
 \item{ccdb}{\code{\link[=ContigCellDB]{ContigCellDB()}}}
@@ -21,8 +21,6 @@ cluster_logistic_test(formula, ccdb, replicate_keys, cluster_whitelist,
 \item{...}{passed to \code{cluster_logistic_test}}
 
 \item{formula}{the \strong{right-hand side} of a glmer or glm-style formula.}
-
-\item{replicate_keys}{keys naming columns in \code{ccdb$cell_tbl}}
 
 \item{cluster_whitelist}{a table, keyed by \code{ccdb$cluster_pk} specifying the clusters to test. It does not alter which cells are included or how  canonicalization is performed. If omitted, all clusters will be tested and reported.}
 
@@ -39,7 +37,7 @@ for each cluster}
 
 \item{fitter}{a function taking arguments \code{formula}, \code{data}, \code{is_mixed} and \code{keep_fit} that is run on each cluster.  Should return a \code{tibble} or \code{data.frame}}
 
-\item{ccdb}{\code{\link[=ContigCellDB]{ContigCellDB()}}}
+\item{silent}{\code{logical}. Should warnings from fitting functions should be suppressed?}
 }
 \value{
 table with one row per cluster/term.
@@ -53,10 +51,14 @@ Typically one will want to stratify by chain by calling \code{cluster_test_by}, 
 }}
 
 \examples{
+library(dplyr)
 data(ccdb_ex)
 ccdb_ex = cluster_germline(ccdb_ex)
-trav1 = dplyr::filter(ccdb_ex$cluster_tbl, v_gene == 'TRAV1')
-cluster_logistic_test(~pop + (1|sample), ccdb_ex, 'sample', cluster_whitelist = trav1)
+trav1 = filter(ccdb_ex$cluster_tbl, v_gene == 'TRAV1')
+cluster_logistic_test(~pop + (1|sample), ccdb_ex, cluster_whitelist = trav1)
 # Fixed effect analysis of each cluster, by chain
-cluster_test_by(ccdb = ccdb_ex, fields = 'chain', tbl = 'cluster_tbl', formula = ~ pop, replicate_keys = 'sample')
+prev4 = ccdb_ex$contig_tbl \%>\% group_by(cluster_idx) \%>\%
+summarize(n()) \%>\% filter(`n()`>= 4)
+cluster_test_by(ccdb = ccdb_ex, fields = 'chain',
+tbl = 'cluster_tbl', formula = ~ pop, cluster_whitelist = prev4)
 }

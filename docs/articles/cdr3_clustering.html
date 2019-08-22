@@ -30,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CellaRepertorium</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0</span>
       </span>
     </div>
 
@@ -101,15 +101,10 @@
 <a class="sourceLine" id="cb1-9" data-line-number="9"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb1-10" data-line-number="10"><span class="co">#&gt;     intersect, setdiff, setequal, union</span></a>
 <a class="sourceLine" id="cb1-11" data-line-number="11"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(ggplot2)</a>
-<a class="sourceLine" id="cb1-12" data-line-number="12"><span class="co">#&gt; Registered S3 methods overwritten by 'ggplot2':</span></a>
-<a class="sourceLine" id="cb1-13" data-line-number="13"><span class="co">#&gt;   method         from </span></a>
-<a class="sourceLine" id="cb1-14" data-line-number="14"><span class="co">#&gt;   [.quosures     rlang</span></a>
-<a class="sourceLine" id="cb1-15" data-line-number="15"><span class="co">#&gt;   c.quosures     rlang</span></a>
-<a class="sourceLine" id="cb1-16" data-line-number="16"><span class="co">#&gt;   print.quosures rlang</span></a>
-<a class="sourceLine" id="cb1-17" data-line-number="17"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(readr)</a>
-<a class="sourceLine" id="cb1-18" data-line-number="18"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(tidyr)</a>
-<a class="sourceLine" id="cb1-19" data-line-number="19"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(stringr)</a>
-<a class="sourceLine" id="cb1-20" data-line-number="20"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(purrr)</a></code></pre></div>
+<a class="sourceLine" id="cb1-12" data-line-number="12"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(readr)</a>
+<a class="sourceLine" id="cb1-13" data-line-number="13"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(tidyr)</a>
+<a class="sourceLine" id="cb1-14" data-line-number="14"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(stringr)</a>
+<a class="sourceLine" id="cb1-15" data-line-number="15"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(purrr)</a></code></pre></div>
 <div id="load-filtered-contig-files" class="section level1">
 <h1 class="hasAnchor">
 <a href="#load-filtered-contig-files" class="anchor"></a>Load filtered contig files</h1>
@@ -184,7 +179,8 @@
 <h1 class="hasAnchor">
 <a href="#oligo-clusters" class="anchor"></a>Oligo clusters</h1>
 <p>Next, we will examine the clusters that are found in many contigs. First we will get a canonical contig to represent each cluster. This will be the medoid contig, by default.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">aa80 =<span class="st"> </span><span class="kw"><a href="../reference/canonicalize_cluster.html">canonicalize_cluster</a></span>(aa80, <span class="dt">representative =</span> <span class="st">'cdr3'</span>, <span class="dt">contig_fields =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">'cdr3'</span>, <span class="st">'cdr3_nt'</span>, <span class="st">'chain'</span>, <span class="st">'v_gene'</span>, <span class="st">'d_gene'</span>, <span class="st">'j_gene'</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">aa80 =<span class="st"> </span><span class="kw"><a href="../reference/canonicalize_cluster.html">canonicalize_cluster</a></span>(aa80, <span class="dt">representative =</span> <span class="st">'cdr3'</span>, <span class="dt">contig_fields =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">'cdr3'</span>, <span class="st">'cdr3_nt'</span>, <span class="st">'chain'</span>, <span class="st">'v_gene'</span>, <span class="st">'d_gene'</span>, <span class="st">'j_gene'</span>))</a>
+<a class="sourceLine" id="cb9-2" data-line-number="2"><span class="co">#&gt; Filtering `contig_tbl` by `is_medoid`, override by setting `contig_filter_args == TRUE`</span></a></code></pre></div>
 <p><code>aa80</code> now includes the fields listed in <code>contig_fields</code> in the <code>cluster_tbl</code>, using the values found in the medoid contig.</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">MIN_OLIGO =<span class="st"> </span><span class="dv">7</span></a>
 <a class="sourceLine" id="cb10-2" data-line-number="2">oligo_clusters =<span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(aa80<span class="op">$</span>cluster_tbl, n_cluster <span class="op">&gt;=</span><span class="st"> </span>MIN_OLIGO)</a>

@@ -1,6 +1,7 @@
 #' Guess the cell type of a contig from the chain ID
 #'
-#' This function is likely dependent on annotations from 10X and change or break
+#' This function is likely dependent on annotations from 10X and
+#' may change or break
 #' as their pipeline changes.
 #' @param chain `character` which will be parsed to try to infer celltype
 #'

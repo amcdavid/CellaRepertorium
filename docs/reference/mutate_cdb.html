@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Given a family of similar sequences, return a "representative" — get_canonical_representative • CellaRepertorium</title>
+<title>Create new or update existing columns of <code>ContigCellDB</code> tables — filter_cdb • CellaRepertorium</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,9 +30,9 @@
 
 
 
-<meta property="og:title" content="Given a family of similar sequences, return a "representative" — get_canonical_representative" />
+<meta property="og:title" content="Create new or update existing columns of <code>ContigCellDB</code> tables — filter_cdb" />
 
-<meta property="og:description" content="This function can be deprecated." />
+<meta property="og:description" content="Create new or update existing columns of ContigCellDB tables" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -114,45 +114,62 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Given a family of similar sequences, return a "representative"</h1>
-    <small class="dont-index">Source: <a href='https://github.com/amcdavid/CellaRepertorium/blob/master/R/pairing-methods.R'><code>R/pairing-methods.R</code></a></small>
-    <div class="hidden name"><code>get_canonical_representative.Rd</code></div>
+    <h1>Create new or update existing columns of <code>ContigCellDB</code> tables</h1>
+    <small class="dont-index">Source: <a href='https://github.com/amcdavid/CellaRepertorium/blob/master/R/ContigCellDB-methods.R'><code>R/ContigCellDB-methods.R</code></a></small>
+    <div class="hidden name"><code>mutate_cdb.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>This function can be deprecated.</p>
+    <p>Create new or update existing columns of <code>ContigCellDB</code> tables</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>get_canonical_representative</span>(<span class='no'>seqs</span>, <span class='no'>medoid_idx</span>, <span class='kw'>warn_if_distinct</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+    <pre class="usage"><span class='fu'>filter_cdb</span>(<span class='no'>ccdb</span>, <span class='no'>...</span>, <span class='kw'>tbl</span> <span class='kw'>=</span> <span class='st'>"contig_tbl"</span>)
+
+<span class='fu'>mutate_cdb</span>(<span class='no'>ccdb</span>, <span class='no'>...</span>, <span class='kw'>tbl</span> <span class='kw'>=</span> <span class='st'>"contig_tbl"</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>seqs</th>
-      <td><p>character vector</p></td>
+      <th>ccdb</th>
+      <td><p><code><a href='ContigCellDB-fun.html'>ContigCellDB()</a></code></p></td>
     </tr>
     <tr>
-      <th>medoid_idx</th>
-      <td><p>optional index into seqs</p></td>
+      <th>...</th>
+      <td><p>name and value pair of column that will be updated</p></td>
     </tr>
     <tr>
-      <th>warn_if_distinct</th>
-      <td><p>Should a warning be emitted if there are distinct elements in seqs?</p>
-<p>If medoid_idx is supplied, the medoid sequence is returned, otherwise the longest
-sequence is returned</p></td>
+      <th>tbl</th>
+      <td><p><code>character.</code> One of <code>contig_tbl</code>, <code>cell_tbl</code> or <code>cluster_tbl</code>, naming the table to be updated.</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>character vector</p>
+    <p>ContigCellDB object with updated table</p>
+    
+    <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
+
+    <ul>
+<li><p><code>filter_cdb</code>: Filter rows of a table in a <code>ContigCellDB</code> object</p></li>
+</ul>
+    
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p><code><a href='https://dplyr.tidyverse.org/reference/mutate.html'>dplyr::mutate()</a></code></p>
+<p><code><a href='https://dplyr.tidyverse.org/reference/filter.html'>dplyr::filter()</a></code></p></div>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw pkg'>CellaRepertorium</span><span class='kw ns'>:::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/CellaRepertorium/topics/get_canonical_representative'>get_canonical_representative</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>'apple'</span>, <span class='st'>'manzana'</span>, <span class='st'>'pomme'</span>))</div><div class='output co'>#&gt; [1] "manzana"</div></pre>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/data'>data</a></span>(<span class='no'>ccdb_ex</span>)
+<span class='no'>subset_contig</span> <span class='kw'>=</span> <span class='fu'>filter_cdb</span>(<span class='no'>ccdb_ex</span>,<span class='no'>full_length</span>, <span class='no'>productive</span> <span class='kw'>==</span> <span class='st'>'True'</span>,
+<span class='no'>high_confidence</span>, <span class='no'>chain</span> <span class='kw'>!=</span> <span class='st'>'Multi'</span>, <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/nchar'>nchar</a></span>(<span class='no'>cdr3</span>) <span class='kw'>&gt;</span> <span class='fl'>5</span>)
+<span class='no'>subset_cell</span> <span class='kw'>=</span> <span class='fu'>filter_cdb</span>(<span class='no'>ccdb_ex</span>, <span class='no'>sample</span> <span class='kw'>==</span> <span class='fl'>4</span>, <span class='kw'>tbl</span> <span class='kw'>=</span> <span class='st'>'cell_tbl'</span>)
+<span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/data'>data</a></span>(<span class='no'>ccdb_ex</span>)
+<span class='no'>new_contig</span> <span class='kw'>=</span> <span class='fu'>mutate_cdb</span>(<span class='no'>ccdb_ex</span>, <span class='kw'>new_col</span> <span class='kw'>=</span> <span class='fl'>1</span>)
+<span class='no'>new_cell</span> <span class='kw'>=</span> <span class='fu'>mutate_cdb</span>(<span class='no'>ccdb_ex</span>, <span class='kw'>new_col</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>tbl</span> <span class='kw'>=</span> <span class='st'>'contig_tbl'</span>)</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -160,6 +177,10 @@ sequence is returned</p></td>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
+
+      <li><a href="#functions">Functions</a></li>
+
+      <li><a href="#see-also">See also</a></li>
       
       <li><a href="#examples">Examples</a></li>
     </ul>

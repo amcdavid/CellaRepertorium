@@ -63,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CellaRepertorium</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0</span>
       </span>
     </div>
 
@@ -175,8 +175,7 @@
 <span class='kw'>identity</span> <span class='kw'>=</span> <span class='fl'>.965</span>, <span class='kw'>min_length</span> <span class='kw'>=</span> <span class='fl'>12</span>, <span class='kw'>G</span> <span class='kw'>=</span> <span class='fl'>1</span>)
 <span class='no'>ccdb_ex_small</span> <span class='kw'>=</span> <span class='fu'>fine_clustering</span>(<span class='no'>ccdb_ex_small</span>, <span class='kw'>sequence_key</span> <span class='kw'>=</span> <span class='st'>'cdr3_nt'</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>'DNA'</span>)</div><div class='output co'>#&gt; <span class='message'>Calculating intradistances on 329 clusters.</span></div><div class='output co'>#&gt; <span class='message'>Summarizing</span></div><div class='input'>
 <span class='co'># Canonicalize with the medoid contig is probably what is most common</span>
-<span class='no'>ccdb_medoid</span> <span class='kw'>=</span> <span class='fu'><a href='canonicalize_cluster.html'>canonicalize_cluster</a></span>(<span class='no'>ccdb_ex_small</span>)
-
+<span class='no'>ccdb_medoid</span> <span class='kw'>=</span> <span class='fu'><a href='canonicalize_cluster.html'>canonicalize_cluster</a></span>(<span class='no'>ccdb_ex_small</span>)</div><div class='output co'>#&gt; <span class='message'>Filtering `contig_tbl` by `is_medoid`, override by setting `contig_filter_args == TRUE`</span></div><div class='input'>
 <span class='co'># But there are other possibilities.</span>
 <span class='co'># To pass multiple "AND" filter arguments must use &amp;</span>
 <span class='no'>ccdb_umi</span> <span class='kw'>=</span> <span class='fu'><a href='canonicalize_cluster.html'>canonicalize_cluster</a></span>(<span class='no'>ccdb_ex_small</span>,

@@ -26,8 +26,8 @@ valid_KeyedTbl = function(tbl, keys){
 #'
 #' @section Accessors/mutators:
 #' See \code{\link[=ContigCellDB-mutate]{$,ContigCellDB-method}} for more on how to access and mutate slots.
-#' At the moment, there is not a good way to combine objects without manually touching slots with `@`,
-#' but a `rbind` method is in the offing.
+#' See [mutate_cdb()] and [filter_cdb()] for endomorphic filtering/mutation methods
+#' See [split_cdb()] to split into a list, and [rbind.ContigCellDB()] for the inverse operation.
 #' @export
 #' @importFrom S4Vectors List SimpleList
 #' @importFrom tibble as_tibble
@@ -189,13 +189,15 @@ filter_cdb <- function(ccdb, ..., tbl='contig_tbl'){
     return(ccdb)
 }
 
-#' Make changes (ceate new or update existed) on columns of tables in ContigCellDB object
+#' Create new or update existing columns of `ContigCellDB` tables
 #'
-#' @param ccdb A ContigCellDB object
+#' @param ccdb [ContigCellDB()]
 #' @param ... name and value pair of column that will be updated
-#' @param tbl name of the table needs to update columns
+#' @param tbl `character.` One of `contig_tbl`, `cell_tbl` or `cluster_tbl`, naming the table to be updated.
 #'
 #' @return ContigCellDB object with updated table
+#' @seealso [dplyr::mutate()]
+#' @seealso [dplyr::filter()]
 #' @export
 #'
 #' @examples
@@ -246,11 +248,16 @@ rbind.ContigCellDB <- function(..., deparse.level=1)
     .bind_rows_ccdb(objects[[1L]], objects[-1L])
 }
 
-#' S4 Generics
+#' #' Combine `ContigCellDB` along rows (contigs, cells or clusters)
 #'
+#' The union of the rows in each of the objects is taken,
+#'  thus removing any rows that has an exact duplicate.  This
+#'  includes all fields, not just the primary key for that table.
+#' The union of the various primary keys is taken.
 #' @param ... [ContigCellDB()]
 #' @param deparse.level ignored
 #' @rdname ContigCellDB-generics
+#' @aliases rbind.ContigCellDB
 #' @export
 #' @examples
 #' data(ccdb_ex)

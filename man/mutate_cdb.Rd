@@ -3,24 +3,24 @@
 \name{filter_cdb}
 \alias{filter_cdb}
 \alias{mutate_cdb}
-\title{Make changes (ceate new or update existed) on columns of tables in ContigCellDB object}
+\title{Create new or update existing columns of \code{ContigCellDB} tables}
 \usage{
 filter_cdb(ccdb, ..., tbl = "contig_tbl")
 
 mutate_cdb(ccdb, ..., tbl = "contig_tbl")
 }
 \arguments{
-\item{ccdb}{A ContigCellDB object}
+\item{ccdb}{\code{\link[=ContigCellDB]{ContigCellDB()}}}
 
 \item{...}{name and value pair of column that will be updated}
 
-\item{tbl}{name of the table needs to update columns}
+\item{tbl}{\code{character.} One of \code{contig_tbl}, \code{cell_tbl} or \code{cluster_tbl}, naming the table to be updated.}
 }
 \value{
 ContigCellDB object with updated table
 }
 \description{
-Make changes (ceate new or update existed) on columns of tables in ContigCellDB object
+Create new or update existing columns of \code{ContigCellDB} tables
 }
 \section{Functions}{
 \itemize{
@@ -35,4 +35,9 @@ subset_cell = filter_cdb(ccdb_ex, sample == 4, tbl = 'cell_tbl')
 data(ccdb_ex)
 new_contig = mutate_cdb(ccdb_ex, new_col = 1)
 new_cell = mutate_cdb(ccdb_ex, new_col = 1, tbl = 'contig_tbl')
+}
+\seealso{
+\code{\link[dplyr:mutate]{dplyr::mutate()}}
+
+\code{\link[dplyr:filter]{dplyr::filter()}}
 }

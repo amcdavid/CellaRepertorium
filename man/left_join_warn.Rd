@@ -26,7 +26,7 @@ left_join_warn(x, y, by, overwrite = FALSE, join = left_join, ...)
 \code{data.frame} or \code{tibble}
 }
 \description{
-Perform a dplyr join, but either warn if the two tables
+Perform a \code{dplyr} join, but either warn if the two tables
 share non-key fields  If \code{overwrite = TRUE}, then shared columns will pull from \code{x} otherwise a suffix will be added to \code{y}.  To perform this check, \code{by} must be specified, and it is an error if it is not.
 }
 \section{Functions}{

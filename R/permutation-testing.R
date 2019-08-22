@@ -1,3 +1,4 @@
+
 #' Calculate number of cluster-subject singletons for the purposes of permutation testing
 #'
 #' @param cluster_idx factor-like cluster variable
@@ -30,7 +31,7 @@ purity = function(cluster_idx, subject) {
 #' @param ... passed to \code{statistic}
 #' @param alternative `character` naming the direction `statistic` should be fall under the alternative hypothesis
 #'
-#' @return a list containing the observed value of the statistic, its expectation (under independence), a p-value, and the monte carlo standard error (of the expected value).
+#' @return a list containing the observed value of the statistic, its expectation (under independence), a p-value, and the Monte Carlo standard error (of the expected value).
 #' @seealso [purity()]
 #' @export
 #'
@@ -84,7 +85,9 @@ cluster_permute_test = function(ccdb, cell_covariate_keys,
 
     # checck that covariate nested within label
     observed = statistic(labels, covariates, ...)
+    pb = progress::progress_bar$new(total = n_perm)
     for(i in seq_len(n_perm)){
+        pb$tick()
         ci = sample(labels)
         permp[i] = statistic(ci, covariates, ...)
     }

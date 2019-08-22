@@ -24,7 +24,7 @@ cluster_permute_test(ccdb, cell_covariate_keys,
 \item{...}{passed to \code{statistic}}
 }
 \value{
-a list containing the observed value of the statistic, its expectation (under independence), a p-value, and the monte carlo standard error (of the expected value).
+a list containing the observed value of the statistic, its expectation (under independence), a p-value, and the Monte Carlo standard error (of the expected value).
 }
 \description{
 This tests a statistic for association between labels (for instance, cluster/clonal ID) and covariates (for instance, subject or treatment) by permuting the link between the two.
