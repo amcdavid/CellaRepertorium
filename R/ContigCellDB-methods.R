@@ -1,5 +1,6 @@
-# Todo
-# combine methods
+# Contig -- always equalize to cell
+# Cluster -- equalize to contig
+# Cell -- equalize after calling
 
 valid_KeyedTbl = function(tbl, keys){
     tbl_nm = deparse(substitute(tbl))
@@ -25,6 +26,7 @@ valid_KeyedTbl = function(tbl, keys){
 #' @param cell_pk character vector naming fields in `cell_tbl` that uniquely identify a cell barcode
 #' @param cluster_tbl A data frame that provide cluster assignments for each contig
 #' @param cluster_pk If `cluster_tbl` was provided, a character vector naming fields in `cluster_tbl` that uniquely identify a cluster
+#' @param equalize `logical`. Should the contig, cells and clusters be equalized by taking the intersection of their common keys?
 #' @return \code{ContigCellDB}
 #'
 #' @section Accessors/mutators:
@@ -82,9 +84,10 @@ ContigCellDB = function(contig_tbl, contig_pk, cell_tbl, cell_pk, cluster_tbl, c
 }
 
 #' @describeIn ContigCellDB-fun provide defaults that correspond to identifiers in 10X VDJ data
+#' @param ... passed to [ContigCellDB()]
 #' @export
-ContigCellDB_10XVDJ = function(contig_tbl, contig_pk = c('barcode', 'contig_id'), cell_pk = 'barcode'){
-    ContigCellDB(contig_tbl = contig_tbl, contig_pk = contig_pk, cell_pk = cell_pk)
+ContigCellDB_10XVDJ = function(contig_tbl, contig_pk = c('barcode', 'contig_id'), cell_pk = 'barcode', ...){
+    ContigCellDB(contig_tbl = contig_tbl, contig_pk = contig_pk, cell_pk = cell_pk, ...)
 }
 
 access_cdb = function(x, name){
@@ -104,7 +107,7 @@ replace_cdb = function(x, name, value){
     }
     if(name %in% c('contig_tbl','contig_pk')){
         valid_KeyedTbl(x$contig_tbl, x$contig_pk)
-        x = equalize_ccdb(x)
+        x = equalize_ccdb(x, contig = TRUE, cell = FALSE, cluster = TRUE)
     }
     if(name %in% c('cell_tbl','cell_pk')){
         valid_KeyedTbl(x$cell_tbl, x$cell_pk)
@@ -112,7 +115,7 @@ replace_cdb = function(x, name, value){
     }
     if(name %in% c('cluster_tbl','cluster_pk')){
         valid_KeyedTbl(x$cluster_tbl, x$cluster_pk)
-        x = equalize_ccdb(x, contig = TRUE, cell = FALSE, cluster = FALSE)
+        x = equalize_ccdb(x, contig = TRUE, cell = FALSE, cluster = TRUE)
     }
     invisible(x)
 }
@@ -141,7 +144,7 @@ setMethod("$", signature = c(x = 'ContigCellDB'), access_cdb)
 #' ccdb_ex
 #' ccdb_ex$contig_tbl = dplyr::filter(ccdb_ex$contig_tbl, pop == 'b6')
 #' ccdb_ex
-setReplaceMethod("$", signature = c(x = 'ContigCellDB'), replace_cdb)
+setReplaceMethod("$", signature = c(x = 'ContigCellDB'), function(x, name, value) replace_cdb(x, name, value))
 
 setMethod('show', signature = c(object = 'ContigCellDB'), function(object){
     cat(class(object), "of", nrow(object$contig_tbl), "contigs")
@@ -200,20 +203,20 @@ equalize_ccdb = function(x, cell = TRUE, contig = TRUE, cluster = TRUE){
     if(cell) x@cell_tbl = semi_join(x$cell_tbl, x$contig_tbl, by = x$cell_pk)
     if(contig) x@contig_tbl = semi_join(x$contig_tbl, x$cell_tbl, by = x$cell_pk)
     if(nrow(x$cluster_tbl) > 0 && cluster) x@cluster_tbl = semi_join(x$cluster_tbl, x$contig_tbl, by = x$cluster_pk)
-    x@equalized = TRUE
+    x@equalized = (cell & contig & cluster) | x@equalized
     x
 }
 
 replace_cluster_tbl = function(ccdb, cluster_tbl, contig_tbl, cluster_pk){
     if(nrow(ccdb$cluster_tbl)>0 && !missing(cluster_pk)){
-        warning("Replacing `cluster_tbl` with ", paste(ccdb$cluster_pk, sep = ', ', '.'))
+        warning("Replacing `cluster_tbl` with ", paste(ccdb$cluster_pk, sep = ', '), '.')
     }
     if(!missing(cluster_pk)) ccdb@cluster_pk = cluster_pk
     ccdb@cluster_tbl = cluster_tbl
     if(!missing(contig_tbl)){
+        if(nrow(contig_tbl) != nrow(ccdb@contig_tbl)) stop("Length mismatch; this is a bug!")
         ccdb@contig_tbl = contig_tbl
         valid_KeyedTbl(ccdb$contig_tbl, ccdb$contig_pk)
-        ccdb = equalize_ccdb(ccdb, cell = FALSE, cluster = FALSE, contig = TRUE)
     }
     valid_KeyedTbl(ccdb$cluster_tbl, ccdb$cluster_pk)
     validObject(ccdb)
@@ -271,7 +274,7 @@ mutate_cdb <- function(ccdb, ..., tbl='contig_tbl'){
 #' splat = split_cdb(ccdb_ex, 'chain', 'contig_tbl')
 #' stopifnot(all(splat$TRA$contig_tbl$chain == 'TRA'))
 #' stopifnot(all(splat$TRB$contig_tbl$chain == 'TRB'))
-split_cdb = function(ccdb, fields, tbl = 'contig_tbl', drop = FALSE){
+split_cdb = function(ccdb, fields, tbl = 'contig_tbl', drop = FALSE, equalize = TRUE){
     thetbl = access_cdb(ccdb, tbl)
     if(!is.character(fields)){
         stop('`field` must be a character naming fields in `tbl`')
@@ -281,7 +284,8 @@ split_cdb = function(ccdb, fields, tbl = 'contig_tbl', drop = FALSE){
     }
     split_tbl = split(thetbl, thetbl[fields], drop = drop)
     out = purrr::map(split_tbl, function(tt){
-        replace_cdb(ccdb, tbl, tt)
+        tmp = replace_cdb(ccdb, tbl, tt)
+        if(equalize) equalize_ccdb(tmp)
     })
     out
 }
@@ -293,7 +297,7 @@ rbind.ContigCellDB <- function(..., deparse.level=1)
     .bind_rows_ccdb(objects[[1L]], objects[-1L])
 }
 
-#' #' Combine `ContigCellDB` along rows (contigs, cells or clusters)
+#' Combine `ContigCellDB` along rows (contigs, cells or clusters)
 #'
 #' The union of the rows in each of the objects is taken,
 #'  thus removing any rows that has an exact duplicate.  This
@@ -324,7 +328,5 @@ setMethod('rbind', 'ContigCellDB', rbind.ContigCellDB)
     for(tt in c('contig_pk', 'cell_pk', 'cluster_pk')){
         pks[[tt]] = purrr::reduce(purrr::map(all_objs, access_cdb, name = tt), union)
     }
-
-
     ContigCellDB(tbls$contig_tbl, pks$contig_pk, tbls$cell_tbl, pks$cell_pk, tbls$cluster_tbl, pks$cluster_pk)
 }

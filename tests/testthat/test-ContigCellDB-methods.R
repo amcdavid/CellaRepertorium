@@ -31,7 +31,7 @@ test_that('Can rbind', {
    expect_equal(unite, ccdb_ex)
 
    ccdb_ex = cluster_germline(ccdb_ex, segment_keys = 'sample')
-   splat_cell = split_cdb(ccdb_ex, c('sample', 'pop'), 'cell_tbl', drop = TRUE)
+   splat_cell = split_cdb(ccdb_ex, c('sample', 'pop'), 'cell_tbl', drop = TRUE, equalize = TRUE)
    unite_cell = do.call(rbind, splat_cell)
    expect_equal(unite_cell, ccdb_ex)
 

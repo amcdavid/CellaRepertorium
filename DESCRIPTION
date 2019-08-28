@@ -47,7 +47,9 @@ Suggests:
     ggdendro,
     broom,
     lme4,
-    RColorBrewer
+    RColorBrewer,
+    SingleCellExperiment,
+    scater
 LinkingTo: 
     Rcpp
 VignetteBuilder: 
