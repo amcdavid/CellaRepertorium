@@ -288,7 +288,8 @@ enumerate_pairing = function(ccdb, chain_key = 'chain', chain_recode_fun = NULL)
 
     chain_keys = union(chain_key, ccdb$cell_pk)
     chain_count = ccdb$contig_tbl %>% group_by(!!!syms(chain_keys)) %>% summarize(n_chains = dplyr::n()) %>% tidyr::spread(chain_key, 'n_chains', fill = 0)
+    chain_count = left_join(ccdb$cell_tbl[ccdb$cell_pk], chain_count, by = ccdb$cell_pk)
     chain_type = ccdb$contig_tbl %>% group_by(!!!syms(ccdb$cell_pk)) %>% summarize(raw_chain_type = paste(sort(!!sym(chain_key)), collapse = '_'))
-    chain_summary = left_join(chain_type, chain_count, by = ccdb$cell_pk) %>% ungroup()
+    chain_summary = left_join(chain_count, chain_type, by = ccdb$cell_pk) %>% ungroup()
     chain_recode_fun(chain_summary)
 }
