@@ -13,6 +13,9 @@
 
 \item{deparse.level}{ignored}
 }
+\value{
+\code{\link[=ContigCellDB]{ContigCellDB()}}
+}
 \description{
 The union of the rows in each of the objects is taken,
 thus removing any rows that has an exact duplicate.  This

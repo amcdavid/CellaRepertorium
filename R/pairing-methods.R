@@ -159,7 +159,7 @@ pairing_tables = function(ccdb,  canonicalize_fun = canonicalize_by_chain, table
     # In how many cells do each cluster pairing appear?
     cluster_pair_tbl = oligo_cluster_pairs %>% group_by(!!!syms(cluster_ids)) %>% summarize(n_clone_pairs = dplyr::n())
     # which clusters are expanded
-    expanded_cluster = cluster_pair_tbl %>% dplyr::filter(n_clone_pairs >= min_expansion) %>% dplyr::filter_at(.vars = cluster_ids, .vars_predicate = all_vars(!is.na(.)))
+    expanded_cluster = cluster_pair_tbl %>% dplyr::filter(n_clone_pairs >= min_expansion) %>% dplyr::filter_at(.vars = cluster_ids, .vars_predicate = dplyr::all_vars(!is.na(.)))
     expanded_cluster = ungroup(expanded_cluster) %>% dplyr::select(!!!syms(cluster_ids_to_select), max_pairs = n_clone_pairs)
     if(!is.null(cluster_whitelist)){
         expanded_cluster = bind_rows(expanded_cluster, cluster_whitelist)

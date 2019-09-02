@@ -19,6 +19,7 @@ cluster_test_by = function(ccdb, fields  = 'chain', tbl = 'cluster_tbl', ...){
 #' @inheritParams canonicalize_cell
 #' @return table with one row per cluster/term.
 #' @export
+#' @importFrom stats as.formula
 #'
 #' @examples
 #' library(dplyr)

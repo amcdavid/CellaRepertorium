@@ -78,6 +78,7 @@ cluster_permute_test = function(ccdb, cell_covariate_keys,
 #' @param labels \code{factor} of length n
 #' @param covariates \code{factor} of length n
 #' @param statistic function of label and covariate
+#' @return a list containing the observed value of the statistic, its expectation (under independence), a p-value, and the Monte Carlo standard error (of the expected value).
 #' @inheritParams cluster_permute_test
 .cluster_permute_test = function(labels, covariates, statistic, n_perm, alternative,  ...){
     permp = rep(NA, n_perm)

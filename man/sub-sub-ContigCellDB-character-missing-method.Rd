@@ -34,6 +34,9 @@
 
 \item{drop}{ignored}
 }
+\value{
+See details.
+}
 \description{
 A \code{ContigCellDB} pretend to be a \code{cell_tbl} data.frame in several regards.
 This is to enable nesting \code{ContigCellDB} objects in the \code{colData} of a \code{SingleCellExperiment}

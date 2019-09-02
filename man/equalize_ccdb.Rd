@@ -15,6 +15,9 @@ equalize_ccdb(x, cell = TRUE, contig = TRUE, cluster = TRUE)
 
 \item{cluster}{\code{logical} equalize clusters}
 }
+\value{
+\code{\link[=ContigCellDB]{ContigCellDB()}}
+}
 \description{
 The cells in \code{cell_tbl}, and clusters in \code{cluster_tbl} can potentially be a superset of the \code{contig_tbl}.
 }
