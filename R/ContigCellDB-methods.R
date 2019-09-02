@@ -197,12 +197,40 @@ setAs('ContigCellDB', 'data.frame', function(from){
 as.data.frame.ContigCellDB = function(object) as(object, 'data.frame')
 
 
+#' Take the intersection of keys in tables in `x`
+#'
+#' The cells in `cell_tbl`, and clusters in `cluster_tbl` can potentially be a superset of the `contig_tbl`.
+#'
+#' *  `equalize_ccdb(x, cell = TRUE)` trims cells that aren't in `contig_tbl` or  `cluster_tbl`.
+#' *  `equalize_ccdb(x, cluster = TRUE)` trims clusters that aren't in `contig_tbl`.
+#' *  `equalize_ccdb(x, contig = TRUE)` trims contigs that aren't `cell_tbl` or `cluster_tbl`.
+#' @param x [ContigCellDB()]
+#'
+#' @param cell `logical` equalize cells
+#' @param contig `logical` equalize contigs
+#' @param cluster `logical` equalize clusters
+#'
 #' @importFrom dplyr semi_join left_join right_join
+#' @export
 equalize_ccdb = function(x, cell = TRUE, contig = TRUE, cluster = TRUE){
     # Must use @ to avoid infinite loop!
-    if(cell) x@cell_tbl = semi_join(x$cell_tbl, x$contig_tbl, by = x$cell_pk)
-    if(contig) x@contig_tbl = semi_join(x$contig_tbl, x$cell_tbl, by = x$cell_pk)
-    if(nrow(x$cluster_tbl) > 0 && cluster) x@cluster_tbl = semi_join(x$cluster_tbl, x$contig_tbl, by = x$cluster_pk)
+    if(contig){
+        x@contig_tbl = semi_join(x$contig_tbl, x$cell_tbl, by = x$cell_pk)
+        if(nrow(x$cluster_tbl) > 0)
+        x@contig_tbl = semi_join(x$contig_tbl, x$cluster_tbl, by = x$cluster_pk)
+    }
+    if(cell){
+        if(nrow(x$cluster_tbl) > 0 && !contig){
+            contig_tbl = semi_join(x$contig_tbl, x$cluster_tbl, by = x$cluster_pk)
+        } else {
+            contig_tbl = x$contig_tbl
+        }
+        x@cell_tbl = semi_join(x$cell_tbl, x$contig_tbl, by = x$cell_pk)
+
+    }
+    if(nrow(x$cluster_tbl) > 0 && cluster){
+        x@cluster_tbl = semi_join(x$cluster_tbl, x$contig_tbl, by = x$cluster_pk)
+    }
     x@equalized = (cell & contig & cluster) | x@equalized
     x
 }
@@ -266,6 +294,7 @@ mutate_cdb <- function(ccdb, ..., tbl='contig_tbl'){
 #' @param fields `character` naming fields in `tbl`
 #' @param tbl one of `contig_tbl`, `cell_tbl` or `cluster_tbl`
 #' @inheritParams base::split
+#' @inheritParams ContigCellDB
 #' @return list of `ContigCellDB`
 #' @export
 #'

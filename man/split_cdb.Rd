@@ -4,7 +4,8 @@
 \alias{split_cdb}
 \title{Split into a list of \code{\link[=ContigCellDB]{ContigCellDB()}} by named fields}
 \usage{
-split_cdb(ccdb, fields, tbl = "contig_tbl", drop = FALSE)
+split_cdb(ccdb, fields, tbl = "contig_tbl", drop = FALSE,
+  equalize = TRUE)
 }
 \arguments{
 \item{ccdb}{\code{\link[=ContigCellDB]{ContigCellDB()}}}
@@ -15,6 +16,8 @@ split_cdb(ccdb, fields, tbl = "contig_tbl", drop = FALSE)
 
 \item{drop}{logical indicating if levels that do not occur should be dropped
     (if \code{f} is a \code{factor} or a list).}
+
+\item{equalize}{\code{logical}. Should the contig, cells and clusters be equalized by taking the intersection of their common keys?}
 }
 \value{
 list of \code{ContigCellDB}

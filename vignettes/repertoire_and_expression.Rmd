@@ -53,7 +53,7 @@ genes = 200
 cells = nrow(all_bc)
 array_size = genes*cells
 expression = matrix(rnbinom(array_size, size = 5, mu = 3), nrow = genes, ncol = cells)
-sce = SingleCellExperiment(assay = expression, colData = all_bc)
+sce = SingleCellExperiment(assay = list(counts = expression), colData = all_bc)
 ```
 
 # Remake the ContigCellDB with empty cells
@@ -76,5 +76,25 @@ colData(sce)$alpha =  canonicalize_cell(ccdb2, chain == 'TRA', contig_fields = c
 
 colData(sce)$beta =  canonicalize_cell(ccdb2, chain == 'TRB', contig_fields = c('chain', 'v_gene','d_gene', 'j_gene', 'aa80'))
 
+colData(sce)$pairing = enumerate_pairing(ccdb2, chain_recode_fun = 'guess')
 ```
 
+# Visualization of TCR features with Scater
+
+We can leverage Scater's ability to use "nested" data frames to visualize TCR features.
+
+```{r}
+library(scater)
+sce = normalizeSCE(sce)
+sce = runPCA(sce)
+plotReducedDim(sce, use_dimred = 'PCA', colour_by = c('pairing', 'pairing'))
+```
+
+Here we calculate the first two principal components (which don't show much because these are simulated data without any special structure), and then visualize if the TCR was paired or not.
+
+```{r}
+only_paired = sce[,which(sce$pairing$pairing == 'paired')]
+plotReducedDim(only_paired, use_dimred = 'PCA', colour_by = c('pairing', 'canonical'))
+```
+
+Since the `ContigCellDB` is nested within the `SingleCellExperiment` it automatically gets subsetted appropriately when the parent object is subsetted.
