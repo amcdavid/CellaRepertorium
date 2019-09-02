@@ -8,11 +8,13 @@
 
 <title>Function reference • CellaRepertorium</title>
 
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
@@ -30,7 +32,9 @@
 
 
 
+
 <meta property="og:title" content="Function reference" />
+
 
 
 
@@ -60,7 +64,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CellaRepertorium</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.0</span>
       </span>
     </div>
 
@@ -88,10 +92,12 @@
     <li>
       <a href="../articles/mouse_tcell_qc.html">Quality control and Exploration of UMI-based repertoire data</a>
     </li>
+    <li>
+      <a href="../articles/repertoire_and_expression.html">Combining Repertoire with Expression with SingleCellExperiment</a>
+    </li>
   </ul>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/amcdavid/CellaRepertorium">
@@ -150,15 +156,21 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="ContigCellDB-generics.html">rbind(<i>&lt;ContigCellDB&gt;</i>)</a></code> </p>
+          <p><code><a href="rbind-ContigCellDB-method.html">rbind(<i>&lt;ContigCellDB&gt;</i>)</a></code> </p>
         </td>
-        <td><p>#' Combine <code>ContigCellDB</code> along rows (contigs, cells or clusters)</p></td>
+        <td><p>Combine <code>ContigCellDB</code> along rows (contigs, cells or clusters).</p></td>
       </tr><tr>
         
         <td>
           <p><code><a href="split_cdb.html">split_cdb()</a></code> </p>
         </td>
         <td><p>Split into a list of <code>ContigCellDB()</code> by named fields</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="equalize_ccdb.html">equalize_ccdb()</a></code> </p>
+        </td>
+        <td><p>Take the intersection of keys in tables in <code>x</code></p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -301,12 +313,6 @@
           <p><code><a href="fine_cluster_seqs.html">fine_cluster_seqs()</a></code> </p>
         </td>
         <td><p>Calculate distances and perform hierarchical clustering on a set of sequences</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="get_canonical_representative.html">get_canonical_representative()</a></code> </p>
-        </td>
-        <td><p>Given a family of similar sequences, return a "representative"</p></td>
       </tr>
     </tbody>
     </table>

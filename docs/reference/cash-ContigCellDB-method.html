@@ -8,11 +8,13 @@
 
 <title>Access public members of ContigCellDB object — $,ContigCellDB-method • CellaRepertorium</title>
 
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
@@ -30,10 +32,11 @@
 
 
 
-<meta property="og:title" content="Access public members of ContigCellDB object — $,ContigCellDB-method" />
 
+<meta property="og:title" content="Access public members of ContigCellDB object — $,ContigCellDB-method" />
 <meta property="og:description" content="Access public members of ContigCellDB object" />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -63,7 +66,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CellaRepertorium</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.0</span>
       </span>
     </div>
 
@@ -91,10 +94,12 @@
     <li>
       <a href="../articles/mouse_tcell_qc.html">Quality control and Exploration of UMI-based repertoire data</a>
     </li>
+    <li>
+      <a href="../articles/repertoire_and_expression.html">Combining Repertoire with Expression with SingleCellExperiment</a>
+    </li>
   </ul>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/amcdavid/CellaRepertorium">
@@ -120,9 +125,7 @@
     </div>
 
     <div class="ref-description">
-    
     <p>Access public members of ContigCellDB object</p>
-    
     </div>
 
     <pre class="usage"># S4 method for ContigCellDB
@@ -130,7 +133,7 @@ $(x, name)
 
 # S4 method for ContigCellDB
 $(x, name) <- value</pre>
-    
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -147,11 +150,10 @@ $(x, name) <- value</pre>
       <td><p>The value assigned to a slot of ContigCellDB object</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>Update or return a slot of <code><a href='ContigCellDB-fun.html'>ContigCellDB()</a></code></p>
-    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='no'>ccdb_ex</span>$<span class='no'>contig_tbl</span></div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 1,508 x 22</span><span>
@@ -187,16 +189,14 @@ $(x, name) <- value</pre>
 <span class='co'># Take a subset of ccdb_ex</span>
 <span class='no'>ccdb_ex</span></div><div class='output co'>#&gt; ContigCellDB of 1508 contigs; 832 cells; and 0 clusters.
 #&gt; Contigs keyed by sample, barcode, contig_id; cells keyed by pop, sample, barcode.</div><div class='input'><span class='no'>ccdb_ex</span>$<span class='no'>contig_tbl</span> <span class='kw'>=</span> <span class='kw pkg'>dplyr</span><span class='kw ns'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span>(<span class='no'>ccdb_ex</span>$<span class='no'>contig_tbl</span>, <span class='no'>pop</span> <span class='kw'>==</span> <span class='st'>'b6'</span>)
-<span class='no'>ccdb_ex</span></div><div class='output co'>#&gt; ContigCellDB of 767 contigs; 426 cells; and 0 clusters.
+<span class='no'>ccdb_ex</span></div><div class='output co'>#&gt; ContigCellDB of 767 contigs; 832 cells; and 0 clusters.
 #&gt; Contigs keyed by sample, barcode, contig_id; cells keyed by pop, sample, barcode.</div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#value">Value</a></li>
-      
       <li><a href="#examples">Examples</a></li>
     </ul>
 

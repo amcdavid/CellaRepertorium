@@ -8,11 +8,13 @@
 
 <title>Construct a ContigCellDB — ContigCellDB • CellaRepertorium</title>
 
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
@@ -30,10 +32,11 @@
 
 
 
-<meta property="og:title" content="Construct a ContigCellDB — ContigCellDB" />
 
+<meta property="og:title" content="Construct a ContigCellDB — ContigCellDB" />
 <meta property="og:description" content="Construct a ContigCellDB" />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -63,7 +66,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CellaRepertorium</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.0</span>
       </span>
     </div>
 
@@ -91,10 +94,12 @@
     <li>
       <a href="../articles/mouse_tcell_qc.html">Quality control and Exploration of UMI-based repertoire data</a>
     </li>
+    <li>
+      <a href="../articles/repertoire_and_expression.html">Combining Repertoire with Expression with SingleCellExperiment</a>
+    </li>
   </ul>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/amcdavid/CellaRepertorium">
@@ -120,17 +125,15 @@
     </div>
 
     <div class="ref-description">
-    
     <p>Construct a ContigCellDB</p>
-    
     </div>
 
     <pre class="usage"><span class='fu'>ContigCellDB</span>(<span class='no'>contig_tbl</span>, <span class='no'>contig_pk</span>, <span class='no'>cell_tbl</span>, <span class='no'>cell_pk</span>, <span class='no'>cluster_tbl</span>,
-  <span class='kw'>cluster_pk</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/character'>character</a></span>())
+  <span class='kw'>cluster_pk</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/character'>character</a></span>(), <span class='kw'>equalize</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
 
 <span class='fu'>ContigCellDB_10XVDJ</span>(<span class='no'>contig_tbl</span>, <span class='kw'>contig_pk</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"barcode"</span>, <span class='st'>"contig_id"</span>),
-  <span class='kw'>cell_pk</span> <span class='kw'>=</span> <span class='st'>"barcode"</span>)</pre>
-    
+  <span class='kw'>cell_pk</span> <span class='kw'>=</span> <span class='st'>"barcode"</span>, <span class='no'>...</span>)</pre>
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -158,29 +161,33 @@
       <th>cluster_pk</th>
       <td><p>If <code>cluster_tbl</code> was provided, a character vector naming fields in <code>cluster_tbl</code> that uniquely identify a cluster</p></td>
     </tr>
+    <tr>
+      <th>equalize</th>
+      <td><p><code>logical</code>. Should the contig, cells and clusters be equalized by taking the intersection of their common keys?</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>passed to <code>ContigCellDB()</code></p></td>
+    </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p><code>ContigCellDB</code></p>
-    
     <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
 
     <ul>
 <li><p><code>ContigCellDB_10XVDJ</code>: provide defaults that correspond to identifiers in 10X VDJ data</p></li>
 </ul>
-    
     <h2 class="hasAnchor" id="accessors-mutators"><a class="anchor" href="#accessors-mutators"></a>Accessors/mutators</h2>
 
     
     <p>See <code><a href='cash-ContigCellDB-method.html'>$,ContigCellDB-method</a></code> for more on how to access and mutate slots.
 See <code><a href='mutate_cdb.html'>mutate_cdb()</a></code> and <code><a href='mutate_cdb.html'>filter_cdb()</a></code> for endomorphic filtering/mutation methods
-See <code><a href='split_cdb.html'>split_cdb()</a></code> to split into a list, and <code><a href='ContigCellDB-generics.html'>rbind.ContigCellDB()</a></code> for the inverse operation.</p>
-    
+See <code><a href='split_cdb.html'>split_cdb()</a></code> to split into a list, and <code><a href='rbind-ContigCellDB-method.html'>rbind.ContigCellDB()</a></code> for the inverse operation.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='cash-ContigCellDB-method.html'>$,ContigCellDB-method</a></code></p></div>
-    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/data'>data</a></span>(<span class='no'>contigs_qc</span>)
@@ -247,15 +254,10 @@ See <code><a href='split_cdb.html'>split_cdb()</a></code> to split into a list, 
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#value">Value</a></li>
-
       <li><a href="#functions">Functions</a></li>
-
       <li><a href="#accessors-mutators">Accessors/mutators</a></li>
-
       <li><a href="#see-also">See also</a></li>
-      
       <li><a href="#examples">Examples</a></li>
     </ul>
 

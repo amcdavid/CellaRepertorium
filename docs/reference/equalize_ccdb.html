@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Authors • CellaRepertorium</title>
+<title>Take the intersection of keys in tables in <code>x</code> — equalize_ccdb • CellaRepertorium</title>
 
 
 <!-- jquery -->
@@ -27,13 +27,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
-<link href="pkgdown.css" rel="stylesheet">
-<script src="pkgdown.js"></script>
+<link href="../pkgdown.css" rel="stylesheet">
+<script src="../pkgdown.js"></script>
 
 
 
 
-<meta property="og:title" content="Authors" />
+<meta property="og:title" content="Take the intersection of keys in tables in <code>x</code> — equalize_ccdb" />
+<meta property="og:description" content="The cells in cell_tbl, and clusters in cluster_tbl can potentially be a superset of the contig_tbl." />
+<meta name="twitter:card" content="summary" />
 
 
 
@@ -51,7 +53,7 @@
   </head>
 
   <body>
-    <div class="container template-authors">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -63,7 +65,7 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="index.html">CellaRepertorium</a>
+        <a class="navbar-link" href="../index.html">CellaRepertorium</a>
         <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.0</span>
       </span>
     </div>
@@ -71,13 +73,13 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="index.html">
+  <a href="../index.html">
     <span class="fa fa-home fa-lg"></span>
      
   </a>
 </li>
 <li>
-  <a href="reference/index.html">Reference</a>
+  <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
@@ -87,13 +89,13 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="articles/cdr3_clustering.html">Clustering repertoire via CDR3 sequences</a>
+      <a href="../articles/cdr3_clustering.html">Clustering repertoire via CDR3 sequences</a>
     </li>
     <li>
-      <a href="articles/mouse_tcell_qc.html">Quality control and Exploration of UMI-based repertoire data</a>
+      <a href="../articles/mouse_tcell_qc.html">Quality control and Exploration of UMI-based repertoire data</a>
     </li>
     <li>
-      <a href="articles/repertoire_and_expression.html">Combining Repertoire with Expression with SingleCellExperiment</a>
+      <a href="../articles/repertoire_and_expression.html">Combining Repertoire with Expression with SingleCellExperiment</a>
     </li>
   </ul>
 </li>
@@ -115,30 +117,62 @@
       </header>
 
 <div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Authors</h1>
+    <h1>Take the intersection of keys in tables in <code>x</code></h1>
+    <small class="dont-index">Source: <a href='https://github.com/amcdavid/CellaRepertorium/blob/master/R/ContigCellDB-methods.R'><code>R/ContigCellDB-methods.R</code></a></small>
+    <div class="hidden name"><code>equalize_ccdb.Rd</code></div>
     </div>
 
-    <ul class="list-unstyled">
-      <li>
-        <p><strong>Andrew McDavid</strong>. Author, maintainer. 
-        </p>
-      </li>
-      <li>
-        <p><strong>Yu Gu</strong>. Author. 
-        </p>
-      </li>
-      <li>
-        <p><strong>Thomas Lin Pedersen</strong>. Contributor. 
-        </p>
-      </li>
+    <div class="ref-description">
+    <p>The cells in <code>cell_tbl</code>, and clusters in <code>cluster_tbl</code> can potentially be a superset of the <code>contig_tbl</code>.</p>
+    </div>
+
+    <pre class="usage"><span class='fu'>equalize_ccdb</span>(<span class='no'>x</span>, <span class='kw'>cell</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>contig</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>cluster</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>x</th>
+      <td><p><code><a href='ContigCellDB-fun.html'>ContigCellDB()</a></code></p></td>
+    </tr>
+    <tr>
+      <th>cell</th>
+      <td><p><code>logical</code> equalize cells</p></td>
+    </tr>
+    <tr>
+      <th>contig</th>
+      <td><p><code>logical</code> equalize contigs</p></td>
+    </tr>
+    <tr>
+      <th>cluster</th>
+      <td><p><code>logical</code> equalize clusters</p></td>
+    </tr>
+    </table>
+
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p><code><a href='ContigCellDB-fun.html'>ContigCellDB()</a></code></p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <ul>
+<li><p><code>equalize_ccdb(x, cell = TRUE)</code> trims cells that aren't in <code>contig_tbl</code> or  <code>cluster_tbl</code>.</p></li>
+<li><p><code>equalize_ccdb(x, cluster = TRUE)</code> trims clusters that aren't in <code>contig_tbl</code>.</p></li>
+<li><p><code>equalize_ccdb(x, contig = TRUE)</code> trims contigs that aren't <code>cell_tbl</code> or <code>cluster_tbl</code>.</p></li>
+</ul>
+
+  </div>
+  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+    <h2>Contents</h2>
+    <ul class="nav nav-pills nav-stacked">
+      <li><a href="#arguments">Arguments</a></li>
+      <li><a href="#value">Value</a></li>
+      <li><a href="#details">Details</a></li>
     </ul>
 
   </div>
-
 </div>
-
 
       <footer>
       <div class="copyright">

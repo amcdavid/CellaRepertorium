@@ -30,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CellaRepertorium</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.0</span>
       </span>
     </div>
 
@@ -57,6 +57,9 @@
     </li>
     <li>
       <a href="../articles/mouse_tcell_qc.html">Quality control and Exploration of UMI-based repertoire data</a>
+    </li>
+    <li>
+      <a href="../articles/repertoire_and_expression.html">Combining Repertoire with Expression with SingleCellExperiment</a>
     </li>
   </ul>
 </li>
@@ -115,7 +118,7 @@
 <a class="sourceLine" id="cb2-5" data-line-number="5">cdb =<span class="st"> </span><span class="kw"><a href="../reference/ContigCellDB-fun.html">ContigCellDB_10XVDJ</a></span>(contigs_qc, <span class="dt">contig_pk =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">'barcode'</span>, <span class="st">'pop'</span>, <span class="st">'sample'</span>, <span class="st">'contig_id'</span>), <span class="dt">cell_pk =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">'barcode'</span>, <span class="st">'pop'</span>, <span class="st">'sample'</span>))</a>
 <a class="sourceLine" id="cb2-6" data-line-number="6"></a>
 <a class="sourceLine" id="cb2-7" data-line-number="7">cdb<span class="op">$</span>contig_tbl =<span class="st"> </span>dplyr<span class="op">::</span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(cdb<span class="op">$</span>contig_tbl, full_length, productive <span class="op">==</span><span class="st"> 'True'</span>, high_confidence, chain <span class="op">!=</span><span class="st"> 'Multi'</span>, <span class="kw"><a href="https://stringr.tidyverse.org/reference/str_length.html">str_length</a></span>(cdr3) <span class="op">&gt;</span><span class="st"> </span>MIN_CDR3_AA) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>( <span class="dt">fancy_name =</span> <span class="kw"><a href="../reference/fancy_name_contigs.html">fancy_name_contigs</a></span>(., <span class="kw"><a href="https://stringr.tidyverse.org/reference/str_c.html">str_c</a></span>(pop, <span class="st">'_'</span>, sample)))</a></code></pre></div>
-<p>good chains (either TRA or TRB); each cell can appear more than once.</p>
+<p>832 good chains (either TRA or TRB); each cell can appear more than once.</p>
 </div>
 <div id="chain-pairings" class="section level1">
 <h1 class="hasAnchor">
@@ -160,7 +163,7 @@
 <a href="#cluster-by-v-j-identity" class="anchor"></a>Cluster by V-J identity</h1>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">germline_cluster =<span class="st"> </span><span class="kw"><a href="../reference/cluster_germline.html">cluster_germline</a></span>(cdb, <span class="dt">segment_keys =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">'v_gene'</span>, <span class="st">'j_gene'</span>, <span class="st">'chain'</span>), <span class="dt">cluster_name =</span> <span class="st">'segment_idx'</span>)</a>
 <a class="sourceLine" id="cb6-2" data-line-number="2"><span class="co">#&gt; Warning in replace_cluster_tbl(ccdb, cluster_tbl, cl_con_tbl, cluster_pk =</span></a>
-<a class="sourceLine" id="cb6-3" data-line-number="3"><span class="co">#&gt; cluster_name): Replacing `cluster_tbl` with DNA97, .</span></a></code></pre></div>
+<a class="sourceLine" id="cb6-3" data-line-number="3"><span class="co">#&gt; cluster_name): Replacing `cluster_tbl` with DNA97.</span></a></code></pre></div>
 <p>We can cluster by any other feature of the contigs. Here we cluster each contig based on the chain and V-J genes. This gives us the set of observed V-J pairings:</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">germline_cluster =<span class="st"> </span><span class="kw"><a href="../reference/fine_clustering.html">fine_clustering</a></span>(germline_cluster, <span class="dt">sequence_key =</span> <span class="st">'cdr3_nt'</span>, <span class="dt">type =</span> <span class="st">'DNA'</span>)</a>
 <a class="sourceLine" id="cb7-2" data-line-number="2"><span class="co">#&gt; Calculating intradistances on 700 clusters.</span></a>
@@ -187,7 +190,7 @@
 <a class="sourceLine" id="cb10-3" data-line-number="3">oligo_contigs =<span class="st"> </span>aa80</a>
 <a class="sourceLine" id="cb10-4" data-line-number="4">oligo_contigs<span class="op">$</span>contig_tbl =<span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/join.html">semi_join</a></span>(oligo_contigs<span class="op">$</span>contig_tbl, oligo_clusters, <span class="dt">by =</span> <span class="st">'aa80'</span>)</a>
 <a class="sourceLine" id="cb10-5" data-line-number="5">oligo_contigs</a>
-<a class="sourceLine" id="cb10-6" data-line-number="6"><span class="co">#&gt; ContigCellDB of 54 contigs; 54 cells; and 4 clusters.</span></a>
+<a class="sourceLine" id="cb10-6" data-line-number="6"><span class="co">#&gt; ContigCellDB of 54 contigs; 832 cells; and 4 clusters.</span></a>
 <a class="sourceLine" id="cb10-7" data-line-number="7"><span class="co">#&gt; Contigs keyed by barcode, pop, sample, contig_id; cells keyed by barcode, pop, sample.</span></a></code></pre></div>
 <p>Get contigs/cells/clusters found at least 7 times (across contigs). Note that replacing <code>contig_tbl</code> with the subset selected with the <code>semi_join</code> also automatically subsetted the <code>cell_tbl</code> and <code>cluster_tbl</code>.</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">oligo_clusters =<span class="st"> </span>oligo_contigs<span class="op">$</span>contig_tbl <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(aa80) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span>(<span class="st">`</span><span class="dt">n subjects observed</span><span class="st">`</span> =<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/length">length</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/unique">unique</a></span>(sample))) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/join.html">left_join</a></span>(oligo_clusters)</a>
@@ -393,6 +396,7 @@
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+
         <div id="tocnav">
       <h2 class="hasAnchor">
 <a href="#tocnav" class="anchor"></a>Contents</h2>

@@ -8,11 +8,13 @@
 
 <title>Categorize the pairing present in a cell — ig_chain_recode • CellaRepertorium</title>
 
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
@@ -30,12 +32,13 @@
 
 
 
-<meta property="og:title" content="Categorize the pairing present in a cell — ig_chain_recode" />
 
+<meta property="og:title" content="Categorize the pairing present in a cell — ig_chain_recode" />
 <meta property="og:description" content="For each cell (defined by ccdb$cell_pk) count the number of each level of chain_key occurs, and cross tabulate.
 Also for each cell, paste together all values chain_key.
 Return a tibble, keyed by cells that includes the counts of the chains, the raw_chain_type and any additional output from running chain_recode_fun." />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -65,7 +68,7 @@ Return a tibble, keyed by cells that includes the counts of the chains, the raw_
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CellaRepertorium</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.0</span>
       </span>
     </div>
 
@@ -93,10 +96,12 @@ Return a tibble, keyed by cells that includes the counts of the chains, the raw_
     <li>
       <a href="../articles/mouse_tcell_qc.html">Quality control and Exploration of UMI-based repertoire data</a>
     </li>
+    <li>
+      <a href="../articles/repertoire_and_expression.html">Combining Repertoire with Expression with SingleCellExperiment</a>
+    </li>
   </ul>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/amcdavid/CellaRepertorium">
@@ -122,11 +127,9 @@ Return a tibble, keyed by cells that includes the counts of the chains, the raw_
     </div>
 
     <div class="ref-description">
-    
     <p>For each cell (defined by <code>ccdb$cell_pk</code>) count the number of each level of <code>chain_key</code> occurs, and cross tabulate.
 Also for each cell, paste together all values <code>chain_key</code>.
 Return a tibble, keyed by cells that includes the counts of the chains, the <code>raw_chain_type</code> and any additional output from running <code>chain_recode_fun</code>.</p>
-    
     </div>
 
     <pre class="usage"><span class='fu'>ig_chain_recode</span>(<span class='no'>tbl</span>)
@@ -134,7 +137,7 @@ Return a tibble, keyed by cells that includes the counts of the chains, the <cod
 <span class='fu'>tcr_chain_recode</span>(<span class='no'>tbl</span>)
 
 <span class='fu'>enumerate_pairing</span>(<span class='no'>ccdb</span>, <span class='kw'>chain_key</span> <span class='kw'>=</span> <span class='st'>"chain"</span>, <span class='kw'>chain_recode_fun</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
-    
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -155,58 +158,53 @@ Return a tibble, keyed by cells that includes the counts of the chains, the <cod
       <td><p>a function that operates on the output of this function that further reduces the chain combinations to some other summary.  Set to 'guess' to apply functions that may work for 10X data or <code>NULL</code> to skip.  See <code>CellaRepertorium::tcr_chain_recode</code> for an example.</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>a <code>tibble</code> keyed by cells.</p>
-    
     <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
 
     <ul>
 <li><p><code>ig_chain_recode</code>: Recode a table with IG chains</p></li>
 <li><p><code>tcr_chain_recode</code>: Recode a table with TCR chains</p></li>
 </ul>
-    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/data'>data</a></span>(<span class='no'>ccdb_ex</span>)
 <span class='fu'>enumerate_pairing</span>(<span class='no'>ccdb_ex</span>)</div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 832 x 6</span><span>
-#&gt;    pop   sample barcode            raw_chain_type   TRA   TRB
-#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>              </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>          </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'> 1</span><span> b6    4      AAAGTAGTCGCGCCAA-1 TRA_TRB_TRB        1     2
-#&gt; </span><span style='color: #555555;'> 2</span><span> b6    4      AACCATGCATTTGCCC-1 TRA                1     0
-#&gt; </span><span style='color: #555555;'> 3</span><span> b6    4      AACTGGTGTCTGATCA-1 TRA_TRB            1     1
-#&gt; </span><span style='color: #555555;'> 4</span><span> b6    4      AAGCCGCAGTAAGTAC-1 TRB                0     1
-#&gt; </span><span style='color: #555555;'> 5</span><span> b6    4      AAGTCTGGTTCAACCA-1 TRA_TRB            1     1
-#&gt; </span><span style='color: #555555;'> 6</span><span> b6    4      ACACCAAAGTCCAGGA-1 TRA_TRB            1     1
-#&gt; </span><span style='color: #555555;'> 7</span><span> b6    4      ACATGGTAGTGTTTGC-1 TRA_TRB            1     1
-#&gt; </span><span style='color: #555555;'> 8</span><span> b6    4      ACCCACTTCCACGACG-1 TRA_TRB            1     1
-#&gt; </span><span style='color: #555555;'> 9</span><span> b6    4      ACGCCAGGTCCGAATT-1 TRB                0     1
-#&gt; </span><span style='color: #555555;'>10</span><span> b6    4      ACGCCAGTCCAATGGT-1 TRB                0     1
+#&gt;    pop   sample barcode              TRA   TRB raw_chain_type
+#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>              </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>         
+#&gt; </span><span style='color: #555555;'> 1</span><span> b6    4      AAAGTAGTCGCGCCAA-1     1     2 TRA_TRB_TRB   
+#&gt; </span><span style='color: #555555;'> 2</span><span> b6    4      AACCATGCATTTGCCC-1     1     0 TRA           
+#&gt; </span><span style='color: #555555;'> 3</span><span> b6    4      AACTGGTGTCTGATCA-1     1     1 TRA_TRB       
+#&gt; </span><span style='color: #555555;'> 4</span><span> b6    4      AAGCCGCAGTAAGTAC-1     0     1 TRB           
+#&gt; </span><span style='color: #555555;'> 5</span><span> b6    4      AAGTCTGGTTCAACCA-1     1     1 TRA_TRB       
+#&gt; </span><span style='color: #555555;'> 6</span><span> b6    4      ACACCAAAGTCCAGGA-1     1     1 TRA_TRB       
+#&gt; </span><span style='color: #555555;'> 7</span><span> b6    4      ACATGGTAGTGTTTGC-1     1     1 TRA_TRB       
+#&gt; </span><span style='color: #555555;'> 8</span><span> b6    4      ACCCACTTCCACGACG-1     1     1 TRA_TRB       
+#&gt; </span><span style='color: #555555;'> 9</span><span> b6    4      ACGCCAGGTCCGAATT-1     0     1 TRB           
+#&gt; </span><span style='color: #555555;'>10</span><span> b6    4      ACGCCAGTCCAATGGT-1     0     1 TRB           
 #&gt; </span><span style='color: #555555;'># … with 822 more rows</span><span></div><div class='input'><span class='fu'>enumerate_pairing</span>(<span class='no'>ccdb_ex</span>, <span class='kw'>chain_recode_fun</span> <span class='kw'>=</span> <span class='st'>'guess'</span>)</div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 832 x 8</span><span>
-#&gt;    pop   sample barcode            raw_chain_type   TRA   TRB pairing canonical 
-#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>              </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>          </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>     
-#&gt; </span><span style='color: #555555;'> 1</span><span> b6    4      AAAGTAGTCGCGCCAA-1 TRA_TRB_TRB        1     2 paired  double-be…
-#&gt; </span><span style='color: #555555;'> 2</span><span> b6    4      AACCATGCATTTGCCC-1 TRA                1     0 alpha   classical 
-#&gt; </span><span style='color: #555555;'> 3</span><span> b6    4      AACTGGTGTCTGATCA-1 TRA_TRB            1     1 paired  classical 
-#&gt; </span><span style='color: #555555;'> 4</span><span> b6    4      AAGCCGCAGTAAGTAC-1 TRB                0     1 beta    classical 
-#&gt; </span><span style='color: #555555;'> 5</span><span> b6    4      AAGTCTGGTTCAACCA-1 TRA_TRB            1     1 paired  classical 
-#&gt; </span><span style='color: #555555;'> 6</span><span> b6    4      ACACCAAAGTCCAGGA-1 TRA_TRB            1     1 paired  classical 
-#&gt; </span><span style='color: #555555;'> 7</span><span> b6    4      ACATGGTAGTGTTTGC-1 TRA_TRB            1     1 paired  classical 
-#&gt; </span><span style='color: #555555;'> 8</span><span> b6    4      ACCCACTTCCACGACG-1 TRA_TRB            1     1 paired  classical 
-#&gt; </span><span style='color: #555555;'> 9</span><span> b6    4      ACGCCAGGTCCGAATT-1 TRB                0     1 beta    classical 
-#&gt; </span><span style='color: #555555;'>10</span><span> b6    4      ACGCCAGTCCAATGGT-1 TRB                0     1 beta    classical 
+#&gt;    pop   sample barcode              TRA   TRB raw_chain_type pairing canonical 
+#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>              </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>          </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>     
+#&gt; </span><span style='color: #555555;'> 1</span><span> b6    4      AAAGTAGTCGCGCCAA-1     1     2 TRA_TRB_TRB    paired  double-be…
+#&gt; </span><span style='color: #555555;'> 2</span><span> b6    4      AACCATGCATTTGCCC-1     1     0 TRA            alpha   classical 
+#&gt; </span><span style='color: #555555;'> 3</span><span> b6    4      AACTGGTGTCTGATCA-1     1     1 TRA_TRB        paired  classical 
+#&gt; </span><span style='color: #555555;'> 4</span><span> b6    4      AAGCCGCAGTAAGTAC-1     0     1 TRB            beta    classical 
+#&gt; </span><span style='color: #555555;'> 5</span><span> b6    4      AAGTCTGGTTCAACCA-1     1     1 TRA_TRB        paired  classical 
+#&gt; </span><span style='color: #555555;'> 6</span><span> b6    4      ACACCAAAGTCCAGGA-1     1     1 TRA_TRB        paired  classical 
+#&gt; </span><span style='color: #555555;'> 7</span><span> b6    4      ACATGGTAGTGTTTGC-1     1     1 TRA_TRB        paired  classical 
+#&gt; </span><span style='color: #555555;'> 8</span><span> b6    4      ACCCACTTCCACGACG-1     1     1 TRA_TRB        paired  classical 
+#&gt; </span><span style='color: #555555;'> 9</span><span> b6    4      ACGCCAGGTCCGAATT-1     0     1 TRB            beta    classical 
+#&gt; </span><span style='color: #555555;'>10</span><span> b6    4      ACGCCAGTCCAATGGT-1     0     1 TRB            beta    classical 
 #&gt; </span><span style='color: #555555;'># … with 822 more rows</span><span></div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#value">Value</a></li>
-
       <li><a href="#functions">Functions</a></li>
-      
       <li><a href="#examples">Examples</a></li>
     </ul>
 

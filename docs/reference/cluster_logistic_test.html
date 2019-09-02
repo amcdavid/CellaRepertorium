@@ -8,11 +8,13 @@
 
 <title>Test clusters for differential usage — cluster_test_by • CellaRepertorium</title>
 
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
@@ -30,10 +32,11 @@
 
 
 
-<meta property="og:title" content="Test clusters for differential usage — cluster_test_by" />
 
+<meta property="og:title" content="Test clusters for differential usage — cluster_test_by" />
 <meta property="og:description" content="Typically one will want to stratify by chain by calling cluster_test_by, as this will calculate the number of cell &quot;trials&quot; separately depending on the chain recovered." />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -63,7 +66,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CellaRepertorium</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.0</span>
       </span>
     </div>
 
@@ -91,10 +94,12 @@
     <li>
       <a href="../articles/mouse_tcell_qc.html">Quality control and Exploration of UMI-based repertoire data</a>
     </li>
+    <li>
+      <a href="../articles/repertoire_and_expression.html">Combining Repertoire with Expression with SingleCellExperiment</a>
+    </li>
   </ul>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/amcdavid/CellaRepertorium">
@@ -120,9 +125,7 @@
     </div>
 
     <div class="ref-description">
-    
     <p>Typically one will want to stratify by chain by calling <code>cluster_test_by</code>, as this will calculate the number of cell "trials" separately depending on the chain recovered.</p>
-    
     </div>
 
     <pre class="usage"><span class='fu'>cluster_test_by</span>(<span class='no'>ccdb</span>, <span class='kw'>fields</span> <span class='kw'>=</span> <span class='st'>"chain"</span>, <span class='kw'>tbl</span> <span class='kw'>=</span> <span class='st'>"cluster_tbl"</span>, <span class='no'>...</span>)
@@ -130,7 +133,7 @@
 <span class='fu'>cluster_logistic_test</span>(<span class='no'>formula</span>, <span class='no'>ccdb</span>, <span class='no'>cluster_whitelist</span>,
   <span class='kw'>contig_filter_args</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>tie_break_keys</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"umis"</span>, <span class='st'>"reads"</span>),
   <span class='kw'>keep_fit</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>fitter</span> <span class='kw'>=</span> <span class='no'>glm_glmer</span>, <span class='kw'>silent</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
-    
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -184,17 +187,15 @@ for each cluster</p></td>
       <td><p><code>logical</code>. Should warnings from fitting functions should be suppressed?</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>table with one row per cluster/term.</p>
-    
     <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
 
     <ul>
 <li><p><code>cluster_test_by</code>: split <code>ccdb</code> and conduct tests within strata</p></li>
 </ul>
-    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>library</a></span>(<span class='no'>dplyr</span>)
@@ -232,11 +233,8 @@ for each cluster</p></td>
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#value">Value</a></li>
-
       <li><a href="#functions">Functions</a></li>
-      
       <li><a href="#examples">Examples</a></li>
     </ul>
 
