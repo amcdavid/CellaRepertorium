@@ -94,7 +94,8 @@ Here we calculate the first two principal components (which don't show much beca
 
 ```{r}
 only_paired = sce[,which(sce$pairing$pairing == 'paired')]
-plotReducedDim(only_paired, use_dimred = 'PCA', colour_by = c('pairing', 'canonical'))
+plotReducedDim(only_paired, use_dimred = 'PCA', colour_by = c('alpha', 'j_gene'))
+plotReducedDim(only_paired, use_dimred = 'PCA', colour_by = c('beta', 'j_gene'))
 ```
 
-Since the `ContigCellDB` is nested within the `SingleCellExperiment` it automatically gets subsetted appropriately when the parent object is subsetted.
+Since the `ContigCellDB` is nested within the `SingleCellExperiment` it automatically gets subsetted appropriately when the parent object is subsetted.  Enough `data.frame`-like semantics have been implemented so that fields from the `cell_tbl` can be visualized.

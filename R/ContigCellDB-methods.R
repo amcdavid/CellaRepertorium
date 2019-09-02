@@ -93,6 +93,8 @@ ContigCellDB_10XVDJ = function(contig_tbl, contig_pk = c('barcode', 'contig_id')
 access_cdb = function(x, name){
     if(name %in% c('contig_tbl', 'cell_tbl', 'contig_pk', 'cell_pk', 'cluster_tbl', 'cluster_pk')){
         slot(x, name)
+    } else if(name %in% names(x@cell_tbl)) {
+        x@cell_tbl[[name]]
     } else{
         stop("Cannot access member ", name)
     }
@@ -102,6 +104,8 @@ replace_cdb = function(x, name, value){
     if(name %in% c('contig_tbl', 'cell_tbl', 'contig_pk', 'cell_pk', 'cluster_tbl', 'cluster_pk')){
         slot(x, name) <- value
         x@equalized = FALSE
+    } else if(name %in% names(x@cell_tbl)) {
+        x@cell_tbl[[name]] <- value
     } else{
         stop("Cannot access member ", name)
     }
@@ -155,6 +159,35 @@ setMethod('show', signature = c(object = 'ContigCellDB'), function(object){
     cat(paste(object@cell_pk, collapse = ', '), '.\n', sep = '')
 })
 
+
+#' `data.frame`-like mutation/accessor generics for `ContigCellDB` objects
+#'
+#' A `ContigCellDB` pretend to be a `cell_tbl` data.frame in several regards.
+#' This is to enable nesting `ContigCellDB` objects in the `colData` of a `SingleCellExperiment`
+#' and so that various plotting functionality in `scater` can do something sensible.
+#'
+#' If `x` a `ContigCellDB`, then `dim(x)` and `dimnames(x)` return `dim(x$cell_tbl)` and `dimnames(x$cell_tbl)`, respectively, and `x[[col]]`  returns `x$cell_tbl[[col]]`.
+#' Likewise indexing with `x[i,]` returns cells indexed by `i`.
+#' Finally `as.data.frame(x)` returns `x$cell_tbl`.
+setMethod('[[', signature = c(x = 'ContigCellDB', i = 'character', j = 'missing'), function(x, i, ...){
+    x@cell_tbl[[i]]
+})
+
+
+#' @rdname sub-sub-ContigCellDB-character-missing-method
+#' @param j ignored
+#' @param drop ignored
+#' @param x `ContigCellDB`
+#' @param i integer or character index
+#' @param ... ignored
+#' @return See details.
+#' @aliases [,ContigCellDB,ANY,missing-method
+#' @examples
+#'  data(ccdb_ex)
+#'  ccdb_ex[1:10,]
+#'  head(ccdb_ex[['barcode']])
+#'  dim(ccdb_ex)
+#'  dimnames(ccdb_ex)
 setMethod('[', signature = c(x = 'ContigCellDB', i = 'ANY', j = 'missing'), function(x, i, ...){
     i = S4Vectors::NSBS(i, x)
     y = x
@@ -162,17 +195,22 @@ setMethod('[', signature = c(x = 'ContigCellDB', i = 'ANY', j = 'missing'), func
     y
 })
 
+
 # Should this be c(ncol(x$cell_tbl), nrow(x$cell_tbl))? Seems unlikely..
+#' @rdname sub-sub-ContigCellDB-character-missing-method
 setMethod('dim', signature = c(x = 'ContigCellDB'), function(x) dim(x$cell_tbl))
 
+#' @rdname sub-sub-ContigCellDB-character-missing-method
 setMethod('dimnames', signature = c(x = 'ContigCellDB'), function(x){
    dimnames(x$cell_tbl)
 })
 
+#' @rdname sub-sub-ContigCellDB-character-missing-method
 setMethod('nrow', signature = c(x = 'ContigCellDB'), function(x){
     nrow(x$cell_tbl)
 })
 
+#' @rdname sub-sub-ContigCellDB-character-missing-method
 setMethod('ncol', signature = c(x = 'ContigCellDB'), function(x){
     ncol(x$cell_tbl)
 })
@@ -209,6 +247,7 @@ as.data.frame.ContigCellDB = function(object) as(object, 'data.frame')
 #' @param cell `logical` equalize cells
 #' @param contig `logical` equalize contigs
 #' @param cluster `logical` equalize clusters
+#' @return [ContigCellDB()]
 #'
 #' @importFrom dplyr semi_join left_join right_join
 #' @export
@@ -326,7 +365,7 @@ rbind.ContigCellDB <- function(..., deparse.level=1)
     .bind_rows_ccdb(objects[[1L]], objects[-1L])
 }
 
-#' Combine `ContigCellDB` along rows (contigs, cells or clusters)
+#' Combine `ContigCellDB` along rows (contigs, cells or clusters).
 #'
 #' The union of the rows in each of the objects is taken,
 #'  thus removing any rows that has an exact duplicate.  This
@@ -334,7 +373,7 @@ rbind.ContigCellDB <- function(..., deparse.level=1)
 #' The union of the various primary keys is taken.
 #' @param ... [ContigCellDB()]
 #' @param deparse.level ignored
-#' @rdname ContigCellDB-generics
+#' @return [ContigCellDB()]
 #' @aliases rbind.ContigCellDB
 #' @export
 #' @examples
