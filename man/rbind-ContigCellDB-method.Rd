@@ -4,7 +4,7 @@
 \name{rbind,ContigCellDB-method}
 \alias{rbind,ContigCellDB-method}
 \alias{rbind.ContigCellDB}
-\title{#' Combine \code{ContigCellDB} along rows (contigs, cells or clusters)}
+\title{Combine \code{ContigCellDB} along rows (contigs, cells or clusters).}
 \usage{
 \S4method{rbind}{ContigCellDB}(..., deparse.level = 1)
 }
@@ -12,6 +12,9 @@
 \item{...}{\code{\link[=ContigCellDB]{ContigCellDB()}}}
 
 \item{deparse.level}{ignored}
+}
+\value{
+\code{\link[=ContigCellDB]{ContigCellDB()}}
 }
 \description{
 The union of the rows in each of the objects is taken,

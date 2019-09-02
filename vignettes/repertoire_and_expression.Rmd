@@ -1,0 +1,101 @@
+---
+title: "Combining Repertoire with Expression with SingleCellExperiment"
+output: BiocStyle::html_document
+vignette: >
+  %\VignetteIndexEntry{Combining Repertoire with Expression with SingleCellExperiment}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>")
+```
+
+```{r setup}
+library(CellaRepertorium)
+library(SingleCellExperiment)
+library(dplyr)
+library(ggplot2)
+library(readr)
+library(tidyr)
+library(stringr)
+library(purrr)
+```
+
+
+# "Load" expression
+
+```{r}
+set.seed(1345)
+data(ccdb_ex)
+barcodes = ccdb_ex$cell_tbl[ccdb_ex$cell_pk]
+
+# Take a subsample of almost all of the barcdes
+barcodes = barcodes[sample(nrow(barcodes), nrow(barcodes) - 5),]
+samples = unique(ccdb_ex$cell_tbl[setdiff(ccdb_ex$cell_pk, 'barcode')])
+
+# For each sample, generate  0-100 "extra" barcodes for which only 5' expression is recovered
+extra = samples %>% rowwise() %>% mutate(extrabc = {
+  extra_bc = floor(runif(1, 0, 100))
+  list(tibble(barcode = paste0('barcode', seq_len(extra_bc))))
+}) 
+extra = extra %>% unnest()
+all_bc = bind_rows(extra, barcodes)
+
+```
+
+Simulate some "cells" and "genes" that nearly form a superset of the cells for which repertoire are available.  This is generally true if no barcode filters have been applied to the expression data. In practice a few cells may have repertoire but not expression (or fail QC for expression). We will work with the intersection of these cells. 
+
+```{r}
+genes = 200
+cells = nrow(all_bc)
+array_size = genes*cells
+expression = matrix(rnbinom(array_size, size = 5, mu = 3), nrow = genes, ncol = cells)
+sce = SingleCellExperiment(assay = list(counts = expression), colData = all_bc)
+```
+
+# Remake the ContigCellDB with empty cells
+
+```{r}
+ccdb2 = ContigCellDB(ccdb_ex$contig_tbl, contig_pk = ccdb_ex$contig_pk, cell_tbl = colData(sce), cell_pk = ccdb_ex$cell_pk, equalize = FALSE)
+
+ccdb2 = cdhit_ccdb(ccdb2, 'cdr3', type = 'AA', cluster_name = 'aa80', identity = .8, min_length = 5)
+ccdb2 = fine_clustering(ccdb2, sequence_key = 'cdr3', type = 'AA', keep_clustering_details = FALSE)
+
+```
+
+Key is to construct with `equalize = FALSE`, which will allow some cells to lack contigs.
+
+
+# Chain pairings
+
+```{r}
+colData(sce)$alpha =  canonicalize_cell(ccdb2, chain == 'TRA', contig_fields = c('chain', 'v_gene','d_gene', 'j_gene', 'aa80'))
+
+colData(sce)$beta =  canonicalize_cell(ccdb2, chain == 'TRB', contig_fields = c('chain', 'v_gene','d_gene', 'j_gene', 'aa80'))
+
+colData(sce)$pairing = enumerate_pairing(ccdb2, chain_recode_fun = 'guess')
+```
+
+# Visualization of TCR features with Scater
+
+We can leverage Scater's ability to use "nested" data frames to visualize TCR features.
+
+```{r}
+library(scater)
+sce = normalizeSCE(sce)
+sce = runPCA(sce)
+plotReducedDim(sce, use_dimred = 'PCA', colour_by = c('pairing', 'pairing'))
+```
+
+Here we calculate the first two principal components (which don't show much because these are simulated data without any special structure), and then visualize if the TCR was paired or not.
+
+```{r}
+only_paired = sce[,which(sce$pairing$pairing == 'paired')]
+plotReducedDim(only_paired, use_dimred = 'PCA', colour_by = c('alpha', 'j_gene'))
+plotReducedDim(only_paired, use_dimred = 'PCA', colour_by = c('beta', 'j_gene'))
+```
+
+Since the `ContigCellDB` is nested within the `SingleCellExperiment` it automatically gets subsetted appropriately when the parent object is subsetted.  Enough `data.frame`-like semantics have been implemented so that fields from the `cell_tbl` can be visualized.

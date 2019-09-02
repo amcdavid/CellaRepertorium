@@ -16,9 +16,12 @@ test_that('Can construct ContigCellDB',
 
 test_that('Can split', {
    data(ccdb_ex)
-   splat = split_cdb(ccdb_ex, 'chain', 'contig_tbl')
+   splat = split_cdb(ccdb_ex, 'chain', 'contig_tbl', equalize = TRUE)
    expect_equal(length(splat), 2)
    expect_equal(splat$TRA$contig_tbl$chain, rep('TRA', sum(ccdb_ex$contig_tbl$chain == 'TRA')))
+
+   # Drop missing cells
+   expect_equal(nrow(splat$TRB$cell_tbl), nrow(unique(dplyr::filter(ccdb_ex$contig_tbl, chain =='TRB')[ccdb_ex$cell_pk])))
 
    splat_cell = split_cdb(ccdb_ex, c('sample', 'pop'), 'cell_tbl')
 })
@@ -29,9 +32,8 @@ test_that('Can rbind', {
    unite = rbind(splat$TRA, splat$TRB)
    expect_is(unite, 'ContigCellDB')
    expect_equal(unite, ccdb_ex)
-
    ccdb_ex = cluster_germline(ccdb_ex, segment_keys = 'sample')
-   splat_cell = split_cdb(ccdb_ex, c('sample', 'pop'), 'cell_tbl', drop = TRUE)
+   splat_cell = split_cdb(ccdb_ex, c('sample', 'pop'), 'cell_tbl', drop = TRUE, equalize = TRUE)
    unite_cell = do.call(rbind, splat_cell)
    expect_equal(unite_cell, ccdb_ex)
 

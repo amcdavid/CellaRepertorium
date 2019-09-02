@@ -72,7 +72,9 @@ canonicalize_cell = function(ccdb, contig_filter_args = TRUE,  tie_break_keys = 
     # setup quosures to arrange the data
     arranging = purrr::map(tie_break_keys, ~ rlang::quo(desc(!!sym(.x))))
     # take first row of each cell
-    ft2 = ft %>% group_by(!!!syms(ccdb$cell_pk)) %>% dplyr::arrange(!!!arranging) %>% dplyr::do(dplyr::slice(., order))
+    ft2 = ft %>% group_by(!!!syms(ccdb$cell_pk)) %>% dplyr::arrange(!!!arranging)
+    idx = ft2 %>% transmute(ngrp = dplyr::n(), idx = seq_along(ngrp))
+    ft2 = ft2[idx$idx==order,,drop = FALSE]
     cell_tbl = ccdb$cell_tbl
     # join with cell tbl (so same number of cells)
     ccdb$cell_tbl = right_join_warn(ft2[unique(c(contig_fields, ccdb$cell_pk))], cell_tbl, by = ccdb$cell_pk, overwrite = overwrite)
@@ -159,7 +161,7 @@ pairing_tables = function(ccdb,  canonicalize_fun = canonicalize_by_chain, table
     # In how many cells do each cluster pairing appear?
     cluster_pair_tbl = oligo_cluster_pairs %>% group_by(!!!syms(cluster_ids)) %>% summarize(n_clone_pairs = dplyr::n())
     # which clusters are expanded
-    expanded_cluster = cluster_pair_tbl %>% dplyr::filter(n_clone_pairs >= min_expansion) %>% dplyr::filter_at(.vars = cluster_ids, .vars_predicate = all_vars(!is.na(.)))
+    expanded_cluster = cluster_pair_tbl %>% dplyr::filter(n_clone_pairs >= min_expansion) %>% dplyr::filter_at(.vars = cluster_ids, .vars_predicate = dplyr::all_vars(!is.na(.)))
     expanded_cluster = ungroup(expanded_cluster) %>% dplyr::select(!!!syms(cluster_ids_to_select), max_pairs = n_clone_pairs)
     if(!is.null(cluster_whitelist)){
         expanded_cluster = bind_rows(expanded_cluster, cluster_whitelist)
@@ -288,7 +290,8 @@ enumerate_pairing = function(ccdb, chain_key = 'chain', chain_recode_fun = NULL)
 
     chain_keys = union(chain_key, ccdb$cell_pk)
     chain_count = ccdb$contig_tbl %>% group_by(!!!syms(chain_keys)) %>% summarize(n_chains = dplyr::n()) %>% tidyr::spread(chain_key, 'n_chains', fill = 0)
+    chain_count = left_join(ccdb$cell_tbl[ccdb$cell_pk], chain_count, by = ccdb$cell_pk)
     chain_type = ccdb$contig_tbl %>% group_by(!!!syms(ccdb$cell_pk)) %>% summarize(raw_chain_type = paste(sort(!!sym(chain_key)), collapse = '_'))
-    chain_summary = left_join(chain_type, chain_count, by = ccdb$cell_pk) %>% ungroup()
+    chain_summary = left_join(chain_count, chain_type, by = ccdb$cell_pk) %>% ungroup()
     chain_recode_fun(chain_summary)
 }

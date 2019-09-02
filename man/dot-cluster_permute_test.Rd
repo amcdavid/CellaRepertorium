@@ -20,6 +20,9 @@
 
 \item{...}{passed to \code{statistic}}
 }
+\value{
+a list containing the observed value of the statistic, its expectation (under independence), a p-value, and the Monte Carlo standard error (of the expected value).
+}
 \description{
 Cell permutation tests (internal)
 }

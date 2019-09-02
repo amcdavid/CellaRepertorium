@@ -3,7 +3,7 @@
 #' @inheritParams split_cdb
 #' @export
 cluster_test_by = function(ccdb, fields  = 'chain', tbl = 'cluster_tbl', ...){
-    splat = split_cdb(ccdb, fields = fields, tbl = tbl, drop = TRUE)
+    splat = split_cdb(ccdb, fields = fields, tbl = tbl, drop = TRUE, equalize = TRUE)
     purrr::map_dfr(splat, function(x) cluster_logistic_test(...,  ccdb = x), .id = paste0(fields, collapse = '.'))
 }
 
@@ -19,6 +19,7 @@ cluster_test_by = function(ccdb, fields  = 'chain', tbl = 'cluster_tbl', ...){
 #' @inheritParams canonicalize_cell
 #' @return table with one row per cluster/term.
 #' @export
+#' @importFrom stats as.formula
 #'
 #' @examples
 #' library(dplyr)

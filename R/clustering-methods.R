@@ -1,3 +1,4 @@
+globalVariables('ngrp')
 
 #' Cluster contigs by germline properties
 #'
@@ -13,7 +14,8 @@
 #' ccdb_ex$cluster_tbl
 cluster_germline = function(ccdb, segment_keys = c('v_gene', 'j_gene', 'chain'), cluster_name = 'cluster_idx'){
     contig_tbl = ccdb$contig_tbl
-    seg_types = contig_tbl %>% group_by(!!!syms(segment_keys)) %>% summarize() %>% ungroup() %>% mutate(!!sym(cluster_name) := seq_len(nrow(.)))
+    seg_types = contig_tbl %>% group_by(!!!syms(segment_keys)) %>% summarize() %>% ungroup()
+    seg_types[[cluster_name]] = seq_len(nrow(seg_types))
     cl_con_tbl = left_join_warn(seg_types, contig_tbl, by = segment_keys)
     cluster_tbl = as_tibble(unique(cl_con_tbl[union(cluster_name, segment_keys)]))
     replace_cluster_tbl(ccdb, cluster_tbl, cl_con_tbl, cluster_pk = cluster_name)
@@ -151,7 +153,9 @@ tie_break_keys = character(), order = 1, representative = ccdb$cluster_pk[1], co
     arranging = purrr::map(tie_break_keys, ~ rlang::quo(desc(!!sym(.x))))
 
     # take first row of each cluster
-    cluster_tbl = sub_contig_tbl %>% group_by(!!!syms(ccdb$cluster_pk)) %>% dplyr::arrange(!!!arranging) %>% dplyr::do(dplyr::slice(., order))
+    cluster_tbl = sub_contig_tbl %>% group_by(!!!syms(ccdb$cluster_pk)) %>% dplyr::arrange(!!!arranging)
+    idx = cluster_tbl %>% transmute(ngrp = dplyr::n(), idx = seq_along(ngrp))
+    cluster_tbl = cluster_tbl[idx$idx==order,,drop = FALSE]
     cluster_tbl = cluster_tbl %>% dplyr::select(!!!syms(unique(c(ccdb$cluster_pk, contig_fields, representative))))
 
     # fill any missing clusters after the filtering

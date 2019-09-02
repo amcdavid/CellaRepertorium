@@ -2,7 +2,7 @@ Type: Package
 Package: CellaRepertorium
 Title: Data structures, clustering and testing for single 
     cell immune receptor repertoires (scRNAseq RepSeq/AIRR-seq)
-Version: 0.4.0
+Version: 0.8.0
 Authors@R: 
     c(person(given = "Andrew",
              family = "McDavid",
@@ -11,8 +11,10 @@ Authors@R:
       person(given = "Yu",
              family = "Gu",
              role = "aut",
-             email = "Yu_Gu@urmc.rochester.edu"))
-Maintainer: Andrew McDavid <Andrew_McDavid@urmc.rochester.edu>
+             email = "Yu_Gu@urmc.rochester.edu"),
+      person(given = 'Thomas Lin',
+             family = 'Pedersen', 
+             role = 'ctb'))
 Description: Methods to cluster and analyze high-throughput
     single cell immune cell repertoires, especially from the 10X Genomics
     VDJ solution. Contains an R interface to CD-HIT (Li and Godzik 2006).   
@@ -36,7 +38,9 @@ Imports:
     S4Vectors,
     tidyr,
     forcats,
-    progress
+    progress,
+    stats,
+    utils
 Suggests: 
     testthat,
     readr,
@@ -47,7 +51,9 @@ Suggests:
     ggdendro,
     broom,
     lme4,
-    RColorBrewer
+    RColorBrewer,
+    SingleCellExperiment,
+    scater
 LinkingTo: 
     Rcpp
 VignetteBuilder: 
@@ -59,3 +65,5 @@ RoxygenNote: 6.1.1
 URL: https://github.com/amcdavid/CellaRepertorium
 BugReports: https://github.com/amcdavid/CellaRepertorium/issues
 Roxygen: list(markdown = TRUE)
+biocViews: RNASeq, Transcriptomics, SingleCell, TargetedResequencing, 
+    Technology, ImmunoOncology, Clustering
