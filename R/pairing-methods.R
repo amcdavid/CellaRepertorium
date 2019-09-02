@@ -72,7 +72,9 @@ canonicalize_cell = function(ccdb, contig_filter_args = TRUE,  tie_break_keys = 
     # setup quosures to arrange the data
     arranging = purrr::map(tie_break_keys, ~ rlang::quo(desc(!!sym(.x))))
     # take first row of each cell
-    ft2 = ft %>% group_by(!!!syms(ccdb$cell_pk)) %>% dplyr::arrange(!!!arranging) %>% dplyr::do(dplyr::slice(., order))
+    ft2 = ft %>% group_by(!!!syms(ccdb$cell_pk)) %>% dplyr::arrange(!!!arranging)
+    idx = ft2 %>% transmute(ngrp = dplyr::n(), idx = seq_along(ngrp))
+    ft2 = ft2[idx$idx==order,,drop = FALSE]
     cell_tbl = ccdb$cell_tbl
     # join with cell tbl (so same number of cells)
     ccdb$cell_tbl = right_join_warn(ft2[unique(c(contig_fields, ccdb$cell_pk))], cell_tbl, by = ccdb$cell_pk, overwrite = overwrite)

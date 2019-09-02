@@ -12,3 +12,4 @@ manuscript/
 .ignore
 README.Rmd
 data/ccdb_bcell.rda
+R/immcantation-utils.R
