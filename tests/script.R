@@ -1,16 +1,19 @@
 data("ccdb_bcell")
 
-cdb <- filter_cdb(ccdb_bcell, is_cell & high_confidence & productive == 'True' & chain %in% c('IGH', 'IGK', 'IGL'))
-Y_kj <- cdb$contig_tbl %>% group_by(chain, cdr3, v_gene, j_gene) %>% summarize(total_umis = sum(umis))
-Y_j <- cdb$contig_tbl %>% group_by(chain) %>% summarize(total_umis = sum(umis))
-Y_j <- c(rep(Y_j$total_umis[1],sum(Y_kj$chain == 'IGH')), 
-             rep(Y_j$total_umis[2],sum(Y_kj$chain=='IGK')), 
-                 rep(Y_j$total_umis[3],sum(Y_kj$chain=='IGL')))
-Y_kj <- Y_kj$total_umis
+generate_pseudobulk = function(ccdb, type = c('cell', 'umi')){
+  cdb <- filter_cdb(ccdb, is_cell & high_confidence & productive == 'True' & chain %in% c('IGH', 'IGK', 'IGL'))
+  if(type == 'umi'){
+    bulk <- cdb$contig_tbl %>% group_by(pop, chain, cdr3, v_gene, j_gene) %>% summarize(n_umis = sum(umis))
+    bulk <- bulk %>% group_by(pop, chain) %>% mutate(total_umis = sum(n_umis))
+  } else if(type == 'cell'){
+    bulk <- cdb$contig_tbl %>% group_by(pop, chain, cdr3, v_gene, j_gene) %>% summarize(n_bc = dplyr::n_distinct(barcode))
+    bulk <- bulk %>% group_by(pop, chain) %>% mutate(total_bc = sum(n_bc))
+  }
+  
+  return(bulk)
+}
 
-Z_kj <- cdb$contig_tbl %>% group_by(pop, barcode) %>% summarize(cells = dplyr::n())
-pop <- Z_kj$pop
-Z_j <- cdb$contig_tbl %>% group_by(pop) %>% summarize(cells = dplyr::n())
-Z_j <- c(rep(Z_j$cells[1],sum(Z_kj$pop == 'balbc')),rep(Z_j$cells[2],sum(Z_kj$pop == 'b6')))
-Z_kj <- Z_kj$cells
-dat <- data.frame(Z_kj = Z_kj, Z_j = Z_j, pop = pop)
+bulk_y <- generate_pseudobulk(ccdb_bcell,'umi')
+bulk_z <- generate_pseudobulk(ccdb_bcell,'cell')
+
+bulk_y %>% tidyr::complete(.,pop,fill=list(n_umis=0,total_umis=0)) %>% group_by(chain,v_gene,j_gene,cdr3)
