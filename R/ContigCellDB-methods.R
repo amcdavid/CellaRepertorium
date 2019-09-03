@@ -5,11 +5,13 @@
 valid_KeyedTbl = function(tbl, keys){
     tbl_nm = deparse(substitute(tbl))
     if( length(missing_fields <- setdiff(keys, names(tbl))) > 0){
-        stop(sprintf("%s fields were named as primary keys but were missing from %s", paste(missing_fields, collapse = ', '), tbl_nm))
+        stop(sprintf("%s fields were named as primary keys but were missing from %s",
+                     paste(missing_fields, collapse = ', '), tbl_nm))
     }
 
     if(any(dups <- duplicated(tbl[keys]))){
-        stop(sprintf("In %s, rows %s... have identical `keys`, which must uniquely identify a row.", tbl_nm,
+        stop(sprintf("In %s, rows %s... have identical `keys`,
+                     which must uniquely identify a row.", tbl_nm,
                      paste(head(which(dups)), collapse = ',')))
     }
     if(tibble::has_rownames(tbl)){
@@ -60,11 +62,14 @@ valid_KeyedTbl = function(tbl, keys){
 #'  cdb$contig_pk
 #'  cdb$cell_pk
 #'  cdb$cluster_pk
-ContigCellDB = function(contig_tbl, contig_pk, cell_tbl, cell_pk, cluster_tbl, cluster_pk = character(),  equalize = TRUE){
+ContigCellDB = function(contig_tbl, contig_pk, cell_tbl, cell_pk,
+                        cluster_tbl, cluster_pk = character(),  equalize = TRUE){
     contig_tbl = as_tibble(contig_tbl)
     valid_KeyedTbl(contig_tbl, contig_pk)
     if(missing(cell_tbl)){
-        if(missing(cell_pk) || !is.character(cell_pk)) stop("If `cell_tbl` missing then `cell_pk` must name columns in `contig_tbl` that identify cells")
+        if(missing(cell_pk) || !is.character(cell_pk))
+            stop("If `cell_tbl` missing then `cell_pk` must name columns in `contig_tbl`
+                 that identify cells")
         cell_tbl = as_tibble(unique(contig_tbl[cell_pk]))
         equalize = TRUE
     } else{
@@ -79,7 +84,9 @@ ContigCellDB = function(contig_tbl, contig_pk, cell_tbl, cell_pk, cluster_tbl, c
         }
     }
     valid_KeyedTbl(cluster_tbl, cluster_pk)
-    obj = new('ContigCellDB', contig_tbl = contig_tbl, contig_pk = contig_pk, cell_tbl = cell_tbl, cell_pk = cell_pk, cluster_tbl = cluster_tbl, cluster_pk = cluster_pk, equalized = equalize)
+    obj = new('ContigCellDB', contig_tbl = contig_tbl, contig_pk = contig_pk,
+              cell_tbl = cell_tbl, cell_pk = cell_pk, cluster_tbl = cluster_tbl,
+              cluster_pk = cluster_pk, equalized = equalize)
     if(equalize) equalize_ccdb(obj) else obj
 }
 
@@ -148,14 +155,16 @@ setMethod("$", signature = c(x = 'ContigCellDB'), access_cdb)
 #' ccdb_ex
 #' ccdb_ex$contig_tbl = dplyr::filter(ccdb_ex$contig_tbl, pop == 'b6')
 #' ccdb_ex
-setReplaceMethod("$", signature = c(x = 'ContigCellDB'), function(x, name, value) replace_cdb(x, name, value))
+setReplaceMethod("$", signature = c(x = 'ContigCellDB'),
+                 function(x, name, value) replace_cdb(x, name, value))
 
 setMethod('show', signature = c(object = 'ContigCellDB'), function(object){
     cat(class(object), "of", nrow(object$contig_tbl), "contigs")
     if((ncells <- nrow(object$cell_tbl)) > 0) cat(";", ncells, "cells;")
     cat(" and", nrow(object$cluster_tbl), "clusters")
     cat(".\n")
-    cat('Contigs keyed by ', paste(object@contig_pk, collapse = ', '), '; cells keyed by ', sep = '')
+    cat('Contigs keyed by ', paste(object@contig_pk, collapse = ', '),
+        '; cells keyed by ', sep = '')
     cat(paste(object@cell_pk, collapse = ', '), '.\n', sep = '')
 })
 
@@ -188,12 +197,13 @@ setMethod('[[', signature = c(x = 'ContigCellDB', i = 'character', j = 'missing'
 #'  head(ccdb_ex[['barcode']])
 #'  dim(ccdb_ex)
 #'  dimnames(ccdb_ex)
-setMethod('[', signature = c(x = 'ContigCellDB', i = 'ANY', j = 'missing'), function(x, i, ...){
-    i = S4Vectors::NSBS(i, x)
-    y = x
-    y$cell_tbl = x$cell_tbl[i@subscript,]
-    y
-})
+setMethod('[', signature = c(x = 'ContigCellDB', i = 'ANY', j = 'missing'),
+          function(x, i, ...){
+            i = S4Vectors::NSBS(i, x)
+            y = x
+            y$cell_tbl = x$cell_tbl[i@subscript,]
+            y
+        })
 
 
 # Should this be c(ncol(x$cell_tbl), nrow(x$cell_tbl))? Seems unlikely..
@@ -348,7 +358,8 @@ split_cdb = function(ccdb, fields, tbl = 'contig_tbl', drop = FALSE, equalize = 
         stop('`field` must be a character naming fields in `tbl`')
     }
     if(length(missing <- setdiff(fields, names(thetbl)))>0){
-        stop("The following fields are missing from ", tbl, ': ', paste0(missing, collapse = ', '), '.')
+        stop("The following fields are missing from ", tbl, ': ',
+             paste0(missing, collapse = ', '), '.')
     }
     split_tbl = split(thetbl, thetbl[fields], drop = drop)
     out = purrr::map(split_tbl, function(tt){
@@ -385,7 +396,8 @@ setMethod('rbind', 'ContigCellDB', rbind.ContigCellDB)
 
 .bind_rows_ccdb = function(o1, objects, .id = NULL){
     all_objs = c(o1, objects)
-    if(!all(purrr::map_lgl(all_objs, inherits, 'ContigCellDB'))) stop("Can't rbind heterogenous objects.")
+    if(!all(purrr::map_lgl(all_objs, inherits, 'ContigCellDB')))
+        stop("Can't rbind heterogenous objects.")
 
     tbls = list()
     for(tt in c('contig_tbl', 'cell_tbl', 'cluster_tbl')){
@@ -396,5 +408,6 @@ setMethod('rbind', 'ContigCellDB', rbind.ContigCellDB)
     for(tt in c('contig_pk', 'cell_pk', 'cluster_pk')){
         pks[[tt]] = purrr::reduce(purrr::map(all_objs, access_cdb, name = tt), union)
     }
-    ContigCellDB(tbls$contig_tbl, pks$contig_pk, tbls$cell_tbl, pks$cell_pk, tbls$cluster_tbl, pks$cluster_pk)
+    ContigCellDB(tbls$contig_tbl, pks$contig_pk, tbls$cell_tbl, pks$cell_pk,
+                 tbls$cluster_tbl, pks$cluster_pk)
 }

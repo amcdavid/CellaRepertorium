@@ -21,16 +21,19 @@
 fancy_name_contigs = function(contig_tbl, prefix){
     contig_frame = contig_tbl
     notin = setdiff(c('chain', 'v_gene', 'd_gene', 'j_gene'), names(contig_frame))
-    if(length(notin>0)) stop("`contig_tbl must contain all of ", paste(notin, collapse = ','))
+    if(length(notin>0)) stop("`contig_tbl must contain all of ",
+                             paste(notin, collapse = ','))
     chain = contig_frame$chain
-paste(contig_frame$v_gene, contig_frame$d_gene, contig_frame$j_gene, sep = ':') %>% str_replace_all('None', '') %>% str_replace_all('IG[KLH]|TR[ABDG]', '') %>% paste(chain, ., sep = ':') %>% paste(prefix, ., sep = '_') %>% make.unique()
+paste(contig_frame$v_gene, contig_frame$d_gene, contig_frame$j_gene, sep = ':') %>%
+    str_replace_all('None', '') %>% str_replace_all('IG[KLH]|TR[ABDG]', '') %>%
+    paste(chain, ., sep = ':') %>% paste(prefix, ., sep = '_') %>% make.unique()
 }
 
-variable_genes = function(ref = '10X'){
-    # This should return genes that lie in the VDJ region for a given annotation
-    # And should know something about the chromium reference DB.
-
-}
+# variable_genes = function(ref = '10X'){
+#     # This should return genes that lie in the VDJ region for a given annotation
+#     # And should know something about the chromium reference DB.
+#
+# }
 
 
 
@@ -52,7 +55,7 @@ get_gaps = function(ca){
     data_frame(vd_gap, dj_gap, vj_gap)
 }
 
-read_contig_json = function(anno_file, seq_cols = c('quals', 'aa_sequence', '')){
-    jsn = fromJSON(file(anno_file), flatten = TRUE)
-    # contig sequences and gaps
-}
+# read_contig_json = function(anno_file, seq_cols = c('quals', 'aa_sequence', '')){
+#     jsn = fromJSON(file(anno_file), flatten = TRUE)
+#     # contig sequences and gaps
+# }

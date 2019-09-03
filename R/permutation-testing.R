@@ -63,7 +63,8 @@ cluster_permute_test = function(ccdb, cell_covariate_keys,
                                 n_perm,
                                 alternative = c("two.sided", "less","greater"),
                                 ...){
-    if(!is.character(cell_label_key) || length(cell_label_key) > 1) stop('`cell_label_key` must name a single column in ccdb$cell_tbl')
+    if(!is.character(cell_label_key) || length(cell_label_key) > 1)
+        stop('`cell_label_key` must name a single column in ccdb$cell_tbl')
     label = ccdb$cell_tbl[[cell_label_key]]
     if( length(na <- which(is.na(label))) > 0){
         warning('Excluding ', length(na), ' cells with missing labels.')
@@ -97,5 +98,6 @@ cluster_permute_test = function(ccdb, cell_covariate_keys,
     } else{
         p_bound = if(alternative == 'less') mean(observed < permp) else mean(observed > permp)
     }
-    list(observed = observed, expected = mean(permp), p.value = max(1/n_perm, p_bound), mc.se = sd(permp)/sqrt(n_perm))
+    list(observed = observed, expected = mean(permp),
+         p.value = max(1/n_perm, p_bound), mc.se = sd(permp)/sqrt(n_perm))
 }

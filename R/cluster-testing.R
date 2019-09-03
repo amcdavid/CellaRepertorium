@@ -32,13 +32,17 @@ cluster_test_by = function(ccdb, fields  = 'chain', tbl = 'cluster_tbl', ...){
 #' summarize(n()) %>% filter(`n()`>= 4)
 #' cluster_test_by(ccdb = ccdb_ex, fields = 'chain',
 #' tbl = 'cluster_tbl', formula = ~ pop, cluster_whitelist = prev4)
-cluster_logistic_test = function(formula, ccdb, cluster_whitelist, contig_filter_args = TRUE, tie_break_keys = c('umis', 'reads'), keep_fit = FALSE, fitter = glm_glmer, silent = FALSE){
+cluster_logistic_test = function(formula, ccdb, cluster_whitelist,
+                                 contig_filter_args = TRUE, tie_break_keys = c('umis', 'reads'),
+                                 keep_fit = FALSE, fitter = glm_glmer, silent = FALSE){
     if(length(ccdb$cluster_pk) == 0 || nrow(ccdb$cluster_tbl) == 0) stop("No clusters to test.")
 
     # canonicalize
     contig_fields = union(tie_break_keys, ccdb$cluster_pk)
     # should this warning be hushed?
-    canon = canonicalize_cell(ccdb, contig_filter_args = !!rlang::enexpr(contig_filter_args), tie_break_keys, overwrite = TRUE, contig_fields = contig_fields)
+    canon = canonicalize_cell(ccdb,
+                              contig_filter_args = !!rlang::enexpr(contig_filter_args),
+                              tie_break_keys, overwrite = TRUE, contig_fields = contig_fields)
 
     if(!missing(cluster_whitelist)){
         valid_KeyedTbl(cluster_whitelist, canon$cluster_pk)

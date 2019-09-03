@@ -40,8 +40,10 @@ globalVariables('cluster_idx')
 #' cdhit(aaseq,identity = 1, G = 0, aL = .9, aS = .9,  only_index = TRUE)[1:10]
 #' # a tibble
 #' tbl = cdhit(aaseq, identity = 1, G = 0, aL = .9, aS = .9, only_index = FALSE)
-cdhit = function(seqs, identity = NULL, kmerSize = NULL, min_length = 6, s = 1, only_index = FALSE, showProgress = interactive(), ...) {
-    if(any(width(seqs) < min_length)) stop("Some sequences shorter than `min_length`; remove these or decrease min_length")
+cdhit = function(seqs, identity = NULL, kmerSize = NULL, min_length = 6, s = 1,
+                 only_index = FALSE, showProgress = interactive(), ...) {
+    if(any(width(seqs) < min_length)) stop("Some sequences shorter than `min_length`;
+                                           remove these or decrease min_length")
     name = 'CD-Hit'
     uopts = list(...)
     options = list()
@@ -56,7 +58,9 @@ cdhit = function(seqs, identity = NULL, kmerSize = NULL, min_length = 6, s = 1, 
         stop('seqs must be either AAStringSet or DNAStringSet')
     )
     if(type == 'cdhitestC'){ #DNA
-        kmerSize = case_when(identity < .8 ~ 4, identity < .85 ~ 5, identity < .88 ~ 6, identity < .9 ~ 7, identity < .95 ~ 9, identity < 1 ~ 10, TRUE ~ 11)
+        kmerSize = case_when(identity < .8 ~ 4, identity < .85 ~ 5,
+                             identity < .88 ~ 6, identity < .9 ~ 7,
+                             identity < .95 ~ 9, identity < 1 ~ 10, TRUE ~ 11)
         options = c(options, list(ap = 1, r = 0))
     } else{
         kmerSize = 5
@@ -74,7 +78,7 @@ cdhit = function(seqs, identity = NULL, kmerSize = NULL, min_length = 6, s = 1, 
         stop('seqs must be either AAStringSet or DNAStringSet')
     )
     if(only_index) return(out)
-    dplyr::data_frame(query_name = names(seqs), seq = as.character(seqs), cluster_idx = out) %>%
+    tibble::tibble(query_name = names(seqs), seq = as.character(seqs), cluster_idx = out) %>%
         dplyr::group_by(cluster_idx) %>% dplyr::mutate(n_cluster = dplyr::n())
 }
 
@@ -95,7 +99,8 @@ cdhit = function(seqs, identity = NULL, kmerSize = NULL, min_length = 6, s = 1, 
 ##' res$cluster_tbl
 ##' res$contig_tbl
 ##' res$cluster_pk
-cdhit_ccdb = function(ccdb, sequence_key, type = c('DNA', 'AA'), cluster_name = 'cluster_idx', ...){
+cdhit_ccdb = function(ccdb, sequence_key, type = c('DNA', 'AA'),
+                      cluster_name = 'cluster_idx', ...){
     seqs = ccdb$contig_tbl[[sequence_key]]
     if(length(seqs) < 1) stop("No sequences were provided")
     type = match.arg(type, c('DNA', 'AA'))

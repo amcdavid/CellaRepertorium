@@ -61,7 +61,9 @@ canonicalize_by_chain = function(tbl,  cell_identifiers = 'barcode', sort_factor
 #' umi5 = canonicalize_cell(ccdb_ex, umis > 5,
 #' tie_break_keys = c('umis', 'reads'), contig_fields = c('umis', 'cdr3'))
 #' stopifnot(all(umi5$cell_tbl$umis > 5, na.rm = TRUE))
-canonicalize_cell = function(ccdb, contig_filter_args = TRUE,  tie_break_keys = c('umis', 'reads'), contig_fields = tie_break_keys, order = 1, overwrite = TRUE){
+canonicalize_cell = function(ccdb, contig_filter_args = TRUE,
+                             tie_break_keys = c('umis', 'reads'),
+                             contig_fields = tie_break_keys, order = 1, overwrite = TRUE){
     tbl = ccdb$contig_tbl
     req_contig_fields = unique(c(contig_fields, tie_break_keys))
     if (length(missing_contig <- setdiff(req_contig_fields, names(tbl))) > 0) stop('`contig_tbl` is missing fields, ', paste(missing_contig, collapse = ', '), '.')
@@ -73,7 +75,7 @@ canonicalize_cell = function(ccdb, contig_filter_args = TRUE,  tie_break_keys = 
     arranging = purrr::map(tie_break_keys, ~ rlang::quo(desc(!!sym(.x))))
     # take first row of each cell
     ft2 = ft %>% group_by(!!!syms(ccdb$cell_pk)) %>% dplyr::arrange(!!!arranging)
-    idx = ft2 %>% transmute(ngrp = dplyr::n(), idx = seq_along(ngrp))
+    idx = ft2 %>% dplyr::transmute(ngrp = dplyr::n(), idx = seq_along(ngrp))
     ft2 = ft2[idx$idx==order,,drop = FALSE]
     cell_tbl = ccdb$cell_tbl
     # join with cell tbl (so same number of cells)

@@ -154,7 +154,7 @@ tie_break_keys = character(), order = 1, representative = ccdb$cluster_pk[1], co
 
     # take first row of each cluster
     cluster_tbl = sub_contig_tbl %>% group_by(!!!syms(ccdb$cluster_pk)) %>% dplyr::arrange(!!!arranging)
-    idx = cluster_tbl %>% transmute(ngrp = dplyr::n(), idx = seq_along(ngrp))
+    idx = cluster_tbl %>% dplyr::transmute(ngrp = dplyr::n(), idx = seq_along(ngrp))
     cluster_tbl = cluster_tbl[idx$idx==order,,drop = FALSE]
     cluster_tbl = cluster_tbl %>% dplyr::select(!!!syms(unique(c(ccdb$cluster_pk, contig_fields, representative))))
 
