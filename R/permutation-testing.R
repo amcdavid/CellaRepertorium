@@ -93,6 +93,7 @@ cluster_permute_test = function(ccdb, cell_covariate_keys,
 #' @param statistic function of label (vector) and covariate (data.frame). Must return a scalar
 #' @param alternative `character` naming the direction `statistic` should be fall under the alternative hypothesis
 #' @param n_perm number of permutations to run
+#' @param ... passed along to `statistic`
 #' @return a list containing the observed value of the statistic, its expectation (under independence), a p-value, and the Monte Carlo standard error (of the expected value).
 .cluster_permute_test = function(labels, covariates, strata, statistic, n_perm, alternative,  ...){
     permp = rep(NA, n_perm)

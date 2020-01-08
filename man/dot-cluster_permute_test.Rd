@@ -26,6 +26,8 @@
 \item{n_perm}{number of permutations to run}
 
 \item{alternative}{\code{character} naming the direction \code{statistic} should be fall under the alternative hypothesis}
+
+\item{...}{passed along to \code{statistic}}
 }
 \value{
 a list containing the observed value of the statistic, its expectation (under independence), a p-value, and the Monte Carlo standard error (of the expected value).
