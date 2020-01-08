@@ -61,12 +61,13 @@ cluster_test_by = function(ccdb, fields  = 'chain', tbl = 'cluster_tbl', ...){
 #' data(ccdb_ex)
 #' ccdb_ex = cluster_germline(ccdb_ex)
 #' trav1 = filter(ccdb_ex$cluster_tbl, v_gene == 'TRAV1')
-#' cluster_logistic_test(~pop + (1|sample), ccdb_ex, cluster_whitelist = trav1)
+#' cluster_logistic_test(~pop + (1|sample), ccdb_ex,
+#' filterset = cluster_filterset(white_list= trav1))
 #' # Fixed effect analysis of each cluster, by chain
 #' prev4 = ccdb_ex$contig_tbl %>% group_by(cluster_idx) %>%
 #' summarize(n()) %>% filter(`n()`>= 4)
 #' cluster_test_by(ccdb = ccdb_ex, fields = 'chain',
-#' tbl = 'cluster_tbl', formula = ~ pop, cluster_whitelist = prev4)
+#' tbl = 'cluster_tbl', formula = ~ pop, filterset = cluster_filterset(white_list= prev4))
 cluster_logistic_test = function(formula, ccdb, filterset = cluster_filterset(),
                                  contig_filter_args = TRUE, tie_break_keys = c('umis', 'reads'), add_cluster_tbl = FALSE,
                                  keep_fit = FALSE, fitter = glm_glmer, silent = FALSE){

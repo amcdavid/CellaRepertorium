@@ -17,17 +17,17 @@ test_that('Manual glmer testing equals cluster_logistic_test', {
     library(lme4)
     # test against a manual data -- TRUE if the cell was in the cluster, false otherwise
     manual_glmer = glmer(update(theform, x_ ~ .) , data = manual_cell,  family = 'binomial')
-    automatic1 = cluster_logistic_test(theform, ccdb = ccdb_ex_trb, cluster_whitelist = theclust, keep_fit = TRUE, silent = TRUE)
+    automatic1 = cluster_logistic_test(theform, ccdb = ccdb_ex_trb, filterset = cluster_filterset(white_list = theclust), keep_fit = TRUE, silent = TRUE)
     expect_equal(fixef(automatic1$fit[[1]]), fixef(manual_glmer))
 
     # Adding additional clusters doesn't change results
-    wl2 = tibble(cluster_idx = c(theclust$cluster_idx, ccdb_ex_trb$cluster_tbl$cluster_idx[1:3]))
-    automatic2 = cluster_logistic_test(theform, ccdb = ccdb_ex_trb, cluster_whitelist = wl2, keep_fit = TRUE, silent = TRUE)
+    wl2 = tibble(cluster_idx = c(ccdb_ex_trb$cluster_tbl$cluster_idx[1:3], theclust$cluster_idx))
+    automatic2 = cluster_logistic_test(theform, ccdb = ccdb_ex_trb, filterset = cluster_filterset(white_list = wl2), keep_fit = TRUE, silent = TRUE)
     expect_equal(unique(automatic2$cluster_idx), wl2$cluster_idx)
     expect_equal(semi_join(automatic2, theclust, by = 'cluster_idx') %>% select(term:p.value), automatic1 %>% select(term:p.value))
 
 
-    automatic3 = cluster_test_by(ccdb_ex, formula = theform, cluster_whitelist = wl2, silent = TRUE)
+    automatic3 = cluster_test_by(ccdb_ex, formula = theform, filterset = cluster_filterset(white_list = wl2), silent = TRUE)
     expect_false(any(automatic3$chain == 'TRA'))
     expect_equal(semi_join(automatic3, theclust, by = 'cluster_idx') %>% select(term:p.value), automatic1 %>% select(term:p.value))
 
@@ -38,7 +38,7 @@ test_that('Manual glmer testing equals cluster_logistic_test', {
     ccdb_ex_double = rbind(ccdb_ex_trb, ccdb_ex_trb2)
     expect_equal(nrow(ccdb_ex_double$contig_tbl), 2*nrow(ccdb_ex_trb$contig_tbl))
     expect_equal(ccdb_ex_double$cell_tbl, ccdb_ex_trb$cell_tbl)
-    automatic4 = cluster_logistic_test(theform, ccdb = ccdb_ex_double, cluster_whitelist = wl2, silent = TRUE)
+    automatic4 = cluster_logistic_test(theform, ccdb = ccdb_ex_double, filterset = cluster_filterset(white_list = wl2), silent = TRUE)
     expect_equal(automatic3 %>% select(term:p.value), automatic4 %>% select(term:p.value))
 })
 
