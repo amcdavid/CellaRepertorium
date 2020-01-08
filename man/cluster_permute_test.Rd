@@ -4,9 +4,17 @@
 \alias{cluster_permute_test}
 \title{Tests for independence between labels and covariates using permutation of cells}
 \usage{
-cluster_permute_test(ccdb, cell_covariate_keys,
-  cell_label_key = ccdb$cluster_pk, statistic, n_perm,
-  alternative = c("two.sided", "less", "greater"), ...)
+cluster_permute_test(
+  ccdb,
+  cell_covariate_keys,
+  cell_label_key = ccdb$cluster_pk,
+  cell_stratify_keys,
+  statistic,
+  n_perm,
+  alternative = c("two.sided", "less", "greater"),
+  sanity_check_strata = TRUE,
+  ...
+)
 }
 \arguments{
 \item{ccdb}{\code{ContigCellDB}}
@@ -15,11 +23,17 @@ cluster_permute_test(ccdb, cell_covariate_keys,
 
 \item{cell_label_key}{\code{character} naming a single field in \code{ccdb$cell_tbl}}
 
-\item{statistic}{function of \code{covariates} (a \code{data.frame}), \code{labels} (a \code{vector}) that returns a \code{numeric} of length 1.}
+\item{cell_stratify_keys}{optional \code{character} naming fields in \code{ccdb$cell_tbl} under which permutations of \code{cell_label_key} will occur.
+This means that the test will occur conditional on these covariates.
+Must be disjoint from  \code{cell_covariate_keys}.}
 
-\item{n_perm}{number of permutations.}
+\item{statistic}{function of label (vector) and covariate (data.frame). Must return a scalar}
+
+\item{n_perm}{number of permutations to run}
 
 \item{alternative}{\code{character} naming the direction \code{statistic} should be fall under the alternative hypothesis}
+
+\item{sanity_check_strata}{\code{logical}, should \code{cell_stratify_keys} be checked for sanity?}
 
 \item{...}{passed to \code{statistic}}
 }

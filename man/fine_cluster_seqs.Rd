@@ -4,9 +4,15 @@
 \alias{fine_cluster_seqs}
 \title{Calculate distances and perform hierarchical clustering on a set of sequences}
 \usage{
-fine_cluster_seqs(seqs, type = "AA", big_memory_brute = FALSE,
-  method = "levenshtein", substitution_matrix = "BLOSUM100",
-  cluster_fun = "none", cluster_method = "complete")
+fine_cluster_seqs(
+  seqs,
+  type = "AA",
+  big_memory_brute = FALSE,
+  method = "levenshtein",
+  substitution_matrix = "BLOSUM100",
+  cluster_fun = "none",
+  cluster_method = "complete"
+)
 }
 \arguments{
 \item{seqs}{character vector, DNAStringSet or AAStringSet}

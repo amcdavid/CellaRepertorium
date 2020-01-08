@@ -4,8 +4,13 @@
 \alias{cdhit_ccdb}
 \title{Use \code{\link[=cdhit]{cdhit()}} to cluster a \code{\link[=ContigCellDB]{ContigCellDB()}}}
 \usage{
-cdhit_ccdb(ccdb, sequence_key, type = c("DNA", "AA"),
-  cluster_name = "cluster_idx", ...)
+cdhit_ccdb(
+  ccdb,
+  sequence_key,
+  type = c("DNA", "AA"),
+  cluster_name = "cluster_idx",
+  ...
+)
 }
 \arguments{
 \item{ccdb}{An object of class \code{\link[=ContigCellDB]{ContigCellDB()}}}
@@ -16,15 +21,16 @@ cdhit_ccdb(ccdb, sequence_key, type = c("DNA", "AA"),
 
 \item{cluster_name}{\code{character} specifying key, and name for the clustering.}
 
-\item{...}{Arguments passed on to \code{cdhit}
-\describe{
-  \item{identity}{minimum proportion identity}
-  \item{kmerSize}{word size.  If NULL, it will be chosen automatically based on the identity.
+\item{...}{
+  Arguments passed on to \code{\link[=cdhit]{cdhit}}
+  \describe{
+    \item{\code{identity}}{minimum proportion identity}
+    \item{\code{kmerSize}}{word size.  If NULL, it will be chosen automatically based on the identity.
 You may need to lower it below 5 for AAseq with identity less than .7.}
-  \item{min_length}{Minimum length for sequences to be clustered.  An error if something smaller is passed.}
-  \item{s}{fraction of shorter sequence covered by alignment.}
-  \item{showProgress}{show a status bar}
-}}
+    \item{\code{min_length}}{Minimum length for sequences to be clustered.  An error if something smaller is passed.}
+    \item{\code{s}}{fraction of shorter sequence covered by alignment.}
+    \item{\code{showProgress}}{show a status bar}
+  }}
 }
 \value{
 \code{\link[=ContigCellDB]{ContigCellDB()}}

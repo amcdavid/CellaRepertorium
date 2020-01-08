@@ -4,8 +4,14 @@
 \alias{fine_clustering}
 \title{Perform additional clustering of sequences within groups}
 \usage{
-fine_clustering(ccdb, sequence_key, type, max_affinity = NULL,
-  keep_clustering_details = FALSE, ...)
+fine_clustering(
+  ccdb,
+  sequence_key,
+  type,
+  max_affinity = NULL,
+  keep_clustering_details = FALSE,
+  ...
+)
 }
 \arguments{
 \item{ccdb}{A \code{\link[=ContigCellDB]{ContigCellDB()}} object}
@@ -18,12 +24,13 @@ fine_clustering(ccdb, sequence_key, type, max_affinity = NULL,
 
 \item{keep_clustering_details}{\code{logical} -- should output of \code{fine_cluster_seqs} be kept as a list column}
 
-\item{...}{Arguments passed on to \code{fine_cluster_seqs}
-\describe{
-  \item{big_memory_brute}{attempt to cluster more than 4000 sequences?  Clustering is quadratic, so this will take a long time and might exhaust memory}
-  \item{method}{one of 'substitutionMatrix' or 'levenshtein'}
-  \item{substitution_matrix}{a character vector naming a substitution matrix available in Biostrings, or a  substitution matrix itself}
-}}
+\item{...}{
+  Arguments passed on to \code{\link[=fine_cluster_seqs]{fine_cluster_seqs}}
+  \describe{
+    \item{\code{big_memory_brute}}{attempt to cluster more than 4000 sequences?  Clustering is quadratic, so this will take a long time and might exhaust memory}
+    \item{\code{method}}{one of 'substitutionMatrix' or 'levenshtein'}
+    \item{\code{substitution_matrix}}{a character vector naming a substitution matrix available in Biostrings, or a  substitution matrix itself}
+  }}
 }
 \value{
 \code{\link[=ContigCellDB]{ContigCellDB()}} object with updated \code{contig_tbl} and \code{cluster_tbl}

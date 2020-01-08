@@ -4,8 +4,11 @@
 \alias{cluster_germline}
 \title{Cluster contigs by germline properties}
 \usage{
-cluster_germline(ccdb, segment_keys = c("v_gene", "j_gene", "chain"),
-  cluster_name = "cluster_idx")
+cluster_germline(
+  ccdb,
+  segment_keys = c("v_gene", "j_gene", "chain"),
+  cluster_name = "cluster_idx"
+)
 }
 \arguments{
 \item{ccdb}{\code{\link[=ContigCellDB]{ContigCellDB()}}}

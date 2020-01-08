@@ -85,17 +85,17 @@ We can leverage Scater's ability to use "nested" data frames to visualize TCR fe
 
 ```{r}
 library(scater)
-sce = normalizeSCE(sce)
+sce = logNormCounts(sce)
 sce = runPCA(sce)
-plotReducedDim(sce, use_dimred = 'PCA', colour_by = c('pairing', 'pairing'))
+plotReducedDim(sce, dimred = 'PCA', colour_by = I(sce$pairing$pairing))
 ```
 
-Here we calculate the first two principal components (which don't show much because these are simulated data without any special structure), and then visualize if the TCR was paired or not.
+Here we calculate the first two principal components (which aren't very interesting because these are simulated data without any special structure), and then visualize if the TCR was paired or not.
 
 ```{r}
 only_paired = sce[,which(sce$pairing$pairing == 'paired')]
-plotReducedDim(only_paired, use_dimred = 'PCA', colour_by = c('alpha', 'j_gene'))
-plotReducedDim(only_paired, use_dimred = 'PCA', colour_by = c('beta', 'j_gene'))
+plotReducedDim(only_paired, dimred = 'PCA', colour_by = I(only_paired$alpha$j_gene))
+plotReducedDim(only_paired, dimred = 'PCA', colour_by = I(only_paired$beta$j_gene))
 ```
 
 Since the `ContigCellDB` is nested within the `SingleCellExperiment` it automatically gets subsetted appropriately when the parent object is subsetted.  Enough `data.frame`-like semantics have been implemented so that fields from the `cell_tbl` can be visualized.

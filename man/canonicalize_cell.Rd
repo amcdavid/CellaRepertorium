@@ -4,9 +4,14 @@
 \alias{canonicalize_cell}
 \title{Find a canonical contig to represent a cell}
 \usage{
-canonicalize_cell(ccdb, contig_filter_args = TRUE,
-  tie_break_keys = c("umis", "reads"), contig_fields = tie_break_keys,
-  order = 1, overwrite = TRUE)
+canonicalize_cell(
+  ccdb,
+  contig_filter_args = TRUE,
+  tie_break_keys = c("umis", "reads"),
+  contig_fields = tie_break_keys,
+  order = 1,
+  overwrite = TRUE
+)
 }
 \arguments{
 \item{ccdb}{\code{\link[=ContigCellDB]{ContigCellDB()}}}

@@ -4,21 +4,28 @@
 \alias{.cluster_permute_test}
 \title{Cell permutation tests (internal)}
 \usage{
-.cluster_permute_test(labels, covariates, statistic, n_perm, alternative,
-  ...)
+.cluster_permute_test(
+  labels,
+  covariates,
+  strata,
+  statistic,
+  n_perm,
+  alternative,
+  ...
+)
 }
 \arguments{
 \item{labels}{\code{factor} of length n}
 
-\item{covariates}{\code{factor} of length n}
+\item{covariates}{\code{data.frame} of length n}
 
-\item{statistic}{function of label and covariate}
+\item{strata}{\code{factor}}
 
-\item{n_perm}{number of permutations.}
+\item{statistic}{function of label (vector) and covariate (data.frame). Must return a scalar}
+
+\item{n_perm}{number of permutations to run}
 
 \item{alternative}{\code{character} naming the direction \code{statistic} should be fall under the alternative hypothesis}
-
-\item{...}{passed to \code{statistic}}
 }
 \value{
 a list containing the observed value of the statistic, its expectation (under independence), a p-value, and the Monte Carlo standard error (of the expected value).

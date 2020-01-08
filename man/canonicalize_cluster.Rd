@@ -4,10 +4,15 @@
 \alias{canonicalize_cluster}
 \title{Find a canonical contig to represent a cluster}
 \usage{
-canonicalize_cluster(ccdb, contig_filter_args,
-  tie_break_keys = character(), order = 1,
-  representative = ccdb$cluster_pk[1], contig_fields = c("cdr3",
-  "cdr3_nt", "chain", "v_gene", "d_gene", "j_gene"), overwrite = TRUE)
+canonicalize_cluster(
+  ccdb,
+  contig_filter_args,
+  tie_break_keys = character(),
+  order = 1,
+  representative = ccdb$cluster_pk[1],
+  contig_fields = c("cdr3", "cdr3_nt", "chain", "v_gene", "d_gene", "j_gene"),
+  overwrite = TRUE
+)
 }
 \arguments{
 \item{ccdb}{\code{\link[=ContigCellDB]{ContigCellDB()}}}

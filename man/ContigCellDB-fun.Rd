@@ -5,11 +5,22 @@
 \alias{ContigCellDB_10XVDJ}
 \title{Construct a ContigCellDB}
 \usage{
-ContigCellDB(contig_tbl, contig_pk, cell_tbl, cell_pk, cluster_tbl,
-  cluster_pk = character(), equalize = TRUE)
+ContigCellDB(
+  contig_tbl,
+  contig_pk,
+  cell_tbl,
+  cell_pk,
+  cluster_tbl,
+  cluster_pk = character(),
+  equalize = TRUE
+)
 
-ContigCellDB_10XVDJ(contig_tbl, contig_pk = c("barcode", "contig_id"),
-  cell_pk = "barcode", ...)
+ContigCellDB_10XVDJ(
+  contig_tbl,
+  contig_pk = c("barcode", "contig_id"),
+  cell_pk = "barcode",
+  ...
+)
 }
 \arguments{
 \item{contig_tbl}{a data frame of contigs, and additional fields describing their properties}

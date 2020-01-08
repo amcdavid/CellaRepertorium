@@ -4,8 +4,7 @@
 \alias{split_cdb}
 \title{Split into a list of \code{\link[=ContigCellDB]{ContigCellDB()}} by named fields}
 \usage{
-split_cdb(ccdb, fields, tbl = "contig_tbl", drop = FALSE,
-  equalize = TRUE)
+split_cdb(ccdb, fields, tbl = "contig_tbl", drop = FALSE, equalize = TRUE)
 }
 \arguments{
 \item{ccdb}{\code{\link[=ContigCellDB]{ContigCellDB()}}}

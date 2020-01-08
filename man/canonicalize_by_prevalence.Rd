@@ -5,13 +5,21 @@
 \alias{canonicalize_by_chain}
 \title{For each cell, return a single, canonical chain-cluster}
 \usage{
-canonicalize_by_prevalence(tbl, cell_identifiers = "barcode",
-  cluster_idx = "cluster_idx", order = 1)
+canonicalize_by_prevalence(
+  tbl,
+  cell_identifiers = "barcode",
+  cluster_idx = "cluster_idx",
+  order = 1
+)
 
-canonicalize_by_chain(tbl, cell_identifiers = "barcode",
+canonicalize_by_chain(
+  tbl,
+  cell_identifiers = "barcode",
   sort_factors = c("chain", "umis", "reads"),
-  cluster_idx = "cluster_idx", order = 1, chain_levels = c("IGL",
-  "IGK", "TRA", "TRB", "IGH"))
+  cluster_idx = "cluster_idx",
+  order = 1,
+  chain_levels = c("IGL", "IGK", "TRA", "TRB", "IGH")
+)
 }
 \arguments{
 \item{tbl}{\code{data.frame} containing columns specified in \code{cell_identifiers}, \code{cluster_idx} and optionally \code{chain_identifiers}}

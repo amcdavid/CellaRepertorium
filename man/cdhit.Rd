@@ -4,8 +4,16 @@
 \alias{cdhit}
 \title{R interface to CDHIT/CDHITest}
 \usage{
-cdhit(seqs, identity = NULL, kmerSize = NULL, min_length = 6,
-  s = 1, only_index = FALSE, showProgress = interactive(), ...)
+cdhit(
+  seqs,
+  identity = NULL,
+  kmerSize = NULL,
+  min_length = 6,
+  s = 1,
+  only_index = FALSE,
+  showProgress = interactive(),
+  ...
+)
 }
 \arguments{
 \item{seqs}{\code{AAseq} or \code{DNAseq}}

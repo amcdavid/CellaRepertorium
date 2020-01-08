@@ -162,8 +162,10 @@ pairing_tables = function(ccdb,  canonicalize_fun = canonicalize_by_chain, table
 
     # In how many cells do each cluster pairing appear?
     cluster_pair_tbl = oligo_cluster_pairs %>% group_by(!!!syms(cluster_ids)) %>% summarize(n_clone_pairs = dplyr::n())
-    # which clusters are expanded
-    expanded_cluster = cluster_pair_tbl %>% dplyr::filter(n_clone_pairs >= min_expansion) %>% dplyr::filter_at(.vars = cluster_ids, .vars_predicate = dplyr::all_vars(!is.na(.)))
+    # which clusters are expanded,
+    expanded_cluster = dplyr::filter(cluster_pair_tbl, n_clone_pairs >= min_expansion)
+    # Must have both cluster_ids non NA (otherwise not a pairing of the required order)
+    expanded_cluster = dplyr::filter_at(expanded_cluster, .vars = cluster_ids, .vars_predicate = dplyr::all_vars(!is.na(.)))
     expanded_cluster = ungroup(expanded_cluster) %>% dplyr::select(!!!syms(cluster_ids_to_select), max_pairs = n_clone_pairs)
     if(!is.null(cluster_whitelist)){
         expanded_cluster = bind_rows(expanded_cluster, cluster_whitelist)
@@ -173,7 +175,7 @@ pairing_tables = function(ccdb,  canonicalize_fun = canonicalize_by_chain, table
     # Could have duplicated cluster_ids after binding to the whitelist or from considering orphans
     expanded_cluster = expanded_cluster[!duplicated(expanded_cluster %>% dplyr::select(-max_pairs)),]
     expanded_c1 = oligo_cluster_pairs %>% dplyr::inner_join(expanded_cluster, by = cluster_ids_to_select)
-    if(anyDuplicated(expanded_c1 %>% dplyr::select(!!!syms(cell_identifiers)))) stop("Ruhoh, duplicated cell identifiers, this is a bug!")
+    if(anyDuplicated(expanded_c1[cell_identifiers])) stop("Ruhoh, duplicated cell identifiers, this is a bug!")
 
     # cross-tab pairings in order to figure out how to order the cluster_idx to put most common pairing on diagonal
     if(nrow(expanded_c1)>0 && table_order > 1){

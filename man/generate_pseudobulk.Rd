@@ -4,8 +4,7 @@
 \alias{generate_pseudobulk}
 \title{Generate "pseudobulk" data from a \code{ContigCellDB}}
 \usage{
-generate_pseudobulk(ccdb, class_keys, total_keys, type = c("cell",
-  "umi"))
+generate_pseudobulk(ccdb, class_keys, total_keys, type = c("cell", "umi"))
 }
 \arguments{
 \item{ccdb}{\code{\link[=ContigCellDB]{ContigCellDB()}}}

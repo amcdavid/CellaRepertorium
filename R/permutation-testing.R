@@ -26,11 +26,12 @@ purity = function(cluster_idx, subject) {
 #' @param ccdb `ContigCellDB`
 #' @param cell_covariate_keys  `character` naming fields in `ccdb$cell_tbl`
 #' @param cell_label_key `character` naming a single field in `ccdb$cell_tbl`
-#' @param statistic function of \code{covariates} (a `data.frame`), \code{labels} (a `vector`) that returns a \code{numeric} of length 1.
-#' @param n_perm number of permutations.
+#' @param cell_stratify_keys optional `character` naming fields in `ccdb$cell_tbl` under which permutations of `cell_label_key` will occur.
+#' This means that the test will occur conditional on these covariates.
+#' Must be disjoint from  `cell_covariate_keys`.
+#' @param sanity_check_strata `logical`, should `cell_stratify_keys` be checked for sanity?
 #' @param ... passed to \code{statistic}
-#' @param alternative `character` naming the direction `statistic` should be fall under the alternative hypothesis
-#'
+#' @inheritParams .cluster_permute_test
 #' @return a list containing the observed value of the statistic, its expectation (under independence), a p-value, and the Monte Carlo standard error (of the expected value).
 #' @seealso [purity()]
 #' @export
@@ -59,9 +60,11 @@ purity = function(cluster_idx, subject) {
 #'
 
 cluster_permute_test = function(ccdb, cell_covariate_keys,
-                                cell_label_key = ccdb$cluster_pk, statistic,
+                                cell_label_key = ccdb$cluster_pk,
+                                cell_stratify_keys, statistic,
                                 n_perm,
                                 alternative = c("two.sided", "less","greater"),
+                                sanity_check_strata = TRUE,
                                 ...){
     if(!is.character(cell_label_key) || length(cell_label_key) > 1)
         stop('`cell_label_key` must name a single column in ccdb$cell_tbl')
@@ -70,27 +73,43 @@ cluster_permute_test = function(ccdb, cell_covariate_keys,
         warning('Excluding ', length(na), ' cells with missing labels.')
     }
     covariates = ccdb$cell_tbl[cell_covariate_keys]
-    .cluster_permute_test(label, covariates, statistic, n_perm, alternative, ...)
+    if(!missing(cell_stratify_keys)){
+        if(length(overlap <- intersect(cell_stratify_keys, cell_covariate_keys))>0)
+            stop("`cell_stratify_keys` must be disjoint from `cell_covariate_keys`.")
+        strata = do.call(interaction, ccdb$cell_tbl[cell_stratify_keys])
+        if(sanity_check_strata && length(unique(strata)) > .75*length(unique(label))) stop("Lots of strata, set `sanity_check_strata = FALSE` if you are sure.")
+    } else{
+        strata  = NULL
+    }
+    .cluster_permute_test(label, covariates, strata, statistic, n_perm, alternative, ...)
 }
 
 
 #' Cell permutation tests (internal)
 #'
 #' @param labels \code{factor} of length n
-#' @param covariates \code{factor} of length n
-#' @param statistic function of label and covariate
+#' @param covariates \code{data.frame} of length n
+#' @param strata \code{factor}
+#' @param statistic function of label (vector) and covariate (data.frame). Must return a scalar
+#' @param alternative `character` naming the direction `statistic` should be fall under the alternative hypothesis
+#' @param n_perm number of permutations to run
 #' @return a list containing the observed value of the statistic, its expectation (under independence), a p-value, and the Monte Carlo standard error (of the expected value).
-#' @inheritParams cluster_permute_test
-.cluster_permute_test = function(labels, covariates, statistic, n_perm, alternative,  ...){
+.cluster_permute_test = function(labels, covariates, strata, statistic, n_perm, alternative,  ...){
     permp = rep(NA, n_perm)
     alternative = match.arg(alternative[1], c("two.sided", "less", "greater"), several.ok = FALSE)
 
-    # checck that covariate nested within label
     observed = statistic(labels, covariates, ...)
     pb = progress::progress_bar$new(total = n_perm)
+    if(is.null(strata)){
+        sampler = sample
+    } else{
+        sampler = function(labels){
+                unsplit(lapply(split(labels, strata), sample), strata)
+        }
+    }
     for(i in seq_len(n_perm)){
         pb$tick()
-        ci = sample(labels)
+        ci = sampler(labels)
         permp[i] = statistic(ci, covariates, ...)
     }
     if(alternative == 'two.sided'){

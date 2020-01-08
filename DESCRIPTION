@@ -2,7 +2,7 @@ Type: Package
 Package: CellaRepertorium
 Title: Data structures, clustering and testing for single 
     cell immune receptor repertoires (scRNAseq RepSeq/AIRR-seq)
-Version: 0.8.1
+Version: 0.98.0
 Authors@R: 
     c(person(given = "Andrew",
              family = "McDavid",
@@ -61,7 +61,7 @@ VignetteBuilder:
 Encoding: UTF-8
 LazyData: true
 NeedsCompilation: yes
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.2
 URL: https://github.com/amcdavid/CellaRepertorium
 BugReports: https://github.com/amcdavid/CellaRepertorium/issues
 Roxygen: list(markdown = TRUE)

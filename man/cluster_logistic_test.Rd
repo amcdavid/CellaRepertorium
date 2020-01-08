@@ -7,9 +7,17 @@
 \usage{
 cluster_test_by(ccdb, fields = "chain", tbl = "cluster_tbl", ...)
 
-cluster_logistic_test(formula, ccdb, cluster_whitelist,
-  contig_filter_args = TRUE, tie_break_keys = c("umis", "reads"),
-  keep_fit = FALSE, fitter = glm_glmer, silent = FALSE)
+cluster_logistic_test(
+  formula,
+  ccdb,
+  filterset = cluster_filterset(),
+  contig_filter_args = TRUE,
+  tie_break_keys = c("umis", "reads"),
+  add_cluster_tbl = FALSE,
+  keep_fit = FALSE,
+  fitter = glm_glmer,
+  silent = FALSE
+)
 }
 \arguments{
 \item{ccdb}{\code{\link[=ContigCellDB]{ContigCellDB()}}}
@@ -22,7 +30,7 @@ cluster_logistic_test(formula, ccdb, cluster_whitelist,
 
 \item{formula}{the \strong{right-hand side} of a glmer or glm-style formula.}
 
-\item{cluster_whitelist}{a table, keyed by \code{ccdb$cluster_pk} specifying the clusters to test. It does not alter which cells are included or how  canonicalization is performed. If omitted, all clusters will be tested and reported.}
+\item{filterset}{a call to \code{\link[=cluster_filterset]{cluster_filterset()}} that will be used to subset clusters.}
 
 \item{contig_filter_args}{an expression passed to \code{\link[dplyr:filter]{dplyr::filter()}}.
 Unlike \code{filter}, multiple criteria must be \code{&} together, rather than using
@@ -32,6 +40,8 @@ commas to separate. These act on \code{ccdb$contig_tbl}}
 that are used sort the contig table in descending order.
 Used to break ties if \code{contig_filter_args} does not return a unique contig
 for each cluster}
+
+\item{add_cluster_tbl}{\code{logical} should the output be joined to the \code{cluster_tbl}?}
 
 \item{keep_fit}{\code{logical} as to whether the fit objects should be returned as a list column}
 

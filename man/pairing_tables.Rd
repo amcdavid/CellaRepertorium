@@ -4,10 +4,16 @@
 \alias{pairing_tables}
 \title{Generate a list of tables representing clusters paired in cells}
 \usage{
-pairing_tables(ccdb, canonicalize_fun = canonicalize_by_chain,
-  table_order = 2, min_expansion = 2, orphan_level = 1,
-  cluster_keys = character(), cluster_whitelist = NULL,
-  cluster_blacklist = NULL)
+pairing_tables(
+  ccdb,
+  canonicalize_fun = canonicalize_by_chain,
+  table_order = 2,
+  min_expansion = 2,
+  orphan_level = 1,
+  cluster_keys = character(),
+  cluster_whitelist = NULL,
+  cluster_blacklist = NULL
+)
 }
 \arguments{
 \item{ccdb}{\code{ContigCellDB}}
