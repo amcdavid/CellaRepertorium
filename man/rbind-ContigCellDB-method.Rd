@@ -26,4 +26,5 @@ data(ccdb_ex)
 splat = split_cdb(ccdb_ex, 'chain', 'contig_tbl')
 unite = rbind(splat$TRA, splat$TRB)
 stopifnot(all.equal(unite, ccdb_ex))
+
 }

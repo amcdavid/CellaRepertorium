@@ -387,12 +387,20 @@ rbind.ContigCellDB <- function(..., deparse.level=1)
 #' @return [ContigCellDB()]
 #' @aliases rbind.ContigCellDB
 #' @export
+#' @importFrom S4Vectors rbind
 #' @examples
 #' data(ccdb_ex)
 #' splat = split_cdb(ccdb_ex, 'chain', 'contig_tbl')
 #' unite = rbind(splat$TRA, splat$TRB)
 #' stopifnot(all.equal(unite, ccdb_ex))
-setMethod('rbind', 'ContigCellDB', rbind.ContigCellDB)
+#'
+setMethod("rbind", "ContigCellDB",
+          function (..., deparse.level = 1)
+          {
+              rbind.ContigCellDB(..., deparse.level = deparse.level)
+          }
+)
+
 
 .bind_rows_ccdb = function(o1, objects, .id = NULL){
     all_objs = c(o1, objects)
