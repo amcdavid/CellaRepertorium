@@ -45,7 +45,7 @@ fine_clustering = function(ccdb, sequence_key, type, max_affinity = NULL, keep_c
     cluster_tbl_orig = ccdb$cluster_tbl
     cluster_tbl = left_join_warn(cluster_tbl, cluster_tbl_orig, by = ccdb$cluster_pk, overwrite = TRUE)
     message('Summarizing')
-    contig_by_cluster = contig_tbl[union(ccdb$contig_pk, ccdb$cluster_pk)] %>% tidyr::nest(!!!syms(ccdb$contig_pk)) %>%
+    contig_by_cluster = contig_tbl[union(ccdb$contig_pk, ccdb$cluster_pk)] %>% tidyr::nest_legacy(!!!syms(ccdb$contig_pk)) %>%
         right_join(cluster_tbl %>% dplyr::select(!!!syms(ccdb$cluster_pk)), by=ccdb$cluster_pk) # need to make sure these are in the same order!
 
     if(is.null(max_affinity)){
