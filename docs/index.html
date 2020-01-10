@@ -8,8 +8,9 @@
 <title>Data structures, clustering and testing for single 
     cell immune receptor repertoires (scRNAseq RepSeq/AIRR-seq) • CellaRepertorium</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous">
+<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
 <script src="pkgdown.js"></script><meta property="og:title" content="Data structures, clustering and testing for single 
     cell immune receptor repertoires (scRNAseq RepSeq/AIRR-seq)">
 <meta property="og:description" content="Methods to cluster and analyze high-throughput
@@ -25,7 +26,7 @@
 <![endif]-->
 </head>
 <body>
-    <div class="container template-article">
+    <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
@@ -37,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">CellaRepertorium</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.1</span>
       </span>
     </div>
 
@@ -45,7 +46,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fas fa fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -74,7 +75,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/amcdavid/CellaRepertorium">
-    <span class="fa fa-github fa-lg"></span>
+    <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -87,13 +88,9 @@
 <!--/.navbar -->
 
       
-      </header><div class="row">
-  <div class="col-md-9 contents">
-    
 
-    
-    
-<!-- README.md is generated from README.Rmd. Please edit that file -->
+      </header><div class="row">
+  <div class="contents col-md-9">
 <div id="cellarepertorium" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#cellarepertorium" class="anchor"></a>CellaRepertorium</h1></div>
@@ -101,7 +98,7 @@
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
-<pre><code><a href="https://www.rdocumentation.org/packages/devtools/topics/reexports">devtools::install_github('amcdavid/CellaRepertorium')</a></code></pre>
+<div class="sourceCode"><pre class="sourceCode R"><code class="sourceCode r">devtools::<span class="kw">install_github</span>(<span class="st">'amcdavid/CellaRepertorium'</span>)</code></pre></div>
 <p>Requires R &gt;= 3.5.</p>
 </div>
 <div id="data-requirements-and-package-structure" class="section level2">
@@ -128,8 +125,6 @@
 <li>
 <code><a href="reference/cluster_permute_test.html">cluster_permute_test()</a></code>: permutation tests of cluster statistics</li>
 <li>
-<code><a href="reference/cluster_logistic_test.html">cluster_logistic_test()</a></code>: logistic regression tests for overrepresentation of clusters among cells</li>
-<li>
 <code><a href="reference/pairing_tables.html">pairing_tables()</a></code>: Generate pairings of contigs within each cell in a way that they can be plotted</li>
 </ul>
 </div>
@@ -137,7 +132,7 @@
 <h2 class="hasAnchor">
 <a href="#interfacing-related-packages-for-clonal-analyses" class="anchor"></a>Interfacing related packages for clonal analyses</h2>
 <ul>
-<li>To combine repertoire information with expression of endogenous mRNAs, this package has been used with <code><a href="https://www.rdocumentation.org/packages/SingleCellExperiment/topics/SingleCellExperiment">SingleCellExperiment::SingleCellExperiment()</a></code> and <a href="https://satijalab.org/seurat/">Seurat</a> after generating cell canonicalizations.</li>
+<li>To combine repertoire information with expression of endogenous mRNAs, this package has been used with <code><a href="https://rdrr.io/pkg/SingleCellExperiment/man/SingleCellExperiment.html">SingleCellExperiment::SingleCellExperiment()</a></code> and <a href="https://satijalab.org/seurat/">Seurat</a> after generating cell canonicalizations.</li>
 <li>Functionality is under development facilitate submitting actual contig <code>fasta</code> to tools such as the IGMT’s <a href="http://imgt.org/HighV-QUEST/home.action">HighV-QUEST</a>
 </li>
 <li>Many tools from the <a href="https://alakazam.readthedocs.io/en/version-0.2.11/">Immcantation</a> suite can work directly on <code><a href="reference/ContigCellDB-fun.html">ContigCellDB()</a></code> objects.</li>
@@ -146,7 +141,7 @@
 <div id="roadmap" class="section level2">
 <h2 class="hasAnchor">
 <a href="#roadmap" class="anchor"></a>Roadmap</h2>
-<p>The data structure, accessor APIs and tests are relatively stable. In the short term, adding infrastructure to nest <code>ContigCellDB</code> objects in <code>SingleCellExperiment()</code> metadata is a priority, as are more and better visualization.</p>
+<p>The data structure and accessor APIs are relatively stable. In the short term, models that test for segment pairing and CDR3 over-representation are a priority, as are procedures for QC of contigs and cells.</p>
 </div>
 </div>
   </div>
@@ -176,9 +171,7 @@
 </ul>
 </div>
 
-
-      </div>
-
+  </div>
 </div>
 
 
@@ -187,12 +180,14 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
+
       </footer>
 </div>
 
   
+
 
   </body>
 </html>

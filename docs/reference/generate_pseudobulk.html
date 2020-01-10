@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Split into a list of <code><a href='ContigCellDB-fun.html'>ContigCellDB()</a></code> by named fields — split_cdb • CellaRepertorium</title>
+<title>Generate "pseudobulk" data from a <code>ContigCellDB</code> — generate_pseudobulk • CellaRepertorium</title>
 
 
 <!-- jquery -->
@@ -35,8 +35,8 @@
 
 
 
-<meta property="og:title" content="Split into a list of <code><a href='ContigCellDB-fun.html'>ContigCellDB()</a></code> by named fields — split_cdb" />
-<meta property="og:description" content="Split into a list of ContigCellDB() by named fields" />
+<meta property="og:title" content="Generate "pseudobulk" data from a <code>ContigCellDB</code> — generate_pseudobulk" />
+<meta property="og:description" content="Generate &quot;pseudobulk&quot; data from a ContigCellDB" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -123,16 +123,16 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Split into a list of <code><a href='ContigCellDB-fun.html'>ContigCellDB()</a></code> by named fields</h1>
-    <small class="dont-index">Source: <a href='https://github.com/amcdavid/CellaRepertorium/blob/master/R/ContigCellDB-methods.R'><code>R/ContigCellDB-methods.R</code></a></small>
-    <div class="hidden name"><code>split_cdb.Rd</code></div>
+    <h1>Generate "pseudobulk" data from a <code>ContigCellDB</code></h1>
+    <small class="dont-index">Source: <a href='https://github.com/amcdavid/CellaRepertorium/blob/master/R/pseudo-bulk.R'><code>R/pseudo-bulk.R</code></a></small>
+    <div class="hidden name"><code>generate_pseudobulk.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Split into a list of <code><a href='ContigCellDB-fun.html'>ContigCellDB()</a></code> by named fields</p>
+    <p>Generate "pseudobulk" data from a <code>ContigCellDB</code></p>
     </div>
 
-    <pre class="usage"><span class='fu'>split_cdb</span>(<span class='no'>ccdb</span>, <span class='no'>fields</span>, <span class='kw'>tbl</span> <span class='kw'>=</span> <span class='st'>"contig_tbl"</span>, <span class='kw'>drop</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>equalize</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'>generate_pseudobulk</span>(<span class='no'>ccdb</span>, <span class='no'>class_keys</span>, <span class='no'>total_keys</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"cell"</span>, <span class='st'>"umi"</span>))</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -142,40 +142,29 @@
       <td><p><code><a href='ContigCellDB-fun.html'>ContigCellDB()</a></code></p></td>
     </tr>
     <tr>
-      <th>fields</th>
-      <td><p><code>character</code> naming fields in <code>tbl</code></p></td>
+      <th>class_keys</th>
+      <td><p><code>character</code> naming fields in <code>contig_tbl</code> that define unique classes of the repertoire</p></td>
     </tr>
     <tr>
-      <th>tbl</th>
-      <td><p>one of <code>contig_tbl</code>, <code>cell_tbl</code> or <code>cluster_tbl</code></p></td>
+      <th>total_keys</th>
+      <td><p><code>character</code> naming fields that also define a class, and moreover will be conditioned upon when calculating the total</p></td>
     </tr>
     <tr>
-      <th>drop</th>
-      <td><p>logical indicating if levels that do not occur should be dropped
-    (if <code>f</code> is a <code>factor</code> or a list).</p></td>
-    </tr>
-    <tr>
-      <th>equalize</th>
-      <td><p><code>logical</code>. Should the contig, cells and clusters be equalized by taking the intersection of their common keys?</p></td>
+      <th>type</th>
+      <td><p>one of "cell" or "umi"</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>list of <code>ContigCellDB</code></p>
+    <p><code>tibble</code></p>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>ccdb_ex</span>)
-<span class='no'>splat</span> <span class='kw'>=</span> <span class='fu'>split_cdb</span>(<span class='no'>ccdb_ex</span>, <span class='st'>'chain'</span>, <span class='st'>'contig_tbl'</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/stopifnot.html'>stopifnot</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/all.html'>all</a></span>(<span class='no'>splat</span>$<span class='no'>TRA</span>$<span class='no'>contig_tbl</span>$<span class='no'>chain</span> <span class='kw'>==</span> <span class='st'>'TRA'</span>))
-<span class='fu'><a href='https://rdrr.io/r/base/stopifnot.html'>stopifnot</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/all.html'>all</a></span>(<span class='no'>splat</span>$<span class='no'>TRB</span>$<span class='no'>contig_tbl</span>$<span class='no'>chain</span> <span class='kw'>==</span> <span class='st'>'TRB'</span>))</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       <li><a href="#value">Value</a></li>
-      <li><a href="#examples">Examples</a></li>
     </ul>
 
   </div>

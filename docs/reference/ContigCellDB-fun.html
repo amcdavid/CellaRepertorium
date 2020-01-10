@@ -18,13 +18,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
 
-<!-- sticky kit -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+<!-- headroom.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -50,6 +52,7 @@
 <![endif]-->
 
 
+
   </head>
 
   <body>
@@ -66,7 +69,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CellaRepertorium</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.1</span>
       </span>
     </div>
 
@@ -74,7 +77,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fas fa fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -103,7 +106,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/amcdavid/CellaRepertorium">
-    <span class="fa fa-github fa-lg"></span>
+    <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -114,6 +117,7 @@
 </div><!--/.navbar -->
 
       
+
       </header>
 
 <div class="row">
@@ -128,11 +132,22 @@
     <p>Construct a ContigCellDB</p>
     </div>
 
-    <pre class="usage"><span class='fu'>ContigCellDB</span>(<span class='no'>contig_tbl</span>, <span class='no'>contig_pk</span>, <span class='no'>cell_tbl</span>, <span class='no'>cell_pk</span>, <span class='no'>cluster_tbl</span>,
-  <span class='kw'>cluster_pk</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/character'>character</a></span>(), <span class='kw'>equalize</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+    <pre class="usage"><span class='fu'>ContigCellDB</span>(
+  <span class='no'>contig_tbl</span>,
+  <span class='no'>contig_pk</span>,
+  <span class='no'>cell_tbl</span>,
+  <span class='no'>cell_pk</span>,
+  <span class='no'>cluster_tbl</span>,
+  <span class='kw'>cluster_pk</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>character</a></span>(),
+  <span class='kw'>equalize</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
+)
 
-<span class='fu'>ContigCellDB_10XVDJ</span>(<span class='no'>contig_tbl</span>, <span class='kw'>contig_pk</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"barcode"</span>, <span class='st'>"contig_id"</span>),
-  <span class='kw'>cell_pk</span> <span class='kw'>=</span> <span class='st'>"barcode"</span>, <span class='no'>...</span>)</pre>
+<span class='fu'>ContigCellDB_10XVDJ</span>(
+  <span class='no'>contig_tbl</span>,
+  <span class='kw'>contig_pk</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"barcode"</span>, <span class='st'>"contig_id"</span>),
+  <span class='kw'>cell_pk</span> <span class='kw'>=</span> <span class='st'>"barcode"</span>,
+  <span class='no'>...</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -176,13 +191,15 @@
     <p><code>ContigCellDB</code></p>
     <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
 
-    <ul>
+    
+<ul>
 <li><p><code>ContigCellDB_10XVDJ</code>: provide defaults that correspond to identifiers in 10X VDJ data</p></li>
 </ul>
     <h2 class="hasAnchor" id="accessors-mutators"><a class="anchor" href="#accessors-mutators"></a>Accessors/mutators</h2>
 
     
-    <p>See <code><a href='cash-ContigCellDB-method.html'>$,ContigCellDB-method</a></code> for more on how to access and mutate slots.
+
+<p>See <code><a href='cash-ContigCellDB-method.html'>$,ContigCellDB-method</a></code> for more on how to access and mutate slots.
 See <code><a href='mutate_cdb.html'>mutate_cdb()</a></code> and <code><a href='mutate_cdb.html'>filter_cdb()</a></code> for endomorphic filtering/mutation methods
 See <code><a href='split_cdb.html'>split_cdb()</a></code> to split into a list, and <code><a href='rbind-ContigCellDB-method.html'>rbind.ContigCellDB()</a></code> for the inverse operation.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
@@ -190,7 +207,7 @@ See <code><a href='split_cdb.html'>split_cdb()</a></code> to split into a list, 
     <div class='dont-index'><p><code><a href='cash-ContigCellDB-method.html'>$,ContigCellDB-method</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/data'>data</a></span>(<span class='no'>contigs_qc</span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>contigs_qc</span>)
 <span class='no'>contigs_qc</span></div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 1,508 x 22</span><span>
 #&gt;    anno_file pop   sample barcode is_cell contig_id high_confidence length chain
 #&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>     </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>     </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span>            </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>
@@ -208,8 +225,8 @@ See <code><a href='split_cdb.html'>split_cdb()</a></code> to split into a list, 
 #&gt; #   j_gene </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, c_gene </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, full_length </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span style='color: #555555;'>, productive </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>,
 #&gt; #   cdr3 </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, cdr3_nt </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, reads </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, umis </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, raw_clonotype_id </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>,
 #&gt; #   raw_consensus_id </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span style='color: #555555;'>, celltype </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span></div><div class='input'>
-<span class='no'>cdb</span> <span class='kw'>=</span> <span class='fu'>ContigCellDB</span>(<span class='no'>contigs_qc</span>, <span class='kw'>contig_pk</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>'barcode'</span>, <span class='st'>'pop'</span>, <span class='st'>'sample'</span>, <span class='st'>'contig_id'</span>),
- <span class='kw'>cell_pk</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>'barcode'</span>, <span class='st'>'pop'</span>, <span class='st'>'sample'</span>))
+<span class='no'>cdb</span> <span class='kw'>=</span> <span class='fu'>ContigCellDB</span>(<span class='no'>contigs_qc</span>, <span class='kw'>contig_pk</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>'barcode'</span>, <span class='st'>'pop'</span>, <span class='st'>'sample'</span>, <span class='st'>'contig_id'</span>),
+ <span class='kw'>cell_pk</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>'barcode'</span>, <span class='st'>'pop'</span>, <span class='st'>'sample'</span>))
  <span class='no'>cdb</span></div><div class='output co'>#&gt; ContigCellDB of 1508 contigs; 832 cells; and 0 clusters.
 #&gt; Contigs keyed by barcode, pop, sample, contig_id; cells keyed by barcode, pop, sample.</div><div class='input'>
  <span class='co'># everything that was in contigs_qc</span>
@@ -264,19 +281,23 @@ See <code><a href='split_cdb.html'>split_cdb()</a></code> to split into a list, 
   </div>
 </div>
 
+
       <footer>
       <div class="copyright">
   <p>Developed by Andrew McDavid, Yu Gu.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
+
       </footer>
    </div>
 
   
 
+
   </body>
 </html>
+
 

@@ -18,13 +18,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
 
-<!-- sticky kit -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+<!-- headroom.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -52,6 +54,7 @@ Fields in contig_fields will be copied over to the cell_tbl." />
 <![endif]-->
 
 
+
   </head>
 
   <body>
@@ -68,7 +71,7 @@ Fields in contig_fields will be copied over to the cell_tbl." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CellaRepertorium</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.1</span>
       </span>
     </div>
 
@@ -76,7 +79,7 @@ Fields in contig_fields will be copied over to the cell_tbl." />
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fas fa fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -105,7 +108,7 @@ Fields in contig_fields will be copied over to the cell_tbl." />
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/amcdavid/CellaRepertorium">
-    <span class="fa fa-github fa-lg"></span>
+    <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -116,6 +119,7 @@ Fields in contig_fields will be copied over to the cell_tbl." />
 </div><!--/.navbar -->
 
       
+
       </header>
 
 <div class="row">
@@ -132,9 +136,14 @@ single, canonical contig to represent each cell
 Fields in <code>contig_fields</code> will be copied over to the <code>cell_tbl</code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>canonicalize_cell</span>(<span class='no'>ccdb</span>, <span class='kw'>contig_filter_args</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>tie_break_keys</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"umis"</span>, <span class='st'>"reads"</span>), <span class='kw'>contig_fields</span> <span class='kw'>=</span> <span class='no'>tie_break_keys</span>,
-  <span class='kw'>order</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'>canonicalize_cell</span>(
+  <span class='no'>ccdb</span>,
+  <span class='kw'>contig_filter_args</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>tie_break_keys</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"umis"</span>, <span class='st'>"reads"</span>),
+  <span class='kw'>contig_fields</span> <span class='kw'>=</span> <span class='no'>tie_break_keys</span>,
+  <span class='kw'>order</span> <span class='kw'>=</span> <span class='fl'>1</span>,
+  <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -183,14 +192,26 @@ this could be used to return the second chain.</p></td>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># Report beta chain with highest umi-count, breaking ties with reads</span>
 <span class='no'>beta</span> <span class='kw'>=</span> <span class='fu'>canonicalize_cell</span>(<span class='no'>ccdb_ex</span>, <span class='no'>chain</span> <span class='kw'>==</span> <span class='st'>'TRB'</span>,
-<span class='kw'>tie_break_keys</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>'umis'</span>, <span class='st'>'reads'</span>),
-<span class='kw'>contig_fields</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>'umis'</span>, <span class='st'>'reads'</span>, <span class='st'>'chain'</span>, <span class='st'>'v_gene'</span>, <span class='st'>'d_gene'</span>, <span class='st'>'j_gene'</span>))</div><div class='output co'>#&gt; <span class='error'>Error in transmute(., ngrp = dplyr::n(), idx = seq_along(ngrp)): could not find function "transmute"</span></div><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/head'>head</a></span>(<span class='no'>beta</span>$<span class='no'>cell_tbl</span>)</div><div class='output co'>#&gt; <span class='error'>Error in beta$cell_tbl: object of type 'closure' is not subsettable</span></div><div class='input'>
+<span class='kw'>tie_break_keys</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>'umis'</span>, <span class='st'>'reads'</span>),
+<span class='kw'>contig_fields</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>'umis'</span>, <span class='st'>'reads'</span>, <span class='st'>'chain'</span>, <span class='st'>'v_gene'</span>, <span class='st'>'d_gene'</span>, <span class='st'>'j_gene'</span>))
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>beta</span>$<span class='no'>cell_tbl</span>)</div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 6 x 9</span><span>
+#&gt; </span><span style='color: #555555;'># Groups:   pop, sample, barcode [6]</span><span>
+#&gt;    umis reads chain v_gene d_gene j_gene  pop   sample barcode           
+#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>             
+#&gt; </span><span style='color: #555555;'>1</span><span>     6 </span><span style='text-decoration: underline;'>37</span><span>898 TRB   TRBV31 None   TRBJ1-5 b6    4      AAAGTAGTCGCGCCAA-1
+#&gt; </span><span style='color: #555555;'>2</span><span>    </span><span style='color: #BB0000;'>NA</span><span>    </span><span style='color: #BB0000;'>NA</span><span> </span><span style='color: #BB0000;'>NA</span><span>    </span><span style='color: #BB0000;'>NA</span><span>     </span><span style='color: #BB0000;'>NA</span><span>     </span><span style='color: #BB0000;'>NA</span><span>      b6    4      AACCATGCATTTGCCC-1
+#&gt; </span><span style='color: #555555;'>3</span><span>     6 </span><span style='text-decoration: underline;'>33</span><span>548 TRB   TRBV5  TRBD2  TRBJ2-2 b6    4      AACTGGTGTCTGATCA-1
+#&gt; </span><span style='color: #555555;'>4</span><span>     6 </span><span style='text-decoration: underline;'>26</span><span>928 TRB   TRBV4  TRBD2  TRBJ2-4 b6    4      AAGCCGCAGTAAGTAC-1
+#&gt; </span><span style='color: #555555;'>5</span><span>     4 </span><span style='text-decoration: underline;'>18</span><span>435 TRB   TRBV1  None   TRBJ2-4 b6    4      AAGTCTGGTTCAACCA-1
+#&gt; </span><span style='color: #555555;'>6</span><span>     9 </span><span style='text-decoration: underline;'>46</span><span>156 TRB   TRBV5  TRBD2  TRBJ2-7 b6    4      ACACCAAAGTCCAGGA-1</div><div class='input'>
 <span class='co'># Stable: only adds fields to `cell_tbl`</span>
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/stopifnot'>stopifnot</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/all.equal'>all.equal</a></span>(<span class='no'>beta</span>$<span class='no'>cell_tbl</span>[<span class='no'>ccdb_ex</span>$<span class='no'>cell_pk</span>],
-<span class='no'>ccdb_ex</span>$<span class='no'>cell_tbl</span>[<span class='no'>ccdb_ex</span>$<span class='no'>cell_pk</span>]))</div><div class='output co'>#&gt; <span class='error'>Error in beta$cell_tbl: object of type 'closure' is not subsettable</span></div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/base/stopifnot.html'>stopifnot</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/all.equal.html'>all.equal</a></span>(<span class='no'>beta</span>$<span class='no'>cell_tbl</span>[<span class='no'>ccdb_ex</span>$<span class='no'>cell_pk</span>],
+<span class='no'>ccdb_ex</span>$<span class='no'>cell_tbl</span>[<span class='no'>ccdb_ex</span>$<span class='no'>cell_pk</span>]))
+
 <span class='co'>#Report cdr3 with highest UMI count, but only when &gt; 5 UMIs support it</span>
 <span class='no'>umi5</span> <span class='kw'>=</span> <span class='fu'>canonicalize_cell</span>(<span class='no'>ccdb_ex</span>, <span class='no'>umis</span> <span class='kw'>&gt;</span> <span class='fl'>5</span>,
-<span class='kw'>tie_break_keys</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>'umis'</span>, <span class='st'>'reads'</span>), <span class='kw'>contig_fields</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>'umis'</span>, <span class='st'>'cdr3'</span>))</div><div class='output co'>#&gt; <span class='error'>Error in transmute(., ngrp = dplyr::n(), idx = seq_along(ngrp)): could not find function "transmute"</span></div><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/stopifnot'>stopifnot</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/all'>all</a></span>(<span class='no'>umi5</span>$<span class='no'>cell_tbl</span>$<span class='no'>umis</span> <span class='kw'>&gt;</span> <span class='fl'>5</span>, <span class='kw'>na.rm</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>))</div><div class='output co'>#&gt; <span class='error'>Error: object 'umi5' not found</span></div></pre>
+<span class='kw'>tie_break_keys</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>'umis'</span>, <span class='st'>'reads'</span>), <span class='kw'>contig_fields</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>'umis'</span>, <span class='st'>'cdr3'</span>))
+<span class='fu'><a href='https://rdrr.io/r/base/stopifnot.html'>stopifnot</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/all.html'>all</a></span>(<span class='no'>umi5</span>$<span class='no'>cell_tbl</span>$<span class='no'>umis</span> <span class='kw'>&gt;</span> <span class='fl'>5</span>, <span class='kw'>na.rm</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>))</div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -204,19 +225,23 @@ this could be used to return the second chain.</p></td>
   </div>
 </div>
 
+
       <footer>
       <div class="copyright">
   <p>Developed by Andrew McDavid, Yu Gu.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
+
       </footer>
    </div>
 
   
 
+
   </body>
 </html>
+
 
