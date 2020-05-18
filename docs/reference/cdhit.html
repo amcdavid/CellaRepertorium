@@ -10,23 +10,27 @@
 
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -36,15 +40,17 @@
 
 
 <meta property="og:title" content="R interface to CDHIT/CDHITest — cdhit" />
-<meta property="og:description" content="CDHIT is a greedy algorithm to cluster amino acid or DNA sequences based on a minimum identity.
-By default, in this package it is configured perform ungapped, global alignments with no clipping at start or end.
+<meta property="og:description" content="CDHIT is a greedy algorithm to cluster amino acid or DNA sequences based on a
+minimum identity.
+By default, in this package it is configured perform ungapped, global
+alignments with no clipping at start or end.
 The identity is the number of identical characters in alignment
 divided by the full length of the shorter sequence.
-Set s &amp;lt; 1 to change the minimum coverage of the shorter sequence, which will allow clipping at start or end.
+Set s &amp;lt; 1 to change the minimum coverage of the shorter sequence, which
+will allow clipping at start or end.
 Changing G = 0 changes the meaning of the identity to be the number of
 identical characters in the alignment divided by the length of the alignment.
 In this case, you must also set the alignment coverage controls aL, AL, aS, AS." />
-<meta name="twitter:card" content="summary" />
 
 
 
@@ -62,7 +68,7 @@ In this case, you must also set the alignment coverage controls aL, AL, aS, AS."
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -76,7 +82,7 @@ In this case, you must also set the alignment coverage controls aL, AL, aS, AS."
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CellaRepertorium</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.2</span>
       </span>
     </div>
 
@@ -112,7 +118,7 @@ In this case, you must also set the alignment coverage controls aL, AL, aS, AS."
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/amcdavid/CellaRepertorium">
+  <a href="https://github.com/amcdavid/CellaRepertorium/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -136,11 +142,14 @@ In this case, you must also set the alignment coverage controls aL, AL, aS, AS."
     </div>
 
     <div class="ref-description">
-    <p>CDHIT is a greedy algorithm to cluster amino acid or DNA sequences based on a minimum identity.
-By default, in this package it is configured perform ungapped, global alignments with no clipping at start or end.
+    <p>CDHIT is a greedy algorithm to cluster amino acid or DNA sequences based on a
+minimum identity.
+By default, in this package it is configured perform ungapped, global
+alignments with no clipping at start or end.
 The <code>identity</code> is the number of identical characters in alignment
 divided by the full length of the shorter sequence.
-Set <code>s</code> &lt; 1 to change the minimum coverage of the shorter sequence, which will allow clipping at start or end.
+Set <code>s</code> &lt; 1 to change the minimum coverage of the shorter sequence, which
+will allow clipping at start or end.
 Changing <code>G</code> = 0 changes the meaning of the <code>identity</code> to be the number of
 identical characters in the alignment divided by the length of the alignment.
 In this case, you must also set the alignment coverage controls <code>aL</code>, <code>AL</code>, <code>aS</code>, <code>AS</code>.</p>
@@ -170,12 +179,14 @@ In this case, you must also set the alignment coverage controls <code>aL</code>,
     </tr>
     <tr>
       <th>kmerSize</th>
-      <td><p>word size.  If NULL, it will be chosen automatically based on the identity.
+      <td><p>word size.  If NULL, it will be chosen automatically based on
+the identity.
 You may need to lower it below 5 for AAseq with identity less than .7.</p></td>
     </tr>
     <tr>
       <th>min_length</th>
-      <td><p>Minimum length for sequences to be clustered.  An error if something smaller is passed.</p></td>
+      <td><p>Minimum length for sequences to be clustered.  An error if
+something smaller is passed.</p></td>
     </tr>
     <tr>
       <th>s</th>
@@ -183,7 +194,8 @@ You may need to lower it below 5 for AAseq with identity less than .7.</p></td>
     </tr>
     <tr>
       <th>only_index</th>
-      <td><p>if TRUE only return the integer cluster indices, otherwise return a tibble.</p></td>
+      <td><p>if TRUE only return the integer cluster indices, otherwise
+return a tibble.</p></td>
     </tr>
     <tr>
       <th>showProgress</th>
@@ -191,17 +203,21 @@ You may need to lower it below 5 for AAseq with identity less than .7.</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>other arguments that can be passed to cdhit, see https://github.com/weizhongli/cdhit/wiki/3.-User's-Guide#CDHIT for details.  These will override any default values.</p></td>
+      <td><p>other arguments that can be passed to cdhit, see
+https://github.com/weizhongli/cdhit/wiki/3.-User's-Guide#CDHIT for details.
+These will override any default values.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>vector of <code>integer</code> of length <code>seqs</code> providing the cluster ID for each sequence, or a <code>tibble</code>.  See details.</p>
+    <p>vector of <code>integer</code> of length <code>seqs</code> providing the cluster
+ID for each sequence, or a <code>tibble</code>.  See details.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>CDHit is by Fu, Niu, Zhu, Wu and Li (2012).  The R interface is originally by
-Thomas Lin Pedersen and was transcribed here because it is not exported from the package FindMyFriends, which is orphaned.</p>
+Thomas Lin Pedersen and was transcribed here because it is not exported from
+the package FindMyFriends, which is orphaned.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='no'>fasta_path</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>'extdata'</span>, <span class='st'>'demo.fasta'</span>, <span class='kw'>package</span><span class='kw'>=</span><span class='st'>'CellaRepertorium'</span>)
@@ -212,15 +228,10 @@ Thomas Lin Pedersen and was transcribed here because it is not exported from the
 <span class='fu'>cdhit</span>(<span class='no'>aaseq</span>,<span class='kw'>identity</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>G</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>aL</span> <span class='kw'>=</span> <span class='fl'>.9</span>, <span class='kw'>aS</span> <span class='kw'>=</span> <span class='fl'>.9</span>,  <span class='kw'>only_index</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)[<span class='fl'>1</span>:<span class='fl'>10</span>]</div><div class='output co'>#&gt;  [1] 100 101 162 102   6 245 103  49 163 164</div><div class='input'><span class='co'># a tibble</span>
 <span class='no'>tbl</span> <span class='kw'>=</span> <span class='fu'>cdhit</span>(<span class='no'>aaseq</span>, <span class='kw'>identity</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>G</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>aL</span> <span class='kw'>=</span> <span class='fl'>.9</span>, <span class='kw'>aS</span> <span class='kw'>=</span> <span class='fl'>.9</span>, <span class='kw'>only_index</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</div></pre>
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#value">Value</a></li>
-      <li><a href="#details">Details</a></li>
-      <li><a href="#examples">Examples</a></li>
-    </ul>
-
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
@@ -231,7 +242,7 @@ Thomas Lin Pedersen and was transcribed here because it is not exported from the
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>

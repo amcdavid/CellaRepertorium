@@ -61,4 +61,4 @@ However, there are a variety of specialized functions, as well:
 
 ## Roadmap
 
-The data structure, accessor APIs and tests are relatively stable.  In the short term, adding infrastructure to nest `ContigCellDB` objects in `SingleCellExperiment()` metadata is a priority, as are more and better visualization.
+The data structure, accessor APIs and tests are relatively stable.  In the short term, more and better visualization is a priority.

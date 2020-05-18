@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>A filtration of clusters — cluster_filterset • CellaRepertorium</title>
+<title>Color axis labels — map_axis_labels • CellaRepertorium</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="A filtration of clusters — cluster_filterset" />
-<meta property="og:description" content="Return clusters that match all provided conditions" />
+<meta property="og:title" content="Color axis labels — map_axis_labels" />
+<meta property="og:description" content="Color axis labels" />
 
 
 
@@ -126,40 +126,55 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>A filtration of clusters</h1>
-    <small class="dont-index">Source: <a href='https://github.com/amcdavid/CellaRepertorium/blob/master/R/cluster-testing.R'><code>R/cluster-testing.R</code></a></small>
-    <div class="hidden name"><code>cluster_filterset.Rd</code></div>
+    <h1>Color axis labels</h1>
+    <small class="dont-index">Source: <a href='https://github.com/amcdavid/CellaRepertorium/blob/master/R/ggplot2-utils.R'><code>R/ggplot2-utils.R</code></a></small>
+    <div class="hidden name"><code>map_axis_labels.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Return clusters that match all provided conditions</p>
+    <p>Color axis labels</p>
     </div>
 
-    <pre class="usage"><span class='fu'>cluster_filterset</span>(<span class='kw'>min_number</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>min_freq</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>white_list</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>map_axis_labels</span>(
+  <span class='no'>plt</span>,
+  <span class='no'>label_data_x</span>,
+  <span class='no'>label_data_y</span>,
+  <span class='no'>aes_label</span>,
+  <span class='kw'>scale</span> <span class='kw'>=</span> <span class='kw pkg'>ggplot2</span><span class='kw ns'>::</span><span class='fu'><a href='https://ggplot2.tidyverse.org/reference/scale_hue.html'>scale_color_hue</a></span>(<span class='kw'>aesthetics</span> <span class='kw'>=</span> <span class='st'>"axis_color"</span>)
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>min_number</th>
-      <td><p><code>integer</code> At least this many cells</p></td>
+      <th>plt</th>
+      <td><p><code><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot2::ggplot()</a></code> object</p></td>
     </tr>
     <tr>
-      <th>min_freq</th>
-      <td><p><code>numeric</code> At least this frequency</p></td>
+      <th>label_data_y</th>
+      <td><p><code><a href='https://rdrr.io/r/base/data.frame.html'>data.frame()</a></code>s containing the mapping between x-axis/y-axis labels and
+<code>aes_label</code></p></td>
     </tr>
     <tr>
-      <th>white_list</th>
-      <td><p><code>data.frame</code> keyed by cluster_pk that must match</p></td>
+      <th>aes_label</th>
+      <td><p>character or bare symbol giving the column in <code>label_data</code> to be mapped</p></td>
+    </tr>
+    <tr>
+      <th>scale</th>
+      <td><p><code>ggplot2</code> discrete color</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>object representing the filtration (currently a list)</p>
+    <p><code>plt</code> with axis text modified</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>cluster_filterset</span>(<span class='kw'>min_number</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>min_freq</span> <span class='kw'>=</span> <span class='fl'>0</span>)</div></pre>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>require</a></span>(<span class='no'>ggplot2</span>)</div><div class='output co'>#&gt; <span class='message'>Loading required package: ggplot2</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>require</a></span>(<span class='no'>dplyr</span>)
+<span class='no'>plt</span> <span class='kw'>=</span> <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></span>(<span class='no'>mpg</span>, <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='no'>manufacturer</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='no'>drv</span>)) + <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_jitter.html'>geom_jitter</a></span>()
+<span class='no'>label_data</span> <span class='kw'>=</span> <span class='no'>mpg</span> <span class='kw'>%&gt;%</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span>(<span class='no'>manufacturer</span>) <span class='kw'>%&gt;%</span> <span class='fu'><a href='https://rdrr.io/r/base/unique.html'>unique</a></span>() <span class='kw'>%&gt;%</span>
+<span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span>(<span class='kw'>euro</span> <span class='kw'>=</span> <span class='no'>manufacturer</span> <span class='kw'>%in%</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>'audi'</span>, <span class='st'>'volkswagen'</span>), <span class='kw'>drv</span> <span class='kw'>=</span> <span class='fl'>NA_character_</span>)
+<span class='fu'>map_axis_labels</span>(<span class='no'>plt</span>, <span class='no'>label_data</span>, <span class='no'>label_data</span>, <span class='no'>euro</span>)</div><div class='img'><img src='map_axis_labels-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

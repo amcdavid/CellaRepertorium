@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>A filtration of clusters — cluster_filterset • CellaRepertorium</title>
+<title>Selectively muffle warnings based on output — hushWarning • CellaRepertorium</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="A filtration of clusters — cluster_filterset" />
-<meta property="og:description" content="Return clusters that match all provided conditions" />
+<meta property="og:title" content="Selectively muffle warnings based on output — hushWarning" />
+<meta property="og:description" content="Selectively muffle warnings based on output" />
 
 
 
@@ -126,40 +126,37 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>A filtration of clusters</h1>
-    <small class="dont-index">Source: <a href='https://github.com/amcdavid/CellaRepertorium/blob/master/R/cluster-testing.R'><code>R/cluster-testing.R</code></a></small>
-    <div class="hidden name"><code>cluster_filterset.Rd</code></div>
+    <h1>Selectively muffle warnings based on output</h1>
+    <small class="dont-index">Source: <a href='https://github.com/amcdavid/CellaRepertorium/blob/master/R/utilty.R'><code>R/utilty.R</code></a></small>
+    <div class="hidden name"><code>hushWarning.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Return clusters that match all provided conditions</p>
+    <p>Selectively muffle warnings based on output</p>
     </div>
 
-    <pre class="usage"><span class='fu'>cluster_filterset</span>(<span class='kw'>min_number</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>min_freq</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>white_list</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>hushWarning</span>(<span class='no'>expr</span>, <span class='no'>regexp</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>min_number</th>
-      <td><p><code>integer</code> At least this many cells</p></td>
+      <th>expr</th>
+      <td><p>an expression</p></td>
     </tr>
     <tr>
-      <th>min_freq</th>
-      <td><p><code>numeric</code> At least this frequency</p></td>
-    </tr>
-    <tr>
-      <th>white_list</th>
-      <td><p><code>data.frame</code> keyed by cluster_pk that must match</p></td>
+      <th>regexp</th>
+      <td><p>a regexp to be matched (with str_detect)</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>object representing the filtration (currently a list)</p>
+    <p>the result of expr</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>cluster_filterset</span>(<span class='kw'>min_number</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>min_freq</span> <span class='kw'>=</span> <span class='fl'>0</span>)</div></pre>
+    <pre class="examples"><div class='input'><span class='kw pkg'>CellaRepertorium</span><span class='kw ns'>:::</span><span class='fu'>hushWarning</span>(<span class='fu'><a href='https://rdrr.io/r/base/warning.html'>warning</a></span>(<span class='st'>'Beware the rabbit'</span>), <span class='st'>'rabbit'</span>)
+<span class='kw pkg'>CellaRepertorium</span><span class='kw ns'>:::</span><span class='fu'>hushWarning</span>(<span class='fu'><a href='https://rdrr.io/r/base/warning.html'>warning</a></span>(<span class='st'>'Beware the rabbit'</span>), <span class='st'>'hedgehog'</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Beware the rabbit</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

@@ -6,19 +6,19 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Quality control and Exploration of UMI-based repertoire data • CellaRepertorium</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
+<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><meta property="og:title" content="Quality control and Exploration of UMI-based repertoire data">
-<meta property="og:description" content="">
-<meta name="twitter:card" content="summary">
+<meta property="og:description" content="CellaRepertorium">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 </head>
-<body>
+<body data-spy="scroll" data-target="#toc">
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CellaRepertorium</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.2</span>
       </span>
     </div>
 
@@ -67,7 +67,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/amcdavid/CellaRepertorium">
+  <a href="https://github.com/amcdavid/CellaRepertorium/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -85,7 +85,7 @@
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1>Quality control and Exploration of UMI-based repertoire data</h1>
+      <h1 data-toc-skip>Quality control and Exploration of UMI-based repertoire data</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/amcdavid/CellaRepertorium/blob/master/vignettes/mouse_tcell_qc.Rmd"><code>vignettes/mouse_tcell_qc.Rmd</code></a></small>
@@ -95,9 +95,9 @@
 
     
     
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#load_all()</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(CellaRepertorium)
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(dplyr)
+<div class="sourceCode"><html><body><pre class="r"><span class="co">#load_all()</span>
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">CellaRepertorium</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">dplyr</span>)
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Attaching package: 'dplyr'</span>
 <span class="co">#&gt; The following objects are masked from 'package:stats':</span>
@@ -106,18 +106,18 @@
 <span class="co">#&gt; The following objects are masked from 'package:base':</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;     intersect, setdiff, setequal, union</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(ggplot2)
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(readr)
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tidyr)
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(stringr)</code></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">ggplot2</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">readr</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">tidyr</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">stringr</span>)</pre></body></html></div>
 <div id="load-contig-files" class="section level1">
 <h1 class="hasAnchor">
 <a href="#load-contig-files" class="anchor"></a>Load contig files</h1>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">files =<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">'extdata'</span>, <span class="dt">package =</span> <span class="st">'CellaRepertorium'</span>), <span class="dt">pattern =</span> <span class="st">"all_contig_annotations_.+?.csv.xz"</span>, <span class="dt">recursive =</span> <span class="ot">TRUE</span>, <span class="dt">full.names =</span> <span class="ot">TRUE</span>)
+<div class="sourceCode"><html><body><pre class="r"><span class="no">files</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">'extdata'</span>, <span class="kw">package</span> <span class="kw">=</span> <span class="st">'CellaRepertorium'</span>), <span class="kw">pattern</span> <span class="kw">=</span> <span class="st">"all_contig_annotations_.+?.csv.xz"</span>, <span class="kw">recursive</span> <span class="kw">=</span> <span class="fl">TRUE</span>, <span class="kw">full.names</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
 <span class="co"># Pull out sample and population names</span>
-samp_map =<span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/reexports.html">tibble</a></span>(<span class="dt">anno_file =</span> files, <span class="dt">pop =</span> <span class="kw"><a href="https://stringr.tidyverse.org/reference/str_match.html">str_match</a></span>(files, <span class="st">'b6|balbc'</span>)[,<span class="dv">1</span>], <span class="dt">sample =</span> <span class="kw"><a href="https://stringr.tidyverse.org/reference/str_match.html">str_match</a></span>(files, <span class="st">'_([0-9])</span><span class="ch">\\</span><span class="st">.'</span>)[,<span class="dv">2</span>])
+<span class="no">samp_map</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/reexports.html">tibble</a></span>(<span class="kw">anno_file</span> <span class="kw">=</span> <span class="no">files</span>, <span class="kw">pop</span> <span class="kw">=</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_match.html">str_match</a></span>(<span class="no">files</span>, <span class="st">'b6|balbc'</span>)[,<span class="fl">1</span>], <span class="kw">sample</span> <span class="kw">=</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_match.html">str_match</a></span>(<span class="no">files</span>, <span class="st">'_([0-9])\\.'</span>)[,<span class="fl">2</span>])
 
-knitr::<span class="kw">kable</span>(samp_map)</code></pre></div>
+<span class="kw pkg">knitr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>(<span class="no">samp_map</span>)</pre></body></html></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">anno_file</th>
@@ -126,79 +126,79 @@ knitr::<span class="kw">kable</span>(samp_map)</code></pre></div>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="left">/private/var/folders/33/vpk59z855zzbrczltjnc52qh0000gn/T/Rtmp3wSvjE/temp_libpath1358b48bf4437/CellaRepertorium/extdata/all_contig_annotations_b6_4.csv.xz</td>
+<td align="left">/private/var/folders/33/vpk59z855zzbrczltjnc52qh0000gn/T/RtmpWc5qMu/temp_libpath50a19f894d1/CellaRepertorium/extdata/all_contig_annotations_b6_4.csv.xz</td>
 <td align="left">b6</td>
 <td align="left">4</td>
 </tr>
 <tr class="even">
-<td align="left">/private/var/folders/33/vpk59z855zzbrczltjnc52qh0000gn/T/Rtmp3wSvjE/temp_libpath1358b48bf4437/CellaRepertorium/extdata/all_contig_annotations_b6_5.csv.xz</td>
+<td align="left">/private/var/folders/33/vpk59z855zzbrczltjnc52qh0000gn/T/RtmpWc5qMu/temp_libpath50a19f894d1/CellaRepertorium/extdata/all_contig_annotations_b6_5.csv.xz</td>
 <td align="left">b6</td>
 <td align="left">5</td>
 </tr>
 <tr class="odd">
-<td align="left">/private/var/folders/33/vpk59z855zzbrczltjnc52qh0000gn/T/Rtmp3wSvjE/temp_libpath1358b48bf4437/CellaRepertorium/extdata/all_contig_annotations_b6_6.csv.xz</td>
+<td align="left">/private/var/folders/33/vpk59z855zzbrczltjnc52qh0000gn/T/RtmpWc5qMu/temp_libpath50a19f894d1/CellaRepertorium/extdata/all_contig_annotations_b6_6.csv.xz</td>
 <td align="left">b6</td>
 <td align="left">6</td>
 </tr>
 <tr class="even">
-<td align="left">/private/var/folders/33/vpk59z855zzbrczltjnc52qh0000gn/T/Rtmp3wSvjE/temp_libpath1358b48bf4437/CellaRepertorium/extdata/all_contig_annotations_balbc_1.csv.xz</td>
+<td align="left">/private/var/folders/33/vpk59z855zzbrczltjnc52qh0000gn/T/RtmpWc5qMu/temp_libpath50a19f894d1/CellaRepertorium/extdata/all_contig_annotations_balbc_1.csv.xz</td>
 <td align="left">balbc</td>
 <td align="left">1</td>
 </tr>
 <tr class="odd">
-<td align="left">/private/var/folders/33/vpk59z855zzbrczltjnc52qh0000gn/T/Rtmp3wSvjE/temp_libpath1358b48bf4437/CellaRepertorium/extdata/all_contig_annotations_balbc_2.csv.xz</td>
+<td align="left">/private/var/folders/33/vpk59z855zzbrczltjnc52qh0000gn/T/RtmpWc5qMu/temp_libpath50a19f894d1/CellaRepertorium/extdata/all_contig_annotations_balbc_2.csv.xz</td>
 <td align="left">balbc</td>
 <td align="left">2</td>
 </tr>
 <tr class="even">
-<td align="left">/private/var/folders/33/vpk59z855zzbrczltjnc52qh0000gn/T/Rtmp3wSvjE/temp_libpath1358b48bf4437/CellaRepertorium/extdata/all_contig_annotations_balbc_3.csv.xz</td>
+<td align="left">/private/var/folders/33/vpk59z855zzbrczltjnc52qh0000gn/T/RtmpWc5qMu/temp_libpath50a19f894d1/CellaRepertorium/extdata/all_contig_annotations_balbc_3.csv.xz</td>
 <td align="left">balbc</td>
 <td align="left">3</td>
 </tr>
 </tbody>
 </table>
 <p>PBMC pooled from BALB/c and C57BL/6 mice <a href="https://support.10xgenomics.com/single-cell-vdj/datasets/3.0.0/vdj_v1_mm_c57bl6_pbmc_t">were assayed on 10X genomics V3 chemistry</a> and a library enriched for TCR were run. For the purposes of illustrating functionality in this package, cell barcodes were subsampled 3 times for each of the BALB/c and Black6 pools to generate distinct <code>samples</code>, which is reflected in the <code>sample</code> column. More details are available in the scripts in the <code>data-raw</code> directory of this package.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># read in CSV</span>
-all_anno =<span class="st"> </span>samp_map %&gt;%<span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/rowwise.html">rowwise</a></span>() %&gt;%<span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="dt">anno =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span>(anno_file, <span class="dt">col_types =</span> <span class="kw"><a href="https://readr.tidyverse.org/reference/cols.html">cols</a></span>(
-  <span class="dt">barcode =</span> <span class="kw"><a href="https://readr.tidyverse.org/reference/parse_atomic.html">col_character</a></span>(),
-  <span class="dt">is_cell =</span> <span class="kw"><a href="https://readr.tidyverse.org/reference/parse_atomic.html">col_logical</a></span>(),
-  <span class="dt">contig_id =</span> <span class="kw"><a href="https://readr.tidyverse.org/reference/parse_atomic.html">col_character</a></span>(),
-  <span class="dt">high_confidence =</span> <span class="kw"><a href="https://readr.tidyverse.org/reference/parse_atomic.html">col_logical</a></span>(),
-  <span class="dt">length =</span> <span class="kw"><a href="https://readr.tidyverse.org/reference/parse_atomic.html">col_double</a></span>(),
-  <span class="dt">chain =</span> <span class="kw"><a href="https://readr.tidyverse.org/reference/parse_atomic.html">col_character</a></span>(),
-  <span class="dt">v_gene =</span> <span class="kw"><a href="https://readr.tidyverse.org/reference/parse_atomic.html">col_character</a></span>(),
-  <span class="dt">d_gene =</span> <span class="kw"><a href="https://readr.tidyverse.org/reference/parse_atomic.html">col_character</a></span>(),
-  <span class="dt">j_gene =</span> <span class="kw"><a href="https://readr.tidyverse.org/reference/parse_atomic.html">col_character</a></span>(),
-  <span class="dt">c_gene =</span> <span class="kw"><a href="https://readr.tidyverse.org/reference/parse_atomic.html">col_character</a></span>(),
-  <span class="dt">full_length =</span> <span class="kw"><a href="https://readr.tidyverse.org/reference/parse_atomic.html">col_logical</a></span>(),
-  <span class="dt">productive =</span> <span class="kw"><a href="https://readr.tidyverse.org/reference/parse_atomic.html">col_character</a></span>(),
-  <span class="dt">cdr3 =</span> <span class="kw"><a href="https://readr.tidyverse.org/reference/parse_atomic.html">col_character</a></span>(),
-  <span class="dt">cdr3_nt =</span> <span class="kw"><a href="https://readr.tidyverse.org/reference/parse_atomic.html">col_character</a></span>(),
-  <span class="dt">reads =</span> <span class="kw"><a href="https://readr.tidyverse.org/reference/parse_atomic.html">col_double</a></span>(),
-  <span class="dt">umis =</span> <span class="kw"><a href="https://readr.tidyverse.org/reference/parse_atomic.html">col_double</a></span>(),
-  <span class="dt">raw_clonotype_id =</span> <span class="kw"><a href="https://readr.tidyverse.org/reference/parse_atomic.html">col_character</a></span>(),
-  <span class="dt">raw_consensus_id =</span> <span class="kw"><a href="https://readr.tidyverse.org/reference/parse_atomic.html">col_character</a></span>()
+<div class="sourceCode"><html><body><pre class="r"><span class="co"># read in CSV</span>
+<span class="no">all_anno</span> <span class="kw">=</span> <span class="no">samp_map</span> <span class="kw">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rowwise.html">rowwise</a></span>() <span class="kw">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">anno</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span>(<span class="no">anno_file</span>, <span class="kw">col_types</span> <span class="kw">=</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/cols.html">cols</a></span>(
+  <span class="kw">barcode</span> <span class="kw">=</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/parse_atomic.html">col_character</a></span>(),
+  <span class="kw">is_cell</span> <span class="kw">=</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/parse_atomic.html">col_logical</a></span>(),
+  <span class="kw">contig_id</span> <span class="kw">=</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/parse_atomic.html">col_character</a></span>(),
+  <span class="kw">high_confidence</span> <span class="kw">=</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/parse_atomic.html">col_logical</a></span>(),
+  <span class="kw">length</span> <span class="kw">=</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/parse_atomic.html">col_double</a></span>(),
+  <span class="kw">chain</span> <span class="kw">=</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/parse_atomic.html">col_character</a></span>(),
+  <span class="kw">v_gene</span> <span class="kw">=</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/parse_atomic.html">col_character</a></span>(),
+  <span class="kw">d_gene</span> <span class="kw">=</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/parse_atomic.html">col_character</a></span>(),
+  <span class="kw">j_gene</span> <span class="kw">=</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/parse_atomic.html">col_character</a></span>(),
+  <span class="kw">c_gene</span> <span class="kw">=</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/parse_atomic.html">col_character</a></span>(),
+  <span class="kw">full_length</span> <span class="kw">=</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/parse_atomic.html">col_logical</a></span>(),
+  <span class="kw">productive</span> <span class="kw">=</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/parse_atomic.html">col_character</a></span>(),
+  <span class="kw">cdr3</span> <span class="kw">=</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/parse_atomic.html">col_character</a></span>(),
+  <span class="kw">cdr3_nt</span> <span class="kw">=</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/parse_atomic.html">col_character</a></span>(),
+  <span class="kw">reads</span> <span class="kw">=</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/parse_atomic.html">col_double</a></span>(),
+  <span class="kw">umis</span> <span class="kw">=</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/parse_atomic.html">col_double</a></span>(),
+  <span class="kw">raw_clonotype_id</span> <span class="kw">=</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/parse_atomic.html">col_character</a></span>(),
+  <span class="kw">raw_consensus_id</span> <span class="kw">=</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/parse_atomic.html">col_character</a></span>()
 ))))
 
-all_anno =<span class="st"> </span>all_anno %&gt;%<span class="st"> </span><span class="kw"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span>() 
+<span class="no">all_anno</span> <span class="kw">=</span> <span class="no">all_anno</span> <span class="kw">%&gt;%</span> <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span>()
 <span class="co">#&gt; Warning: `cols` is now required.</span>
-<span class="co">#&gt; Please use `cols = c(anno)`</span></code></pre></div>
+<span class="co">#&gt; Please use `cols = c(anno)`</span></pre></body></html></div>
 <p>We read in several files of annotated “contigs” output from 10X genomics VDJ version 3.0. The pipeline for assembling reads into contigs, and mapping them to UMIs and cells is described in <a href="https://support.10xgenomics.com/single-cell-vdj/software/pipelines/latest/algorithms/overview">the 10X genomics documentation</a>, and its source code is available <a href="https://github.com/10XGenomics/cellranger/tree/5f5a6293bbc067e1965e50f0277286914b96c908">here</a>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cell_tbl =<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>(all_anno[<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"barcode"</span>,<span class="st">"pop"</span>,<span class="st">"sample"</span>,<span class="st">"is_cell"</span>)])
-cdb =<span class="st"> </span><span class="kw"><a href="../reference/ContigCellDB-fun.html">ContigCellDB</a></span>(all_anno,<span class="dt">contig_pk =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'barcode'</span>,<span class="st">'pop'</span>,<span class="st">'sample'</span>,<span class="st">'contig_id'</span>),<span class="dt">cell_tbl =</span> cell_tbl, <span class="dt">cell_pk =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'barcode'</span>,<span class="st">'pop'</span>,<span class="st">'sample'</span>))</code></pre></div>
+<div class="sourceCode"><html><body><pre class="r"><span class="no">cell_tbl</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>(<span class="no">all_anno</span>[<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"barcode"</span>,<span class="st">"pop"</span>,<span class="st">"sample"</span>,<span class="st">"is_cell"</span>)])
+<span class="no">cdb</span> <span class="kw">=</span> <span class="fu"><a href="../reference/ContigCellDB-fun.html">ContigCellDB</a></span>(<span class="no">all_anno</span>,<span class="kw">contig_pk</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'barcode'</span>,<span class="st">'pop'</span>,<span class="st">'sample'</span>,<span class="st">'contig_id'</span>),<span class="kw">cell_tbl</span> <span class="kw">=</span> <span class="no">cell_tbl</span>, <span class="kw">cell_pk</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'barcode'</span>,<span class="st">'pop'</span>,<span class="st">'sample'</span>))</pre></body></html></div>
 <p>Note that initially there are 3818 contigs.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cdb =<span class="st"> </span><span class="kw"><a href="../reference/mutate_cdb.html">mutate_cdb</a></span>(cdb, <span class="dt">celltype =</span> <span class="kw"><a href="../reference/guess_celltype.html">guess_celltype</a></span>(chain))
-cdb =<span class="st"> </span><span class="kw"><a href="../reference/mutate_cdb.html">filter_cdb</a></span>(cdb,high_confidence)</code></pre></div>
+<div class="sourceCode"><html><body><pre class="r"><span class="no">cdb</span> <span class="kw">=</span> <span class="fu"><a href="../reference/mutate_cdb.html">mutate_cdb</a></span>(<span class="no">cdb</span>, <span class="kw">celltype</span> <span class="kw">=</span> <span class="fu"><a href="../reference/guess_celltype.html">guess_celltype</a></span>(<span class="no">chain</span>))
+<span class="no">cdb</span> <span class="kw">=</span> <span class="fu"><a href="../reference/mutate_cdb.html">filter_cdb</a></span>(<span class="no">cdb</span>,<span class="no">high_confidence</span>)</pre></body></html></div>
 <p>After filtering for only high_confidence contigs there are 2731 contigs.</p>
 <p>We read in the contig annotation file for each of the samples, and annotate the contig as a alpha-beta T cell, gamma-delta T cell, B cell or chimeric “multi” cell type based on where various</p>
 </div>
 <div id="high-confidence-umis-belonging-to-t-cells-per-cell" class="section level1">
 <h1 class="hasAnchor">
 <a href="#high-confidence-umis-belonging-to-t-cells-per-cell" class="anchor"></a>High confidence UMIs belonging to T cells per cell</h1>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">total_umi =<span class="st"> </span><span class="kw"><a href="../reference/crosstab_by_celltype.html">crosstab_by_celltype</a></span>(cdb)
-T_ab_umi =<span class="st"> </span>total_umi[<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(cdb$cell_pk,<span class="st">"is_cell"</span>,<span class="st">"T_ab"</span>)]
+<div class="sourceCode"><html><body><pre class="r"><span class="no">total_umi</span> <span class="kw">=</span> <span class="fu"><a href="../reference/crosstab_by_celltype.html">crosstab_by_celltype</a></span>(<span class="no">cdb</span>)
+<span class="no">T_ab_umi</span> <span class="kw">=</span> <span class="no">total_umi</span>[<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">cdb</span>$<span class="no">cell_pk</span>,<span class="st">"is_cell"</span>,<span class="st">"T_ab"</span>)]
 
-<span class="kw"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(T_ab_umi, <span class="kw"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="dt">color =</span> <span class="kw"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(is_cell), <span class="dt">x =</span> T_ab, <span class="dt">group =</span> <span class="kw"><a href="https://rdrr.io/r/base/interaction.html">interaction</a></span>(is_cell, sample, pop))) +<span class="st"> </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/stat_ecdf.html">stat_ecdf</a></span>() +<span class="st"> </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/coord_cartesian.html">coord_cartesian</a></span>(<span class="dt">xlim =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">0</span>, <span class="dv">10</span>)) +<span class="st"> </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span>(<span class="st">'Fraction of barcodes'</span>) +<span class="st"> </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span>() +<span class="st"> </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/scale_hue.html">scale_color_discrete</a></span>(<span class="st">'10X called cell?'</span>)</code></pre></div>
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="no">T_ab_umi</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">color</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="no">is_cell</span>), <span class="kw">x</span> <span class="kw">=</span> <span class="no">T_ab</span>, <span class="kw">group</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/interaction.html">interaction</a></span>(<span class="no">is_cell</span>, <span class="no">sample</span>, <span class="no">pop</span>))) + <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/stat_ecdf.html">stat_ecdf</a></span>() + <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_cartesian.html">coord_cartesian</a></span>(<span class="kw">xlim</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0</span>, <span class="fl">10</span>)) + <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span>(<span class="st">'Fraction of barcodes'</span>) + <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span>() + <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_hue.html">scale_color_discrete</a></span>(<span class="st">'10X called cell?'</span>)</pre></body></html></div>
 <p><img src="mouse_tcell_qc_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
 <p>10X defines <a href="https://support.10xgenomics.com/single-cell-vdj/software/pipelines/latest/algorithms/cell-calling">a procedure</a> to separate cells from background that fits a Gaussian mixture model to the UMI distributions for each sample. However in some cases, it may be desirable to implement a common QC threshold with a different stringency, such as:</p>
 <ul>
@@ -210,21 +210,21 @@ T_ab_umi =<span class="st"> </span>total_umi[<span class="kw"><a href="https://r
 <div id="reads-umis" class="section level1">
 <h1 class="hasAnchor">
 <a href="#reads-umis" class="anchor"></a>Reads / UMIs</h1>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">qual_plot =<span class="st"> </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(cdb$contig_tbl, <span class="kw"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="dt">x =</span> celltype, <span class="dt">y=</span> umis)) +<span class="st"> </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/geom_violin.html">geom_violin</a></span>() +<span class="st"> </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/geom_jitter.html">geom_jitter</a></span>() +<span class="st"> </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span>(~sample +<span class="st"> </span>pop) +<span class="st"> </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_log10</a></span>() +<span class="st"> </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span>(<span class="st">"Annotated cell type"</span>)
+<div class="sourceCode"><html><body><pre class="r"><span class="no">qual_plot</span> <span class="kw">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="no">cdb</span>$<span class="no">contig_tbl</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">celltype</span>, <span class="kw">y</span><span class="kw">=</span> <span class="no">umis</span>)) + <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_violin.html">geom_violin</a></span>() + <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_jitter.html">geom_jitter</a></span>() + <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span>(~<span class="no">sample</span> + <span class="no">pop</span>) + <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_log10</a></span>() + <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span>(<span class="st">"Annotated cell type"</span>)
 
-qual_plot </code></pre></div>
+<span class="no">qual_plot</span></pre></body></html></div>
 <p><img src="mouse_tcell_qc_files/figure-html/unnamed-chunk-7-1.png" width="700"></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">qual_plot +<span class="st"> </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="dt">y =</span> reads)</code></pre></div>
+<div class="sourceCode"><html><body><pre class="r"><span class="no">qual_plot</span> + <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">y</span> <span class="kw">=</span> <span class="no">reads</span>)</pre></body></html></div>
 <p><img src="mouse_tcell_qc_files/figure-html/unnamed-chunk-7-2.png" width="700"></p>
 <p>The number of UMIs and reads by sample and annotated cell type.</p>
 </div>
 <div id="apply-t-cell-contig-umi-filter" class="section level1">
 <h1 class="hasAnchor">
 <a href="#apply-t-cell-contig-umi-filter" class="anchor"></a>Apply T-cell contig UMI filter</h1>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># At least 2 UMI mapping to high confidence T cell contigs.</span>
-good_bc =<span class="st"> </span>total_umi %&gt;%<span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/group_by.html">ungroup</a></span>() %&gt;%<span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(is_cell) %&gt;%<span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(T_ab &gt;=<span class="st"> </span><span class="dv">2</span>)
-total_cells =<span class="st"> </span>good_bc %&gt;%<span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(sample, pop) %&gt;%<span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span>(<span class="dt">good_bc =</span> <span class="kw"><a href="https://dplyr.tidyverse.org/reference/n.html">n</a></span>())
-knitr::<span class="kw">kable</span>(total_cells)</code></pre></div>
+<div class="sourceCode"><html><body><pre class="r"><span class="co"># At least 2 UMI mapping to high confidence T cell contigs.</span>
+<span class="no">good_bc</span> <span class="kw">=</span> <span class="no">total_umi</span> <span class="kw">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">ungroup</a></span>() <span class="kw">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="no">is_cell</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="no">T_ab</span> <span class="kw">&gt;=</span> <span class="fl">2</span>)
+<span class="no">total_cells</span> <span class="kw">=</span> <span class="no">good_bc</span> <span class="kw">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(<span class="no">sample</span>, <span class="no">pop</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span>(<span class="kw">good_bc</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/n.html">n</a></span>())
+<span class="kw pkg">knitr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>(<span class="no">total_cells</span>)</pre></body></html></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">sample</th>
@@ -265,18 +265,18 @@ knitr::<span class="kw">kable</span>(total_cells)</code></pre></div>
 </tbody>
 </table>
 <p>Apply a filter on UMIs.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">contigs_qc =<span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/join.html">semi_join</a></span>(cdb$contig_tbl, good_bc %&gt;%<span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(sample, pop, barcode)) %&gt;%<span class="st"> </span>
-<span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(full_length, productive ==<span class="st"> 'True'</span>, high_confidence, chain !=<span class="st"> 'Multi'</span>)
-<span class="co">#&gt; Joining, by = c("pop", "sample", "barcode")</span></code></pre></div>
+<div class="sourceCode"><html><body><pre class="r"><span class="no">contigs_qc</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/join.html">semi_join</a></span>(<span class="no">cdb</span>$<span class="no">contig_tbl</span>, <span class="no">good_bc</span> <span class="kw">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="no">sample</span>, <span class="no">pop</span>, <span class="no">barcode</span>)) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="no">full_length</span>, <span class="no">productive</span> <span class="kw">==</span> <span class="st">'True'</span>, <span class="no">high_confidence</span>, <span class="no">chain</span> <span class="kw">!=</span> <span class="st">'Multi'</span>)
+<span class="co">#&gt; Joining, by = c("pop", "sample", "barcode")</span></pre></body></html></div>
 <p>And take only high confidence, full length, productive <span class="math inline">\(\alpha-\beta\)</span> T cell contigs.</p>
 </div>
 <div id="multi-chain-t-cells" class="section level1">
 <h1 class="hasAnchor">
 <a href="#multi-chain-t-cells" class="anchor"></a>“Multi-chain” T cells</h1>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">
-n_productive =<span class="st"> </span>contigs_qc %&gt;%<span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(sample, pop, barcode) %&gt;%<span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span>(<span class="dt">n_productive =</span> <span class="kw"><a href="https://dplyr.tidyverse.org/reference/n.html">n</a></span>())
+<div class="sourceCode"><html><body><pre class="r">
+<span class="no">n_productive</span> <span class="kw">=</span> <span class="no">contigs_qc</span> <span class="kw">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(<span class="no">sample</span>, <span class="no">pop</span>, <span class="no">barcode</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span>(<span class="kw">n_productive</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/n.html">n</a></span>())
 
-<span class="kw"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(n_productive, <span class="kw"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="dt">x =</span> <span class="kw"><a href="https://rdrr.io/r/base/interaction.html">interaction</a></span>(sample,pop), <span class="dt">fill =</span> <span class="kw"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(n_productive))) +<span class="st"> </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar</a></span>(<span class="dt">position =</span> <span class="kw"><a href="https://ggplot2.tidyverse.org/reference/position_stack.html">position_stack</a></span>()) +<span class="st"> </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span>() +<span class="st"> </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span>(<span class="st">"Replicate"</span>) +<span class="st"> </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span>(<span class="st">"Number of cell barcodes"</span>)</code></pre></div>
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="no">n_productive</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/interaction.html">interaction</a></span>(<span class="no">sample</span>,<span class="no">pop</span>), <span class="kw">fill</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="no">n_productive</span>))) + <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar</a></span>(<span class="kw">position</span> <span class="kw">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/position_stack.html">position_stack</a></span>()) + <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span>() + <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span>(<span class="st">"Replicate"</span>) + <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span>(<span class="st">"Number of cell barcodes"</span>)</pre></body></html></div>
 <p><img src="mouse_tcell_qc_files/figure-html/unnamed-chunk-10-1.png" width="700"></p>
 <p>Number of productive chains per replicate.</p>
 </div>
@@ -290,21 +290,11 @@ n_productive =<span class="st"> </span>contigs_qc %&gt;%<span class="st"> </span
 </div>
   </div>
 
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
 
-        <div id="tocnav">
-      <h2 class="hasAnchor">
-<a href="#tocnav" class="anchor"></a>Contents</h2>
-      <ul class="nav nav-pills nav-stacked">
-<li><a href="#load-contig-files">Load contig files</a></li>
-      <li><a href="#high-confidence-umis-belonging-to-t-cells-per-cell">High confidence UMIs belonging to T cells per cell</a></li>
-      <li><a href="#reads-umis">Reads / UMIs</a></li>
-      <li><a href="#apply-t-cell-contig-umi-filter">Apply T-cell contig UMI filter</a></li>
-      <li><a href="#multi-chain-t-cells">“Multi-chain” T cells</a></li>
-      <li><a href="#questions">Questions</a></li>
-      </ul>
+        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
+    </nav>
 </div>
-      </div>
 
 </div>
 
@@ -315,7 +305,7 @@ n_productive =<span class="st"> </span>contigs_qc %&gt;%<span class="st"> </span
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>
