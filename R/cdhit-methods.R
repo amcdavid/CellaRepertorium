@@ -1,30 +1,40 @@
 globalVariables('cluster_idx')
 #' R interface to CDHIT/CDHITest
 #'
-#' CDHIT is a greedy algorithm to cluster amino acid or DNA sequences based on a minimum identity.
-#' By default, in this package it is configured perform ungapped, global alignments with no clipping at start or end.
+#' CDHIT is a greedy algorithm to cluster amino acid or DNA sequences based on a
+#' minimum identity.
+#' By default, in this package it is configured perform ungapped, global
+#' alignments with no clipping at start or end.
 #' The `identity` is the number of identical characters in alignment
 #' divided by the full length of the shorter sequence.
-#' Set `s` < 1 to change the minimum coverage of the shorter sequence, which will allow clipping at start or end.
+#' Set `s` < 1 to change the minimum coverage of the shorter sequence, which
+#' will allow clipping at start or end.
 #' Changing `G` = 0 changes the meaning of the `identity` to be the number of
 #' identical characters in the alignment divided by the length of the alignment.
 #' In this case, you must also set the alignment coverage controls `aL`, `AL`, `aS`, `AS`.
 #'
 #' CDHit is by Fu, Niu, Zhu, Wu and Li (2012).  The R interface is originally by
-#' Thomas Lin Pedersen and was transcribed here because it is not exported from the package FindMyFriends, which is orphaned.
+#' Thomas Lin Pedersen and was transcribed here because it is not exported from
+#' the package FindMyFriends, which is orphaned.
 #'
 #' @param seqs \code{AAseq} or \code{DNAseq}
 #' @param identity minimum proportion identity
-#' @param kmerSize word size.  If NULL, it will be chosen automatically based on the identity.
+#' @param kmerSize word size.  If NULL, it will be chosen automatically based on
+#' the identity.
 #' You may need to lower it below 5 for AAseq with identity less than .7.
-#' @param min_length Minimum length for sequences to be clustered.  An error if something smaller is passed.
+#' @param min_length Minimum length for sequences to be clustered.  An error if
+#' something smaller is passed.
 #' @param s fraction of shorter sequence covered by alignment.
 #' @param showProgress show a status bar
-#' @param only_index if TRUE only return the integer cluster indices, otherwise return a tibble.
-#' @param ... other arguments that can be passed to cdhit, see https://github.com/weizhongli/cdhit/wiki/3.-User's-Guide#CDHIT for details.  These will override any default values.
+#' @param only_index if TRUE only return the integer cluster indices, otherwise
+#' return a tibble.
+#' @param ... other arguments that can be passed to cdhit, see
+#' https://github.com/weizhongli/cdhit/wiki/3.-User's-Guide#CDHIT for details.
+#' These will override any default values.
 #'
 #' @useDynLib CellaRepertorium
-#' @return vector of \code{integer} of length \code{seqs} providing the cluster ID for each sequence, or a `tibble`.  See details.
+#' @return vector of \code{integer} of length \code{seqs} providing the cluster
+#' ID for each sequence, or a `tibble`.  See details.
 #' @export
 #' @importFrom tibble data_frame
 #' @importFrom dplyr group_by mutate filter

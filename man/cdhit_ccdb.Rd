@@ -25,9 +25,11 @@ cdhit_ccdb(
   Arguments passed on to \code{\link[=cdhit]{cdhit}}
   \describe{
     \item{\code{identity}}{minimum proportion identity}
-    \item{\code{kmerSize}}{word size.  If NULL, it will be chosen automatically based on the identity.
+    \item{\code{kmerSize}}{word size.  If NULL, it will be chosen automatically based on
+the identity.
 You may need to lower it below 5 for AAseq with identity less than .7.}
-    \item{\code{min_length}}{Minimum length for sequences to be clustered.  An error if something smaller is passed.}
+    \item{\code{min_length}}{Minimum length for sequences to be clustered.  An error if
+something smaller is passed.}
     \item{\code{s}}{fraction of shorter sequence covered by alignment.}
     \item{\code{showProgress}}{show a status bar}
   }}

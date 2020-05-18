@@ -4,7 +4,8 @@
 \name{contigs_qc}
 \alias{contigs_qc}
 \title{Filtered and annotated contigs of TCR from mice}
-\format{A data frame of 3399 contigs and 22 fields,
+\format{
+A data frame of 3399 contigs and 22 fields,
 all except 4 are originally defined in \url{https://support.10xgenomics.com/single-cell-vdj/software/pipelines/latest/output/annotation#contig}
 The following fields were defined ex post facto.
 \enumerate{
@@ -12,7 +13,8 @@ The following fields were defined ex post facto.
 \item \code{pop}: Mouse strain.
 \item \code{sample}: An artificial "replicate" from the original data defined by subsampling with replacement
 \item \code{celltype}: The putative cell type of the contig.
-}}
+}
+}
 \usage{
 contigs_qc
 }

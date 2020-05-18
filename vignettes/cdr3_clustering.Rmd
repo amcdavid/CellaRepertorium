@@ -171,25 +171,21 @@ map(to_plot$aa80, ~ dendro_plot(aa80, .))
 
 ## Formal testing for frequency differences
 
-```{r, eval = FALSE, results = 'hide'}
-library(lme4)
-library(broom)
-per_chain_sample = good_cluster_cells %>% group_by(sample, pop, chain) %>% summarize(total_cells = n(), weeks_premature = weeks_premature[1])
+```{r,  results = 'hide'}
+mm_out = cluster_test_by(aa80, fields = 'chain', 'cluster_tbl', ~ pop + (1|sample), filterset = cluster_filterset(white_list = oligo_clusters)) %>% left_join(oligo_clusters)
 
-oligo_cluster_stat = semi_join(oligo_clusters, good_cluster_cells %>% select(dataset, contig_id)) %>% group_by(sample, pop, chain, cluster_idx) %>% summarize(n_cluster = n())%>% ungroup() %>% complete(sample, pop, nesting(cluster_idx, chain), fill = list(n_cluster = 0))
+mm_out = mutate(mm_out, conf.low = estimate-1.96*std.error, conf.high = estimate + 1.96*std.error)
 
-oligo_cluster_stat = left_join(oligo_cluster_stat, per_chain_sample, by = c('sample', 'pop', 'chain')) 
-
-stopifnot( all(colSums(with(oligo_cluster_stat, table(chain, cluster_idx)) > 0) == 1))
-
-mm_out = suppressWarnings(oligo_cluster_stat %>% group_by(cluster_idx, chain) %>% do( glmer(cbind(n_cluster, total_cells) ~ pop + weeks_premature + (1|sample), data = ., family = 'binomial') %>% tidy(conf.int = TRUE)))
 ```
 
-```{r  per_iso_tests, eval = FALSE}
-mm_outj = filter(left_join(ungroup(mm_out), unique(oligo_clusters_all %>% select(representative, cluster_idx))), term %in% c('popCD31Pos', 'weeks_premature')) %>% mutate(ci_lo = AMmisc::clamp(conf.low), ci_hi = AMmisc::clamp(conf.high)) %>% arrange(desc(representative))
+```{r per_iso_tests}
+mm_outj = filter(ungroup(mm_out), term == 'popbalbc') %>% arrange(desc(representative))
 
-ggplot(mm_outj, aes(x = representative, ymin = ci_lo, ymax = ci_hi, y = clamp(estimate))) + geom_pointrange() + facet_wrap(~term, scales = 'free') + coord_flip() + theme_minimal() + geom_hline(yintercept = 0, lty = 2) + xlab("Isomorph") + ylab("log odds of isomorph")
+ggplot(mm_outj, aes(x = representative, ymin = conf.low, ymax = conf.high, y = estimate)) + geom_pointrange()  + coord_flip() + theme_minimal() + geom_hline(yintercept = 0, lty = 2) + xlab("Isomorph") + ylab("log odds of isomorph")
 ```
+
+
+
 
 We test if the binomial rate of clone expression differs between CD31+/- or term, for each clone.
 
@@ -198,8 +194,6 @@ We test if the binomial rate of clone expression differs between CD31+/- or term
 Next, we can examine the pairing between $\alpha-\beta$ chains and see if any pairs are found more than once.
 
 ```{r expanded_clones}
-class_colors = tibble(chain =  unique(aa80$cluster_tbl$chain)) %>% mutate(class_color =  RColorBrewer::brewer.pal(length(chain),"Set1")[seq_along(chain)])
-
 aa80$cluster_pk = 'representative'
 pairing_list = pairing_tables(aa80, table_order = 2, orphan_level = 1, min_expansion = 3, cluster_keys = c('cdr3', 'representative', 'chain', 'v_gene', 'j_gene', 'avg_distance'))
 
@@ -208,24 +202,19 @@ pairing_list = pairing_tables(aa80, table_order = 2, orphan_level = 1, min_expan
 
 `pairing_tables` finds all contig combinations of order `table_order` across cells.  Among those combinations that occur at least `min_expansion` times, the expanded combinations and and any other combinations that shared an expanded combo.
 
+
 ```{r plot_expanded}
-pairs_plt = ggplot(pairing_list$cell_tbl, aes(x = cluster_idx.1_fct, y = cluster_idx.2_fct, color = sample, shape = pop)) + geom_jitter(width = .2, height = .2) + theme_minimal() + xlab('TRB') + ylab('TRA')
 
-feature_tbl = left_join(bind_rows(pairing_list$idx1_tbl, pairing_list$idx2_tbl), class_colors)
+pairs_plt = ggplot(pairing_list$cell_tbl, aes(x = cluster_idx.1_fct, y = cluster_idx.2_fct)) + geom_jitter(aes(color = sample, shape = pop), width = .2, height = .2) + theme_minimal() + xlab('TRB') + ylab('TRA') + theme(axis.text.x = element_text(angle = 45))
 
-ylab = data_frame(representative =  ggplot_build(pairs_plt)$layout$panel_params[[1]]$y.label) %>% left_join(feature_tbl) %>% mutate(class_color = ifelse(is.na(class_color), '#E41A1C', class_color))
-
-xlab = data_frame(representative =  ggplot_build(pairs_plt)$layout$panel_params[[1]]$x.label) %>% left_join(feature_tbl) %>% mutate(class_color = ifelse(is.na(class_color), '#E41A1C', class_color))
-
-pairs_plt = pairs_plt + theme(axis.text.x = element_text(angle = 90, color = xlab$class_color, size = 8), axis.text.y = element_text(color = ylab$class_color, size = 8))
-
+pairs_plt = map_axis_labels(pairs_plt, pairing_list$idx1_tbl, pairing_list$idx2_tbl, aes_label  = 'chain')
 pairs_plt
 
 ```
 
 ## Expanded clones
 
-```{r, eval = FALSE}
+```{r}
 whitelist = oligo_clusters %>% dplyr::select(cluster_idx.1 = representative) %>% unique()
 pairing_list = pairing_tables(aa80, canonicalize_fun = canonicalize_by_prevalence, table_order = 2, orphan_level = 1, min_expansion = Inf, cluster_whitelist = whitelist,  cluster_keys = c('cdr3', 'representative', 'chain', 'v_gene', 'j_gene', 'avg_distance'))
 <<plot_expanded>>

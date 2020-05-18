@@ -22,6 +22,8 @@ cluster_germline = function(ccdb, segment_keys = c('v_gene', 'j_gene', 'chain'),
 }
 
 globalVariables(c('fc', 'd(medoid)', 'is_medoid', 'n_cluster'))
+# attempt to detect if we need nest_legacy or regular nest
+nest_pre1.0 = if('nest_legacy' %in% getNamespaceExports('tidyr')) tidyr::nest_legacy else tidyr::nest
 
 # Also canonicalize..
 #' Perform additional clustering of sequences within groups
@@ -45,7 +47,7 @@ fine_clustering = function(ccdb, sequence_key, type, max_affinity = NULL, keep_c
     cluster_tbl_orig = ccdb$cluster_tbl
     cluster_tbl = left_join_warn(cluster_tbl, cluster_tbl_orig, by = ccdb$cluster_pk, overwrite = TRUE)
     message('Summarizing')
-    contig_by_cluster = contig_tbl[union(ccdb$contig_pk, ccdb$cluster_pk)] %>% tidyr::nest_legacy(!!!syms(ccdb$contig_pk)) %>%
+    contig_by_cluster = contig_tbl[union(ccdb$contig_pk, ccdb$cluster_pk)] %>% nest_pre1.0(!!!syms(ccdb$contig_pk)) %>%
         right_join(cluster_tbl %>% dplyr::select(!!!syms(ccdb$cluster_pk)), by=ccdb$cluster_pk) # need to make sure these are in the same order!
 
     if(is.null(max_affinity)){

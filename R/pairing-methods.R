@@ -86,22 +86,38 @@ canonicalize_cell = function(ccdb, contig_filter_args = TRUE,
 # This should return a ccdb or a subclass?
 #' Generate a list of tables representing clusters paired in cells
 #'
-#' A contingency table of every combination of `cluster_idx` up to `table_order` is generated.
-#' Combinations that are found in at least `min_expansion` number of cells are reported.  All cells that have these combinations are returned, as well as cells that only have `orphan_level` of matching `cluster_idx`.
+#' A contingency table of every combination of `cluster_idx` up to `table_order`
+#' is generated. Combinations that are found in at least `min_expansion` number
+#' of cells are reported.  All cells that have these combinations are returned,
+#' as well as cells that only have `orphan_level` of matching `cluster_idx`.
 #'
-#' For example, if `table_order=2` and `min_expansion=2` then heavy/light or alpha/beta pairs found two or more times will be returned (as well as alpha-alpha pairs, etc, if those are present).
-#' If `orphan_level=1` then all cells that share just a single chain with an expanded clone will be returned.
+#' For example, if `table_order=2` and `min_expansion=2` then heavy/light or
+#' alpha/beta pairs found two or more times will be returned
+#' (as well as alpha-alpha pairs, etc, if those are present).
+#' If `orphan_level=1` then all cells that share just a single chain with an
+#' expanded clone will be returned.
 #'
-#' The `cluster_idx.1_fct` and `cluster_idx.2_fct` fields in `cell_tbl`, `idx1_tbl`, `idx2_tbl` are cast to factors and ordered such that pairings will tend to occur along the diagonal when they are cross-tabulated.
+#' The `cluster_idx.1_fct` and `cluster_idx.2_fct` fields in `cell_tbl`,
+#' `idx1_tbl`, `idx2_tbl` are cast to factors and ordered such that pairings will
+#' tend to occur along the diagonal when they are cross-tabulated.
 #' This facilitates plotting.
 #'
 #' @section Caveats and warnings:
-#'  The cell_idx -> cluster_idx map is generally one-to-many, and is resolved by `canonicalize_fun`.  For `table_order>1`, few collisions are expected as most cells will contain no more than 2 clusters.  Any collisions are resolved by returning the most prevalent cluster, across samples.  When two clusters are tied for most prevalent within a cell, the `cluster_idx` returned is arbitrary. Therefore, when `table_order=1`, it is strongly recommended to subset the `cluster_tbl` to just a single chain.
+#'  The cell_idx -> cluster_idx map is generally one-to-many, and is resolved by
+#'  `canonicalize_fun`.  For `table_order>1`, few collisions are expected as
+#'  most cells will contain no more than 2 clusters.  Any collisions are resolved
+#'  by returning the most prevalent cluster, across samples.  When two clusters
+#'  are tied for most prevalent within a cell, the `cluster_idx` returned is arbitrary.
+#'  Therefore, when `table_order=1`, it is strongly recommended to subset the
+#'  `cluster_tbl` to just a single chain.
 #'
 #' @param ccdb `ContigCellDB`
-#' @param min_expansion the minimal number of times a pairing needs to occur for it to be reported
-#' @param cluster_keys optional `character` naming additional columns in `ccdb$cluster_tbl` to be reported in the pairing
-#' @param table_order Integer larger than 1. What order of cluster_idx will be paired, eg, order = 2 means that the most common and second most common cluster_idx will be sought for each cell
+#' @param min_expansion the minimal number of times a pairing needs to occur for
+#' it to be reported
+#' @param cluster_keys optional `character` naming additional columns in
+#' `ccdb$cluster_tbl` to be reported in the pairing
+#' @param table_order Integer larger than 1. What order of cluster_idx will be
+#' paired, eg, order = 2 means that the most common and second most common cluster_idx will be sought for each cell
 #' @param orphan_level Integer larger than 0 and less than or equal to `table_order`.  Given that at least `min_expansion` cells are found that have `table_order` chains identical, how many `cluster_idx` pairs will we match on to select other cells.  Example: `ophan_level=1` means that cells that share just a single chain with the
 #' @param cluster_whitelist a table of pairings or clusters that should always be reported.  Here the clusters must be named "cluster_idx.1", "cluster_idx.2" (if order-2 pairs are being selected) rather than with `ccdb$cluster_pk``
 #' @param cluster_blacklist a table of pairings or clusters that will never be reported.  Must be named as per `cluster_whitelist`.
@@ -294,7 +310,7 @@ enumerate_pairing = function(ccdb, chain_key = 'chain', chain_recode_fun = NULL)
 
     chain_keys = union(chain_key, ccdb$cell_pk)
     chain_count = ccdb$contig_tbl %>% group_by(!!!syms(chain_keys)) %>% summarize(n_chains = dplyr::n()) %>% tidyr::spread(chain_key, 'n_chains', fill = 0)
-    chain_count = left_join(ccdb$cell_tbl[ccdb$cell_pk], chain_count, by = ccdb$cell_pk)
+    chain_count = left_join_warn(ccdb$cell_tbl, chain_count, by = ccdb$cell_pk)
     chain_type = ccdb$contig_tbl %>% group_by(!!!syms(ccdb$cell_pk)) %>% summarize(raw_chain_type = paste(sort(!!sym(chain_key)), collapse = '_'))
     chain_summary = left_join(chain_count, chain_type, by = ccdb$cell_pk) %>% ungroup()
     chain_recode_fun(chain_summary)

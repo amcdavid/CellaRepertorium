@@ -20,35 +20,45 @@ cdhit(
 
 \item{identity}{minimum proportion identity}
 
-\item{kmerSize}{word size.  If NULL, it will be chosen automatically based on the identity.
+\item{kmerSize}{word size.  If NULL, it will be chosen automatically based on
+the identity.
 You may need to lower it below 5 for AAseq with identity less than .7.}
 
-\item{min_length}{Minimum length for sequences to be clustered.  An error if something smaller is passed.}
+\item{min_length}{Minimum length for sequences to be clustered.  An error if
+something smaller is passed.}
 
 \item{s}{fraction of shorter sequence covered by alignment.}
 
-\item{only_index}{if TRUE only return the integer cluster indices, otherwise return a tibble.}
+\item{only_index}{if TRUE only return the integer cluster indices, otherwise
+return a tibble.}
 
 \item{showProgress}{show a status bar}
 
-\item{...}{other arguments that can be passed to cdhit, see https://github.com/weizhongli/cdhit/wiki/3.-User's-Guide#CDHIT for details.  These will override any default values.}
+\item{...}{other arguments that can be passed to cdhit, see
+https://github.com/weizhongli/cdhit/wiki/3.-User's-Guide#CDHIT for details.
+These will override any default values.}
 }
 \value{
-vector of \code{integer} of length \code{seqs} providing the cluster ID for each sequence, or a \code{tibble}.  See details.
+vector of \code{integer} of length \code{seqs} providing the cluster
+ID for each sequence, or a \code{tibble}.  See details.
 }
 \description{
-CDHIT is a greedy algorithm to cluster amino acid or DNA sequences based on a minimum identity.
-By default, in this package it is configured perform ungapped, global alignments with no clipping at start or end.
+CDHIT is a greedy algorithm to cluster amino acid or DNA sequences based on a
+minimum identity.
+By default, in this package it is configured perform ungapped, global
+alignments with no clipping at start or end.
 The \code{identity} is the number of identical characters in alignment
 divided by the full length of the shorter sequence.
-Set \code{s} < 1 to change the minimum coverage of the shorter sequence, which will allow clipping at start or end.
+Set \code{s} < 1 to change the minimum coverage of the shorter sequence, which
+will allow clipping at start or end.
 Changing \code{G} = 0 changes the meaning of the \code{identity} to be the number of
 identical characters in the alignment divided by the length of the alignment.
 In this case, you must also set the alignment coverage controls \code{aL}, \code{AL}, \code{aS}, \code{AS}.
 }
 \details{
 CDHit is by Fu, Niu, Zhu, Wu and Li (2012).  The R interface is originally by
-Thomas Lin Pedersen and was transcribed here because it is not exported from the package FindMyFriends, which is orphaned.
+Thomas Lin Pedersen and was transcribed here because it is not exported from
+the package FindMyFriends, which is orphaned.
 }
 \examples{
 fasta_path = system.file('extdata', 'demo.fasta', package='CellaRepertorium')
