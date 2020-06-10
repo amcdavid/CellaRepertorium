@@ -29,13 +29,14 @@ test_that('Can split', {
 test_that('Can rbind', {
    data(ccdb_ex)
    splat = split_cdb(ccdb_ex, 'chain', 'contig_tbl')
-   unite = rbind(splat$TRA, splat$TRB)
+   unite = equalize_ccdb(rbind(splat$TRA, splat$TRB),sort = TRUE)
    expect_is(unite, 'ContigCellDB')
+
    expect_equal(unite, ccdb_ex)
    ccdb_ex = cluster_germline(ccdb_ex, segment_keys = 'sample')
    splat_cell = split_cdb(ccdb_ex, c('sample', 'pop'), 'cell_tbl', drop = TRUE, equalize = TRUE)
    unite_cell = do.call(rbind, splat_cell)
-   expect_equal(unite_cell, ccdb_ex)
+   expect_equal(equalize_ccdb(unite_cell, sort = TRUE), equalize_ccdb(ccdb_ex, sort = TRUE))
 
    splat_cell[[1]] = suppressWarnings(replace_cluster_tbl(splat_cell[[1]], cluster_tbl = tibble(), cluster_pk = character()))
    unite_cluster = do.call(rbind, splat_cell)

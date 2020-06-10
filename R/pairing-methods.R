@@ -54,8 +54,8 @@ canonicalize_by_chain = function(tbl,  cell_identifiers = 'barcode', sort_factor
 #' head(beta$cell_tbl)
 #'
 #' # Stable: only adds fields to `cell_tbl`
-#' stopifnot(all.equal(beta$cell_tbl[ccdb_ex$cell_pk],
-#' ccdb_ex$cell_tbl[ccdb_ex$cell_pk]))
+#' stopifnot(dplyr::all_equal(beta$cell_tbl[ccdb_ex$cell_pk],
+#' ccdb_ex$cell_tbl[ccdb_ex$cell_pk], ignore_row_order = TRUE))
 #'
 #' #Report cdr3 with highest UMI count, but only when > 5 UMIs support it
 #' umi5 = canonicalize_cell(ccdb_ex, umis > 5,

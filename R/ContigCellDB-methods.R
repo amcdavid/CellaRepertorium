@@ -257,16 +257,18 @@ as.data.frame.ContigCellDB = function(object) as(object, 'data.frame')
 #' @param cell `logical` equalize cells
 #' @param contig `logical` equalize contigs
 #' @param cluster `logical` equalize clusters
+#' @param sort `logical` should equalized fields also be [order()]ed by their primary keys?
 #' @return [ContigCellDB()]
 #'
 #' @importFrom dplyr semi_join left_join right_join
 #' @export
-equalize_ccdb = function(x, cell = TRUE, contig = TRUE, cluster = TRUE){
+equalize_ccdb = function(x, cell = TRUE, contig = TRUE, cluster = TRUE, sort = FALSE){
     # Must use @ to avoid infinite loop!
     if(contig){
         x@contig_tbl = semi_join(x$contig_tbl, x$cell_tbl, by = x$cell_pk)
-        if(nrow(x$cluster_tbl) > 0)
-        x@contig_tbl = semi_join(x$contig_tbl, x$cluster_tbl, by = x$cluster_pk)
+        if(nrow(x$cluster_tbl) > 0) x@contig_tbl = semi_join(x$contig_tbl, x$cluster_tbl, by = x$cluster_pk)
+        if(sort) x@contig_tbl = x$contig_tbl[do.call(order, x$contig_tbl[x$contig_pk]),]
+
     }
     if(cell){
         if(nrow(x$cluster_tbl) > 0 && !contig){
@@ -275,10 +277,14 @@ equalize_ccdb = function(x, cell = TRUE, contig = TRUE, cluster = TRUE){
             contig_tbl = x$contig_tbl
         }
         x@cell_tbl = semi_join(x$cell_tbl, x$contig_tbl, by = x$cell_pk)
+        if(sort) x@cell_tbl = x$cell_tbl[do.call(order, x$cell_tbl[x$cell_pk]),]
+
 
     }
     if(nrow(x$cluster_tbl) > 0 && cluster){
         x@cluster_tbl = semi_join(x$cluster_tbl, x$contig_tbl, by = x$cluster_pk)
+        if(sort) x@cluster_tbl = x$cluster_tbl[do.call(order, x$cluster_tbl[x$cluster_pk]),]
+
     }
     x@equalized = (cell & contig & cluster) | x@equalized
     x
@@ -369,8 +375,7 @@ split_cdb = function(ccdb, fields, tbl = 'contig_tbl', drop = FALSE, equalize = 
     out
 }
 
-#' @export
-rbind.ContigCellDB <- function(..., deparse.level=1)
+rbind_ContigCellDB <- function(..., deparse.level=1)
 {
     objects <- list(...)
     .bind_rows_ccdb(objects[[1L]], objects[-1L])
@@ -391,13 +396,13 @@ rbind.ContigCellDB <- function(..., deparse.level=1)
 #' @examples
 #' data(ccdb_ex)
 #' splat = split_cdb(ccdb_ex, 'chain', 'contig_tbl')
-#' unite = rbind(splat$TRA, splat$TRB)
+#' unite = equalize_ccdb(rbind(splat$TRA, splat$TRB), sort = TRUE)
 #' stopifnot(all.equal(unite, ccdb_ex))
 #'
 setMethod("rbind", "ContigCellDB",
           function (..., deparse.level = 1)
           {
-              rbind.ContigCellDB(..., deparse.level = deparse.level)
+              rbind_ContigCellDB(..., deparse.level = deparse.level)
           }
 )
 
