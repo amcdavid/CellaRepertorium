@@ -15,7 +15,10 @@ map_axis_labels(
 \arguments{
 \item{plt}{\code{\link[ggplot2:ggplot]{ggplot2::ggplot()}} object}
 
-\item{label_data_y}{\code{\link[=data.frame]{data.frame()}}s containing the mapping between x-axis/y-axis labels and
+\item{label_data_x}{\code{\link[=data.frame]{data.frame()}} containing the mapping between x-axis labels and
+\code{aes_label}}
+
+\item{label_data_y}{\code{\link[=data.frame]{data.frame()}} containing the mapping between y-axis labels and
 \code{aes_label}}
 
 \item{aes_label}{character or bare symbol giving the column in \code{label_data} to be mapped}

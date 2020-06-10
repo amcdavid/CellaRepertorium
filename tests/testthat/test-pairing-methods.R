@@ -29,7 +29,7 @@ data("ccdb_ex")
 canon1 = canonicalize_cell(ccdb_ex, contig_filter_args = TRUE, contig_fields = 'umis')
 test_that('Canonicalization preserves number and order of cells', {
     canon2 = canonicalize_cell(ccdb_ex, contig_filter_args = FALSE, contig_fields = 'umis')
-    expect_equal(canon2$cell_tbl[ccdb_ex$cell_pk], ccdb_ex$cell_tbl[ccdb_ex$cell_pk])
+    expect_equivalent(canon2$cell_tbl[ccdb_ex$cell_pk], ccdb_ex$cell_tbl[ccdb_ex$cell_pk])
     expect_true(all(is.na(canon2$cell_tbl$umis)))
 })
 

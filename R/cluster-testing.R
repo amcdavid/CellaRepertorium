@@ -25,7 +25,7 @@ cluster_filterset = function(min_number = 0, min_freq = 0, white_list = NULL){
     canon = canonicalize_cell(ccdb,
                               contig_filter_args = !!rlang::enexpr(contig_filter_args),
                               tie_break_keys, overwrite = TRUE, contig_fields = contig_fields)
-    count = canon$cell_tbl %>% group_by(!!!syms(ccdb$cluster_pk)) %>% summarize(n = n(), freq = n/nrow(canon$cell_tbl))
+    count = canon$cell_tbl %>% group_by(!!!syms(ccdb$cluster_pk)) %>% summarize(n = dplyr::n(), freq = n/nrow(canon$cell_tbl))
     if(!is.null(filterset$white_list)) count = semi_join(count, filterset$white_list, by = ccdb$cluster_pk)
     filter(count, n >= filterset$min_number, freq >= filterset$min_freq)
 }

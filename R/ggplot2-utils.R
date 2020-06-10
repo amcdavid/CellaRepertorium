@@ -2,9 +2,9 @@ get_axis_labels = function(plt){
     if(!requireNamespace('ggplot2')) stop("Install ggplot2 >= 3.0.0")
 
     b = ggplot2::ggplot_build(plt)$layout$panel_params[[1]]
-    if(packageVersion('ggplot2') >='3.3.0'){
+    if(utils::packageVersion('ggplot2') >='3.3.0'){
         list(xlabels =  b$x$get_labels(), ylabels = b$y$get_labels())
-    } else if(packageVersion('ggplot2') >= '3.0'){
+    } else if(utils::packageVersion('ggplot2') >= '3.0'){
         list(xlabels = b$x.label, ylabels = b$y.label)
     } else{
         stop("Install ggplot2 >= 3.0.0")
@@ -21,8 +21,9 @@ replace_empty = function(x, y) if(length(x) == 0) y else x
 #' Color axis labels
 #'
 #' @param plt [ggplot2::ggplot()] object
-#' @param label_data_x
-#' @param label_data_y [data.frame()]s containing the mapping between x-axis/y-axis labels and
+#' @param label_data_x [data.frame()] containing the mapping between x-axis labels and
+#' `aes_label`
+#' @param label_data_y [data.frame()] containing the mapping between y-axis labels and
 #' `aes_label`
 #' @param aes_label character or bare symbol giving the column in `label_data` to be mapped
 #' @param scale `ggplot2` discrete color

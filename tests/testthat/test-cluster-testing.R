@@ -2,7 +2,7 @@ context('Cluster Logistic Testing')
 
 data(ccdb_ex)
 ccdb_ex = cluster_germline(ccdb_ex) %>% fine_clustering('cdr3_nt', 'DNA')
-ccdb_ex = canonicalize_cluster(ccdb_ex)
+ccdb_ex = hushWarning(canonicalize_cluster(ccdb_ex), 'Overwriting fields chain')
 ccdb_ex_trb = filter_cdb(ccdb_ex, chain == 'TRB') %>% equalize_ccdb() %>% canonicalize_cell(, contig_filter_args = chain == 'TRB', contig_fields = c('chain', 'v_gene', 'j_gene'))
 
 theclust = filter(ccdb_ex$cluster_tbl, chain == "TRB", v_gene == "TRBV13-2", j_gene == "TRBJ2-7") %>% mutate( x_ = 1)
@@ -29,7 +29,7 @@ test_that('Manual glmer testing equals cluster_logistic_test', {
 
     automatic3 = cluster_test_by(ccdb_ex, formula = theform, filterset = cluster_filterset(white_list = wl2), silent = TRUE)
     expect_false(any(automatic3$chain == 'TRA'))
-    expect_equal(semi_join(automatic3, theclust, by = 'cluster_idx') %>% select(term:p.value), automatic1 %>% select(term:p.value))
+    expect_equivalent(semi_join(automatic3, theclust, by = 'cluster_idx') %>% select(term:p.value), automatic1 %>% select(term:p.value))
 
     ccdb_ex_trb2 = ccdb_ex_trb
     n_contig = nrow(ccdb_ex_trb$contig_tbl)
@@ -37,9 +37,9 @@ test_that('Manual glmer testing equals cluster_logistic_test', {
     ccdb_ex_trb2$contig_tbl = ccdb_ex_trb2$contig_tbl[sample(seq_len(n_contig)),]
     ccdb_ex_double = rbind(ccdb_ex_trb, ccdb_ex_trb2)
     expect_equal(nrow(ccdb_ex_double$contig_tbl), 2*nrow(ccdb_ex_trb$contig_tbl))
-    expect_equal(ccdb_ex_double$cell_tbl, ccdb_ex_trb$cell_tbl)
+    expect_equivalent(ccdb_ex_double$cell_tbl, ccdb_ex_trb$cell_tbl)
     automatic4 = cluster_logistic_test(theform, ccdb = ccdb_ex_double, filterset = cluster_filterset(white_list = wl2), silent = TRUE)
-    expect_equal(automatic3 %>% select(term:p.value), automatic4 %>% select(term:p.value))
+    expect_equivalent(automatic3 %>% select(term:p.value), automatic4 %>% select(term:p.value))
 })
 
 

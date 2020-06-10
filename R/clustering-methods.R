@@ -47,8 +47,9 @@ fine_clustering = function(ccdb, sequence_key, type, max_affinity = NULL, keep_c
     cluster_tbl_orig = ccdb$cluster_tbl
     cluster_tbl = left_join_warn(cluster_tbl, cluster_tbl_orig, by = ccdb$cluster_pk, overwrite = TRUE)
     message('Summarizing')
-    contig_by_cluster = contig_tbl[union(ccdb$contig_pk, ccdb$cluster_pk)] %>% nest_pre1.0(!!!syms(ccdb$contig_pk)) %>%
-        right_join(cluster_tbl %>% dplyr::select(!!!syms(ccdb$cluster_pk)), by=ccdb$cluster_pk) # need to make sure these are in the same order!
+    contig_by_cluster = contig_tbl[union(ccdb$contig_pk, ccdb$cluster_pk)]
+    contig_by_cluster = nest_pre1.0(contig_by_cluster, !!!syms(ccdb$contig_pk))
+    contig_by_cluster = left_join(cluster_tbl[ccdb$cluster_pk], contig_by_cluster, by=ccdb$cluster_pk)
 
     if(is.null(max_affinity)){
         max_max = max(purrr::map_dbl(cluster_tbl$fc, 'max_dist'))
@@ -59,6 +60,7 @@ fine_clustering = function(ccdb, sequence_key, type, max_affinity = NULL, keep_c
     aff_matrix = Matrix::.bdiag(affinities)
     d_medoid = purrr::map2_dfr(cluster_tbl$fc, contig_by_cluster$data, function(.x, .y){
         is_medoid = seq_len(nrow(.y)) == .x$medoid
+        #if(nrow(.y) != length(.x$distance)) browser()
         dplyr::bind_cols(.y, `d(medoid)` = .x$distance, is_medoid = is_medoid)
     })
     contig_tbl = left_join_warn(d_medoid, contig_tbl, by = ccdb$contig_pk, overwrite = TRUE)

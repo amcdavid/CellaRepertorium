@@ -24,7 +24,7 @@ The union of the various primary keys is taken.
 \examples{
 data(ccdb_ex)
 splat = split_cdb(ccdb_ex, 'chain', 'contig_tbl')
-unite = rbind(splat$TRA, splat$TRB)
+unite = equalize_ccdb(rbind(splat$TRA, splat$TRB), sort = TRUE)
 stopifnot(all.equal(unite, ccdb_ex))
 
 }

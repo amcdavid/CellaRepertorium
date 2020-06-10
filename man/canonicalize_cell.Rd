@@ -50,8 +50,8 @@ contig_fields = c('umis', 'reads', 'chain', 'v_gene', 'd_gene', 'j_gene'))
 head(beta$cell_tbl)
 
 # Stable: only adds fields to `cell_tbl`
-stopifnot(all.equal(beta$cell_tbl[ccdb_ex$cell_pk],
-ccdb_ex$cell_tbl[ccdb_ex$cell_pk]))
+stopifnot(dplyr::all_equal(beta$cell_tbl[ccdb_ex$cell_pk],
+ccdb_ex$cell_tbl[ccdb_ex$cell_pk], ignore_row_order = TRUE))
 
 #Report cdr3 with highest UMI count, but only when > 5 UMIs support it
 umi5 = canonicalize_cell(ccdb_ex, umis > 5,

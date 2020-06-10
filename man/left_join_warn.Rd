@@ -12,9 +12,13 @@ left_join_warn(x, y, by, overwrite = FALSE, join = left_join, ...)
 \arguments{
 \item{...}{passed to joining function}
 
-\item{x}{tbls to join}
+\item{x}{A pair of data frames, data frame extensions (e.g. a tibble), or
+lazy data frames (e.g. from dbplyr or dtplyr). See \emph{Methods}, below, for
+more details.}
 
-\item{y}{tbls to join}
+\item{y}{A pair of data frames, data frame extensions (e.g. a tibble), or
+lazy data frames (e.g. from dbplyr or dtplyr). See \emph{Methods}, below, for
+more details.}
 
 \item{by}{\code{character} specifying columns in \code{x} and \code{y} to key on.}
 

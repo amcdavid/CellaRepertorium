@@ -4,7 +4,7 @@
 \alias{equalize_ccdb}
 \title{Take the intersection of keys in tables in \code{x}}
 \usage{
-equalize_ccdb(x, cell = TRUE, contig = TRUE, cluster = TRUE)
+equalize_ccdb(x, cell = TRUE, contig = TRUE, cluster = TRUE, sort = FALSE)
 }
 \arguments{
 \item{x}{\code{\link[=ContigCellDB]{ContigCellDB()}}}
@@ -14,6 +14,8 @@ equalize_ccdb(x, cell = TRUE, contig = TRUE, cluster = TRUE)
 \item{contig}{\code{logical} equalize contigs}
 
 \item{cluster}{\code{logical} equalize clusters}
+
+\item{sort}{\code{logical} should equalized fields also be \code{\link[=order]{order()}}ed by their primary keys?}
 }
 \value{
 \code{\link[=ContigCellDB]{ContigCellDB()}}
