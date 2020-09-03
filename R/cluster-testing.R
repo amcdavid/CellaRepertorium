@@ -102,9 +102,14 @@ cluster_logistic_test = function(formula, ccdb, filterset = cluster_filterset(),
 
     if(identical(fitter, glm_glmer)  && !requireNamespace('broom')){
         stop("Please install broom.")
-    } else if(is_mixed && !requireNamespace('lme4')){
-        stop("Please install lme4.")
     }
+    if(is_mixed){
+        if(!requireNamespace('lme4')) stop("Please install lme4.")
+        if(packageVersion('broom') >= 0.7 && !requireNamespace('broom.mixed')){
+            stop('install broom.mixed')
+        }
+    }
+
     safe_fit = purrr::possibly(fitter, tibble())
     pb = progress::progress_bar$new(total = n_cluster)
     res = purrr::map_dfr(cluster_whitelist[[cluster_idx_nm]], function(cluster_idx){

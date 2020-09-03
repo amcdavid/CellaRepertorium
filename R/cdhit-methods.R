@@ -38,6 +38,8 @@ globalVariables('cluster_idx')
 #' @export
 #' @importFrom tibble data_frame
 #' @importFrom dplyr group_by mutate filter
+# needed for https://github.com/Lobz/facilitation/issues/1?
+#' @importFrom Rcpp evalCpp
 #'
 #' @examples
 #' fasta_path = system.file('extdata', 'demo.fasta', package='CellaRepertorium')
