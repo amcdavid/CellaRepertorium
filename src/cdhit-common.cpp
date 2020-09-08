@@ -1561,14 +1561,6 @@ void Sequence::ConvertBases()
 	for(i=0; i<size; i++) data[i] = aa2idx[data[i] - 'A'];
 }
 
-void Sequence::Swap( Sequence & other )
-{
-	Sequence tmp;
-	memcpy( & tmp, this, sizeof( Sequence ) );
-	memcpy( this, & other, sizeof( Sequence ) );
-	memcpy( & other, & tmp, sizeof( Sequence ) );
-	memset( & tmp, 0, sizeof( Sequence ) );
-}
 int Sequence::Format()
 {
 	int i, j=0, m = 0;
