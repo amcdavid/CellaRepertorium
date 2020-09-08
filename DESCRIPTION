@@ -2,7 +2,7 @@ Type: Package
 Package: CellaRepertorium
 Title: Data structures, clustering and testing for single 
     cell immune receptor repertoires (scRNAseq RepSeq/AIRR-seq)
-Version: 0.99.0
+Version: 0.99.1
 Authors@R: 
     c(person(given = "Andrew",
              family = "McDavid",
@@ -27,7 +27,7 @@ Description: Methods to cluster and analyze high-throughput
     hypergeometric models.
 License: GPL-3
 Depends: 
-    R (>= 3.5.0)
+    R (>= 4.0)
 Imports:
     dplyr,
     tibble,
@@ -36,7 +36,7 @@ Imports:
     Rcpp,
     reshape2,
     methods,
-    rlang,
+    rlang (>= 0.3),
     purrr,
     Matrix,
     S4Vectors,
