@@ -236,18 +236,6 @@ pairing_tables = function(ccdb,  canonicalize_fun = canonicalize_by_chain, table
 
 }
 
-plot_pairing = function(pairing_list, color_labels_by){
-    pl = pairing_list
-    pairs_plt = ggplot(pairing_list$cell_tbl, aes(x = cluster_idx.1_fct, y = cluster_idx.2_fct, color = sample, shape = pop)) + geom_jitter(width = .3, height = .3)
-
-    ylab = tibble(!!color_labels_by :=  ggplot_build(pairs_plt)$layout$panel_params[[1]]$y.label) %>% left_join(feature_tbl) %>% mutate(class_color = ifelse(is.na(class_color), '#E41A1C', class_color))
-
-    xlab = tibble(!!color_labels_by :=  ggplot_build(pairs_plt)$layout$panel_params[[1]]$x.label) %>% left_join(feature_tbl) %>% mutate(class_color = ifelse(is.na(class_color), '#E41A1C', class_color))
-
-    pairs_plt = pairs_plt + theme(axis.text.x = element_text(angle = 90, color = xlab$class_color, size = 8), axis.text.y = element_text(color = ylab$class_color, size = 8))
-
-
-}
 
 #' @export
 #' @describeIn enumerate_pairing Recode a table with IG chains

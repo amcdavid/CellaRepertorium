@@ -316,6 +316,7 @@ struct Options
 		isEST = false;
 		is454 = false;
 		NAA = 5;
+		NAAN = 0;
 		NAA_top_limit = 5;
 		cluster_thd = 0.9;
 		distance_thd = 0.0;
@@ -414,7 +415,7 @@ struct Sequence
 	void Resize( int n );
 	void Reserve( int n );
 
-	void Swap( Sequence & other );
+	//void Swap( Sequence & other );
 	int Format();
 
 	void ConvertBases();

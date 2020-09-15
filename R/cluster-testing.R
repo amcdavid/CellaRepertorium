@@ -7,6 +7,7 @@
 #'
 #' @return object representing the filtration (currently a list)
 #' @export
+#' @importFrom rlang .data
 #'
 #' @examples
 #' cluster_filterset(min_number = 1, min_freq = 0)
@@ -25,9 +26,11 @@ cluster_filterset = function(min_number = 0, min_freq = 0, white_list = NULL){
     canon = canonicalize_cell(ccdb,
                               contig_filter_args = !!rlang::enexpr(contig_filter_args),
                               tie_break_keys, overwrite = TRUE, contig_fields = contig_fields)
-    count = canon$cell_tbl %>% group_by(!!!syms(ccdb$cluster_pk)) %>% summarize(n = dplyr::n(), freq = n/nrow(canon$cell_tbl))
+    count = canon$cell_tbl
+    count = count %>% group_by(!!!syms(ccdb$cluster_pk))
+    count = count %>% summarize(n = dplyr::n(), freq = .data$n/nrow(canon$cell_tbl))
     if(!is.null(filterset$white_list)) count = semi_join(count, filterset$white_list, by = ccdb$cluster_pk)
-    filter(count, n >= filterset$min_number, freq >= filterset$min_freq)
+    filter(count, .data$n >= filterset$min_number, .data$freq >= filterset$min_freq)
 }
 
 #' @describeIn cluster_logistic_test split `ccdb` and conduct tests within strata
@@ -55,7 +58,7 @@ cluster_test_by = function(ccdb, fields  = 'chain', tbl = 'cluster_tbl', ...){
 #' @return table with one row per cluster/term.
 #' @export
 #' @importFrom stats as.formula
-#'
+#' @importFrom utils packageVersion
 #' @examples
 #' library(dplyr)
 #' data(ccdb_ex)
@@ -102,9 +105,14 @@ cluster_logistic_test = function(formula, ccdb, filterset = cluster_filterset(),
 
     if(identical(fitter, glm_glmer)  && !requireNamespace('broom')){
         stop("Please install broom.")
-    } else if(is_mixed && !requireNamespace('lme4')){
-        stop("Please install lme4.")
     }
+    if(is_mixed){
+        if(!requireNamespace('lme4')) stop("Please install lme4.")
+        if(packageVersion('broom') >= 0.7 && !requireNamespace('broom.mixed')){
+            stop('install broom.mixed')
+        }
+    }
+
     safe_fit = purrr::possibly(fitter, tibble())
     pb = progress::progress_bar$new(total = n_cluster)
     res = purrr::map_dfr(cluster_whitelist[[cluster_idx_nm]], function(cluster_idx){

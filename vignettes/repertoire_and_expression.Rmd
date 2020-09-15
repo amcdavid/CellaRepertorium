@@ -83,7 +83,7 @@ colData(sce)$pairing = enumerate_pairing(ccdb2, chain_recode_fun = 'guess')
 
 We can leverage Scater's ability to use "nested" data frames to visualize TCR features.
 
-```{r}
+```{r, out.height='500px', out.width = '500px'}
 library(scater)
 sce = logNormCounts(sce)
 sce = runPCA(sce)
@@ -92,7 +92,7 @@ plotReducedDim(sce, dimred = 'PCA', colour_by = I(sce$pairing$pairing))
 
 Here we calculate the first two principal components (which aren't very interesting because these are simulated data without any special structure), and then visualize if the TCR was paired or not.
 
-```{r}
+```{r,  out.height='500px', out.width = '500px'}
 only_paired = sce[,which(sce$pairing$pairing == 'paired')]
 plotReducedDim(only_paired, dimred = 'PCA', colour_by = I(only_paired$alpha$j_gene))
 plotReducedDim(only_paired, dimred = 'PCA', colour_by = I(only_paired$beta$j_gene))
