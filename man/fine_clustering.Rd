@@ -40,6 +40,7 @@ Perform additional clustering of sequences within groups
 }
 \examples{
 library(dplyr)
+data(ccdb_ex)
 ccdb_ex_small = ccdb_ex
 ccdb_ex_small$cell_tbl = ccdb_ex_small$cell_tbl[1:200,]
 ccdb_ex_small = cdhit_ccdb(ccdb_ex_small,

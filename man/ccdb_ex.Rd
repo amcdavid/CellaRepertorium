@@ -8,7 +8,7 @@
 \code{ccdb_ex = ContigCellDB_10XVDJ(contigs_qc, contig_pk = c('pop',   'sample', 'barcode', 'contig_id'), cell_pk = c('pop',   'sample', 'barcode'))}
 }
 \usage{
-ccdb_ex
+data(ccdb_ex)
 }
 \description{
 A preconstructed \code{ContigClusterDB} from the \code{contigs_qc} data

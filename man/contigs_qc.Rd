@@ -16,7 +16,7 @@ The following fields were defined ex post facto.
 }
 }
 \usage{
-contigs_qc
+data(contigs_qc)
 }
 \description{
 Data for c57bl6 and balbc mice TCR were downloaded from 10x Genomics website as

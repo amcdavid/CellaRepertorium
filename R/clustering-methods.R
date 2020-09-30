@@ -10,6 +10,7 @@ globalVariables('ngrp')
 #' @export
 #'
 #' @examples
+#' data(ccdb_ex)
 #' ccdb_ex = cluster_germline(ccdb_ex)
 #' ccdb_ex$cluster_tbl
 cluster_germline = function(ccdb, segment_keys = c('v_gene', 'j_gene', 'chain'), cluster_name = 'cluster_idx'){

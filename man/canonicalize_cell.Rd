@@ -44,6 +44,7 @@ Fields in \code{contig_fields} will be copied over to the \code{cell_tbl}.
 }
 \examples{
 # Report beta chain with highest umi-count, breaking ties with reads
+data(ccdb_ex)
 beta = canonicalize_cell(ccdb_ex, chain == 'TRB',
 tie_break_keys = c('umis', 'reads'),
 contig_fields = c('umis', 'reads', 'chain', 'v_gene', 'd_gene', 'j_gene'))

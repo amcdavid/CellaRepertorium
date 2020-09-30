@@ -13,6 +13,8 @@
 #'  3. `sample`: An artificial "replicate" from the original data defined by subsampling with replacement
 #'  4. `celltype`: The putative cell type of the contig.
 #'
+#' @name contigs_qc
+#' @usage data(contigs_qc)
 "contigs_qc"
 
 #' A preconstructed `ContigClusterDB` from the `contigs_qc` data
@@ -21,4 +23,6 @@
 #' \code{ccdb_ex = ContigCellDB_10XVDJ(contigs_qc, contig_pk = c('pop',   'sample', 'barcode', 'contig_id'), cell_pk = c('pop',   'sample', 'barcode'))}
 #' @seealso [contigs_qc]
 #'
+#' @name ccdb_ex
+#' @usage data(ccdb_ex)
 "ccdb_ex"

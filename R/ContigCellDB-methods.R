@@ -140,6 +140,7 @@ replace_cdb = function(x, name, value){
 #' @export
 #' @aliases ContigCellDB-mutate
 #' @examples
+#' data(ccdb_ex)
 #' ccdb_ex$contig_tbl
 #' ccdb_ex$cell_tbl
 #' ccdb_ex$cluster_tbl
@@ -150,6 +151,7 @@ setMethod("$", signature = c(x = 'ContigCellDB'), access_cdb)
 #' @export
 #'
 #' @examples
+#' data(ccdb_ex)
 #' ccdb_ex$contig_pk = c("sample","barcode","contig_id") # 'pop' is technically redundant with 'sample'
 #' # Take a subset of ccdb_ex
 #' ccdb_ex

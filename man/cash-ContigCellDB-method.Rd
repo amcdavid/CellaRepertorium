@@ -24,9 +24,11 @@ Update or return a slot of \code{\link[=ContigCellDB]{ContigCellDB()}}
 Access public members of ContigCellDB object
 }
 \examples{
+data(ccdb_ex)
 ccdb_ex$contig_tbl
 ccdb_ex$cell_tbl
 ccdb_ex$cluster_tbl
+data(ccdb_ex)
 ccdb_ex$contig_pk = c("sample","barcode","contig_id") # 'pop' is technically redundant with 'sample'
 # Take a subset of ccdb_ex
 ccdb_ex

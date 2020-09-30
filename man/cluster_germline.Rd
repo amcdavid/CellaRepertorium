@@ -24,6 +24,7 @@ cluster_germline(
 Cluster contigs by germline properties
 }
 \examples{
+data(ccdb_ex)
 ccdb_ex = cluster_germline(ccdb_ex)
 ccdb_ex$cluster_tbl
 }
