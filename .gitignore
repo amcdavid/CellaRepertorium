@@ -3,9 +3,9 @@
 .DS_Store
 *.so
 .Rproj.user
-data-raw/*.csv
-data-raw/*.json
-data-raw/*.h5
+inst/script/*.csv
+inst/script/*.json
+inst/script/*.h5
 inst/doc
 doc
 Meta

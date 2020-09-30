@@ -1,7 +1,9 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 extdata/.*\.json$
-^data-raw$
+^inst/script/*.csv
+^inst/script/*.json
+^inst/script/*.h5
 extdata/refdata-cellranger-vdj-GRCh38-alts-ensembl-2.0.0/
 ^doc$
 ^Meta$
@@ -10,6 +12,5 @@ manuscript/
 ^docs$
 ^pkgdown$
 .ignore
-README.Rmd
 R/immcantation-utils.R
-inst/WORDLIST
+^inst/WORDLIST

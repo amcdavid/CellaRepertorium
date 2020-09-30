@@ -3,15 +3,15 @@
 # V3 chemistry
 # https://support.10xgenomics.com/single-cell-vdj/datasets/3.0.0/vdj_v1_mm_c57bl6_pbmc_t
 download.file('http://cf.10xgenomics.com/samples/cell-vdj/3.0.0/vdj_v1_mm_c57bl6_pbmc_t/vdj_v1_mm_c57bl6_pbmc_t_all_contig_annotations.csv',
-              destfile = 'data-raw/vdj_v1_mm_c57bl6_pbmc_t_all_contig_annotations.csv')
+              destfile = 'inst/script/vdj_v1_mm_c57bl6_pbmc_t_all_contig_annotations.csv')
 download.file('http://cf.10xgenomics.com/samples/cell-vdj/3.0.0/vdj_v1_mm_c57bl6_pbmc_t/vdj_v1_mm_c57bl6_pbmc_t_all_contig_annotations.json',
-              destfile = 'data-raw/vdj_v1_mm_c57bl6_pbmc_t_all_contig_annotations.json')
+              destfile = 'inst/script/vdj_v1_mm_c57bl6_pbmc_t_all_contig_annotations.json')
 # PBMCs from BALB/c mice - TCR enrichment from amplified cDNA
 # https://support.10xgenomics.com/single-cell-vdj/datasets/3.0.0/vdj_v1_mm_balbc_pbmc_t
 download.file('http://cf.10xgenomics.com/samples/cell-vdj/3.0.0/vdj_v1_mm_balbc_pbmc_t/vdj_v1_mm_balbc_pbmc_t_all_contig_annotations.csv',
-              destfile = 'data-raw/vdj_v1_mm_balbc_pbmc_t_all_contig_annotations.csv')
+              destfile = 'inst/script/vdj_v1_mm_balbc_pbmc_t_all_contig_annotations.csv')
 download.file('http://cf.10xgenomics.com/samples/cell-vdj/3.0.0/vdj_v1_mm_balbc_pbmc_t/vdj_v1_mm_balbc_pbmc_t_all_contig_annotations.json',
-              destfile = 'data-raw/vdj_v1_mm_balbc_pbmc_t_all_contig_annotations.json')
+              destfile = 'inst/script/vdj_v1_mm_balbc_pbmc_t_all_contig_annotations.json')
 
 # Subsample / split
 library(readr)
@@ -20,8 +20,8 @@ library(dplyr)
 library(purrr)
 library(tidyr)
 
-csvs = list.files('data-raw', pattern = '.+?t_all_contig.+?\\.csv$', full.names = TRUE)
-jsns = list.files('data-raw', pattern = '.+?t_all_contig.+?\\.json$', full.names = TRUE)
+csvs = list.files('inst/script', pattern = '.+?t_all_contig.+?\\.csv$', full.names = TRUE)
+jsns = list.files('inst/script', pattern = '.+?t_all_contig.+?\\.json$', full.names = TRUE)
 
 # Pull out sample and population names
 contig_map = tibble(file = csvs, strain = factor(c('balbc', 'b6'), levels = c('balbc', 'b6')))
@@ -69,9 +69,9 @@ jsn_ss %>% rowwise() %>% do({
     tibble()
 })
 
-knitr::purl('vignettes/mouse_tcell_qc.Rmd', output = 'data-raw/mouse_tcells_qc.R')
-source('data-raw/mouse_tcells_qc.R')
+knitr::purl('vignettes/mouse_tcell_qc.Rmd', output = 'inst/script/mouse_tcells_qc.R')
+source('inst/script/mouse_tcells_qc.R')
 ccdb_ex = ContigCellDB_10XVDJ(contigs_qc, contig_pk = c('pop',   'sample', 'barcode', 'contig_id'), cell_pk = c('pop',   'sample', 'barcode'))
 use_data(contigs_qc, overwrite = TRUE)
 use_data(ccdb_ex, overwrite = TRUE)
-unlink('data-raw/mouse_tcells_qc.R')
+unlink('inst/script/mouse_tcells_qc.R')

@@ -33,7 +33,7 @@ samp_map = tibble(anno_file = files, pop = str_match(files, 'b6|balbc')[,1], sam
 knitr::kable(samp_map)
 ```
 
-PBMC pooled from BALB/c and C57BL/6 mice [were assayed on 10X genomics V3 chemistry](https://support.10xgenomics.com/single-cell-vdj/datasets/3.0.0/vdj_v1_mm_c57bl6_pbmc_t) and a library enriched for TCR were run.  For the purposes of illustrating functionality in this package, cell barcodes were subsampled 3 times for each of the BALB/c and Black6 pools to generate distinct `samples`, which is reflected in the `sample` column. More details are available in the scripts in the `data-raw` directory of this package.
+PBMC pooled from BALB/c and C57BL/6 mice [were assayed on 10X genomics V3 chemistry](https://support.10xgenomics.com/single-cell-vdj/datasets/3.0.0/vdj_v1_mm_c57bl6_pbmc_t) and a library enriched for TCR were run.  For the purposes of illustrating functionality in this package, cell barcodes were subsampled 3 times for each of the BALB/c and Black6 pools to generate distinct `samples`, which is reflected in the `sample` column. More details are available in the scripts in the `script` directory of this package.
 
 ```{r}
 # read in CSV
