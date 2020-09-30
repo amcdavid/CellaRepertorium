@@ -9,9 +9,13 @@ solution](https://support.10xgenomics.com/single-cell-vdj).
 
 ## Installation
 
-    devtools::install_github('amcdavid/CellaRepertorium')
+Upon acceptance in Bioconductor, install with
 
-Requires R \>= 3.5.
+    install.packages('BiocManager') # if you don't have it yet
+    BiocManager::install('CellaRepertorium')
+
+For the development version, install via
+`devtools::install_github('amcdavid/CellaRepertorium')`.
 
 ## Data requirements and package structure
 
@@ -60,7 +64,11 @@ However, there are a variety of specialized functions, as well:
     using empirical amino acid substitution matrices)
   - `canonicalize_cell()`: Return a single contig for each cell, e.g.,
     for combining VDJ information with 5’-based single cell expression
+  - `ccdb_join()`: join a `ccdb` object from this package to a
+    `SingleCellExperiment` object, by droplet barcode.
   - `cluster_permute_test()`: permutation tests of cluster statistics
+  - `cluster_logistic_test()`: logistic regression tests for
+    overrepresentation of clusters among cells
   - `pairing_tables()`: Generate pairings of contigs within each cell in
     a way that they can be plotted
 
@@ -71,15 +79,6 @@ However, there are a variety of specialized functions, as well:
     `SingleCellExperiment::SingleCellExperiment()` and
     [Seurat](https://satijalab.org/seurat/) after generating cell
     canonicalizations.
-  - Functionality is under development facilitate submitting actual
-    contig `fasta` to tools such as the IGMT’s
-    [HighV-QUEST](http://imgt.org/HighV-QUEST/home.action)
   - Many tools from the
     [Immcantation](https://alakazam.readthedocs.io/en/version-0.2.11/)
     suite can work directly on `ContigCellDB()` objects.
-
-## Roadmap
-
-The data structure and accessor APIs are relatively stable. In the short
-term, models that test for segment pairing and CDR3 over-representation
-are a priority, as are procedures for QC of contigs and cells.
