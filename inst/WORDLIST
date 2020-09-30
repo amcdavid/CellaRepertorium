@@ -1,3 +1,4 @@
+# ignored words for devtools::spell_check()
 AIRR
 AAseq
 AAStringSet
@@ -24,7 +25,9 @@ Contigs
 csv
 cytometry
 DNAStringSet
-eg
+dbplyr
+dtplyr
+e.g.
 endogenous
 endomorphic
 facto
@@ -57,6 +60,7 @@ Niu
 nucleotides
 Oligo
 oligoclonality
+overrepresentation
 PBMC
 pearson
 Pedersen
@@ -66,9 +70,11 @@ qc
 Recode
 RepSeq
 Roadmap
+Scater
 screencap
 scRNAseq
 seqs
+SingleCellExperiment
 subsampled
 substitutionMatrix
 tcell
@@ -78,6 +84,7 @@ TRA
 TRB
 tbls
 UMI
+umi
 umis
 UMIs
 ungapped

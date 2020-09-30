@@ -38,7 +38,7 @@ canonicalize_by_chain(
 \code{data.frame} with columns from \code{cell_identifiers} and a single \code{cluster_idx} for each cell
 }
 \description{
-In single cell data, multiple chains (heavy-light or alpha-beta) are expected.  In some cases, there could be more than two (eg multiple alpha alleles for T cells).
+In single cell data, multiple chains (heavy-light or alpha-beta) are expected.  In some cases, there could be more than two (e.g. multiple alpha alleles for T cells).
 This picks a cluster id for each cell based on the overall prevalence of cluster ids over all cells in \code{tbl}.
 If order = 1 then the canonical chain-cluster will be the most prevalent, and if order = 2, it will be the 2nd most prevalent, and so on.  Ties are broken arbitrarily (possibly by lexicographic order of \code{cluster_idx}).
 }

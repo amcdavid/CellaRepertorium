@@ -12,3 +12,4 @@ manuscript/
 .ignore
 README.Rmd
 R/immcantation-utils.R
+inst/WORDLIST

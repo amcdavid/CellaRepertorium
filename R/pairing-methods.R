@@ -1,7 +1,7 @@
 globalVariables(c('prev'))
 #' For each cell, return a single, canonical chain-cluster
 #'
-#' In single cell data, multiple chains (heavy-light or alpha-beta) are expected.  In some cases, there could be more than two (eg multiple alpha alleles for T cells).
+#' In single cell data, multiple chains (heavy-light or alpha-beta) are expected.  In some cases, there could be more than two (e.g. multiple alpha alleles for T cells).
 #' This picks a cluster id for each cell based on the overall prevalence of cluster ids over all cells in `tbl`.
 #' If order = 1 then the canonical chain-cluster will be the most prevalent, and if order = 2, it will be the 2nd most prevalent, and so on.  Ties are broken arbitrarily (possibly by lexicographic order of `cluster_idx`).
 #' @param tbl `data.frame` containing columns specified in `cell_identifiers`, `cluster_idx` and optionally `chain_identifiers`
