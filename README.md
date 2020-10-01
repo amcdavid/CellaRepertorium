@@ -82,3 +82,7 @@ However, there are a variety of specialized functions, as well:
   - Many tools from the
     [Immcantation](https://alakazam.readthedocs.io/en/version-0.2.11/)
     suite can work directly on `ContigCellDB()` objects.
+
+# Acknowledgments
+
+Development of CellaRepertorium was funded in part by UL1 TR002001 (PI Bennet/Zand) pilot to Andrew McDavid.
