@@ -11,6 +11,10 @@ reference:
    - 'rbind.ContigCellDB'
    - 'split_cdb'
    - 'equalize_ccdb'
+- title: Interfacing with mRNA-based SingleCellExperiment objects
+  desc: "Merging and joint analysis of ContigCellDB and SingleCellExperiment"
+  contents:
+   - '`ccdb_join`'
 - title: Clustering
   desc: "Methods to cluster contigs"
   contents:
@@ -22,6 +26,8 @@ reference:
 - title: Canonicalization
   desc: "Methods to return single contigs for cells or clusters"
   contents:
+   - '`crosstab_by_celltype`'
+   - '`guess_celltype`'
    - '`canonicalize_cell`'
    - '`canonicalize_cluster`'
    - '`ig_chain_recode`'
@@ -30,6 +36,9 @@ reference:
    - '`cluster_permute_test`'
    - '`cluster_logistic_test`'
    - '`purity`'
+- title: Plotting
+  contents:
+   - '`map_axis_labels`'
 - title: Datasets
   contents:
    - '`ccdb_ex`'
