@@ -1,6 +1,8 @@
 #' Filtered and annotated contigs of TCR from mice
 #'
-#' The details of how these are generated are shown in the vignette mouse_tcell_qc
+#' Data for c57bl6 and balbc mice TCR were downloaded from 10x Genomics website as
+#' shown in `system.file('script/10XMouseTCR_v3_chem.R', package = 'CellaRepertorium')`.
+#' Additional processing of these data is done in the vignette `mouse_tcell_qc`
 #' and are serialized to serve as an examples for other vignettes and documentation.
 #' @format A data frame of 3399 contigs and 22 fields,
 #'  all except 4 are originally defined in <https://support.10xgenomics.com/single-cell-vdj/software/pipelines/latest/output/annotation#contig>
@@ -15,8 +17,8 @@
 
 #' A preconstructed `ContigClusterDB` from the `contigs_qc` data
 #'
-#' Used in various examples.
 #' @format
 #' \code{ccdb_ex = ContigCellDB_10XVDJ(contigs_qc, contig_pk = c('pop',   'sample', 'barcode', 'contig_id'), cell_pk = c('pop',   'sample', 'barcode'))}
+#' @seealso [contigs_qc]
 #'
 "ccdb_ex"

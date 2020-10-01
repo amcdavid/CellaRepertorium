@@ -11,6 +11,9 @@
 ccdb_ex
 }
 \description{
-Used in various examples.
+A preconstructed \code{ContigClusterDB} from the \code{contigs_qc} data
+}
+\seealso{
+\link{contigs_qc}
 }
 \keyword{datasets}
