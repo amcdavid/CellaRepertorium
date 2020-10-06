@@ -7,7 +7,7 @@
 ccdb_join(template, ccdb, join_fun = dplyr::left_join, by = ccdb$cell_pk)
 }
 \arguments{
-\item{template}{Dataframe or SingleCellExperiment object to be joined with ccdb.}
+\item{template}{data.frame or SingleCellExperiment object to be joined with ccdb.}
 
 \item{ccdb}{A ContigCellDB object.}
 
@@ -20,4 +20,11 @@ ccdb_join(template, ccdb, join_fun = dplyr::left_join, by = ccdb$cell_pk)
 }
 \description{
 Join dataframe or SingleCellExperiment object with ContigCellDB object
+}
+\examples{
+data(ccdb_ex)
+to_join = dplyr::bind_rows(ccdb_ex$cell_tbl[1:10,],
+dplyr::tibble(barcode = c('extra1', 'extra2'), sample = LETTERS[1:2],
+pop = LETTERS[1:2]))
+ccdb_join(to_join, ccdb_ex)
 }
