@@ -21,7 +21,7 @@ data(contigs_qc)
 \description{
 Data for c57bl6 and balbc mice TCR were downloaded from 10x Genomics website as
 shown in \code{system.file('script/10XMouseTCR_v3_chem.R', package = 'CellaRepertorium')}.
-Additional processing of these data is done in the vignette mouse_tcell_qc
+Additional processing of these data is done in the vignette \code{mouse_tcell_qc}
 and are serialized to serve as an examples for other vignettes and documentation.
 }
 \keyword{datasets}

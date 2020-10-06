@@ -11,7 +11,7 @@ generate_pseudobulk(ccdb, class_keys, total_keys, type = c("cell", "umi"))
 
 \item{class_keys}{\code{character} naming fields in \code{contig_tbl} that define unique classes of the repertoire}
 
-\item{total_keys}{\code{character} naming fields that also define a class, and moreover will be conditioned upon when calculating the total}
+\item{total_keys}{\code{character} naming fields to be conditioned upon when calculating the total.}
 
 \item{type}{one of "cell" or "umi"}
 }
@@ -19,5 +19,17 @@ generate_pseudobulk(ccdb, class_keys, total_keys, type = c("cell", "umi"))
 \code{tibble}
 }
 \description{
-Generate "pseudobulk" data from a \code{ContigCellDB}
+Tabulate contigs with a unique combination of \code{class_keys} per \code{total_keys}.
+For instance, \code{total_keys} might be a sample identifier, and \code{class_keys} might
+be the V- and J- gene identities.  The idea is that this might mimic the data
+generated in a bulk experiment.
+}
+\details{
+This function is currently rather 10x-specific, in that it is assumed that columns \code{barcode} and
+\code{umis} exist.
+}
+\examples{
+data(ccdb_ex)
+ccdb_ex = cluster_germline(ccdb_ex)
+pseudo = generate_pseudobulk(ccdb_ex, c('v_gene', 'j_gene', 'chain'), c('pop', 'sample'))
 }
