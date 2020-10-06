@@ -17,6 +17,9 @@ average number of singletons
 \description{
 Calculate number of cluster-subject singletons for the purposes of permutation testing
 }
+\examples{
+message("see example(cluster_permute_test)")
+}
 \seealso{
 \code{\link[=cluster_permute_test]{cluster_permute_test()}}
 }

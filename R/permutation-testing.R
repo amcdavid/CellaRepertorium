@@ -6,7 +6,8 @@
 #'
 #' @return average number of singletons
 #' @export
-#'
+#' @examples
+#' message("see example(cluster_permute_test)")
 #' @seealso [cluster_permute_test()]
 purity = function(cluster_idx, subject) {
     n_label_cluster = dplyr::bind_cols(cluster_idx = cluster_idx, subject = subject) %>%
@@ -47,14 +48,6 @@ purity = function(cluster_idx, subject) {
 #' cell_pk = c('contig_pk', 'subject', 'cluster_idx'), cluster_pk = 'cluster_idx')
 #' ccdb_test$cell_tbl
 #'
-#' purity_ex = function(cluster_idx, subject) {
-#' n_label_cluster = tibble(cluster_idx = cluster_idx, subject = subject) %>%
-#' group_by(cluster_idx, subject) %>% summarize(n = dplyr::n()) %>% ungroup()
-#' #Average number of singleton clusters for each subject
-#' singletons = mean(n_label_cluster$n == 1)
-#' singletons
-#' }
-
 #' cluster_permute_test(ccdb_test, 'subject', 'cluster_idx',
 #' statistic = purity, n_perm  = 50)
 #'

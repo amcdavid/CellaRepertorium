@@ -56,13 +56,6 @@ ccdb_test = ContigCellDB(contig_tbl = contig_tbl, contig_pk = 'contig_pk',
 cell_pk = c('contig_pk', 'subject', 'cluster_idx'), cluster_pk = 'cluster_idx')
 ccdb_test$cell_tbl
 
-purity_ex = function(cluster_idx, subject) {
-n_label_cluster = tibble(cluster_idx = cluster_idx, subject = subject) \%>\%
-group_by(cluster_idx, subject) \%>\% summarize(n = dplyr::n()) \%>\% ungroup()
-#Average number of singleton clusters for each subject
-singletons = mean(n_label_cluster$n == 1)
-singletons
-}
 cluster_permute_test(ccdb_test, 'subject', 'cluster_idx',
 statistic = purity, n_perm  = 50)
 
