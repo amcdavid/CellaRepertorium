@@ -44,22 +44,23 @@ test_that('Overwrites fields appropriately', {
 context('Pairing Tables')
 library(dplyr)
 tbl <- tibble(clust_idx = gl(3, 2), cell_idx = rep(1:3, times = 2), contig_idx = 1:6)
-ccdb <- ContigCellDB(tbl, contig_pk = c('cell_idx', 'contig_idx'), cell_pk = 'cell_idx', cluster_pk = 'clust_idx')
+ccdb <- ContigCellDB(tbl, contig_pk = c('cell_idx', 'contig_idx'), cell_pk = 'cell_idx', cluster_pk = 'clust_idx') %>% rank_prevalence_ccdb(tie_break_keys = character())
 
 tbl2 <- bind_rows(tbl, tbl %>% mutate(cell_idx = rep(4:6, times = 2)))
-ccdb2 <- ContigCellDB(tbl2, contig_pk = c('cell_idx', 'contig_idx'), cell_pk = 'cell_idx', cluster_pk = 'clust_idx')
+ccdb2 <- ContigCellDB(tbl2, contig_pk = c('cell_idx', 'contig_idx'), cell_pk = 'cell_idx', cluster_pk = 'clust_idx') %>% rank_prevalence_ccdb(tie_break_keys = character())
 
 
 
 test_that('Generate a list of tables representing clusters paired in cells',{
-  pt2 <- pairing_tables(ccdb, canonicalize_by_prevalence, min_expansion = 1)
+  pt2 <- pairing_tables(ccdb, min_expansion = 1)
   expect_known_value(pt2$cell_tbl, "out/pairing1.rda", check.attributes = FALSE)
 
-  pt3 <- pairing_tables(ccdb2, canonicalize_by_prevalence, min_expansion = 1)
+  pt3 <- pairing_tables(ccdb2, min_expansion = 1)
   expect_known_value(pt3$cell_tbl,  "out/pairing2.rda",  check.attributes = FALSE)
 
-  ccdb2$contig_tbl = ccdb2$contig_tbl %>% mutate(umis = 1, reads = 1, chain = rep(c('TRA', 'TRB'), times = 6))
-  pt4 <- pairing_tables(ccdb2, canonicalize_by_chain, min_expansion = 1, table_order = 2)
+  ccdb2$contig_tbl = ccdb2$contig_tbl %>% ungroup() %>% mutate(umis = 1, reads = 1, chain = rep(c('TRA', 'TRB'), times = 6))
+  ccdb2 = rank_chain_ccdb(ccdb2, tie_break_keys = character())
+  pt4 <- pairing_tables(ccdb2, min_expansion = 1, table_order = 2)
   expect_known_value(pt4$cell_tbl, "out/pairing3.rda", check.attributes = FALSE)
 
 })
