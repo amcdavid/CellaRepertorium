@@ -17,6 +17,10 @@ This function is likely dependent on annotations from 10X and
 may change or break
 as their pipeline changes.
 }
+\examples{
+data(ccdb_ex)
+table(guess_celltype(ccdb_ex$contig_tbl$chain))
+}
 \seealso{
 \code{\link[=crosstab_by_celltype]{crosstab_by_celltype()}}
 }

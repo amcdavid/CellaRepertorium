@@ -51,3 +51,4 @@ map_axis_labels = function(plt, label_data_x,  label_data_y, aes_label, scale = 
     plt + hushWarning(ggplot2::theme(axis.text.x = ggplot2::element_text(color = data_x$COLOR), axis.text.y = ggplot2::element_text(color = data_y$COLOR)), 'Vectorized input')
 }
 
+globalVariables('Y_')

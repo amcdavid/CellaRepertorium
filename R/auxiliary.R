@@ -7,6 +7,9 @@
 #'
 #' @return contig table with `celltype` column
 #' @seealso [crosstab_by_celltype()]
+#' @examples
+#' data(ccdb_ex)
+#' table(guess_celltype(ccdb_ex$contig_tbl$chain))
 #' @export
 guess_celltype = function(chain) {
       celltype = case_when(
@@ -32,14 +35,15 @@ guess_celltype = function(chain) {
 #' nrow(total_umi)
 crosstab_by_celltype = function(ccdb) {
     # add celltype column
+    check_contig_names(ccdb, c('chain', 'umis'))
     ccdb$contig_tbl = ccdb$contig_tbl %>%
-      dplyr::mutate(celltype = guess_celltype(chain))
+      dplyr::mutate(celltype = guess_celltype(.data$chain))
 
     # group by cell_keys
     cell_keys = union(ccdb$cell_pk, 'celltype')
     total_umi = ccdb$contig_tbl %>% group_by(!!!syms(cell_keys)) %>%
-      summarize(total_umi = sum(umis)) %>%
-      tidyr::spread(celltype, 'total_umi', fill = 0)
+      summarize(total_umi = sum(.data$umis))
+    total_umi = tidyr::spread(total_umi, 'celltype', 'total_umi', fill = 0)
     total_umi = left_join_warn(ccdb$cell_tbl, total_umi, by = ccdb$cell_pk)
 
     return(total_umi)

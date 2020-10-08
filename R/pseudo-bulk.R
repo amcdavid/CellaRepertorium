@@ -25,13 +25,13 @@ generate_pseudobulk = function(ccdb, class_keys, total_keys, type = c('cell', 'u
     if(!all(c('umis', 'barcode') %in% names(ccdb$contig_tbl))) stop("Expecting columns `barcode` and `umis` in `contig_tbl`.")
     contig_grp = ccdb$contig_tbl %>% group_by(!!!syms(all_keys))
     if(type == 'umi'){
-        bulk = contig_grp %>% summarize(n_class = sum(umis))
+        bulk = contig_grp %>% summarize(n_class = sum(.data$umis))
     } else {
-        bulk = contig_grp %>% summarize(n_class = dplyr::n_distinct(barcode))
+        bulk = contig_grp %>% summarize(n_class = dplyr::n_distinct(.data$barcode))
     }
 
     bulk = ungroup(bulk)
     bulk = tidyr::complete(bulk,!!!syms(total_keys), tidyr::nesting(!!!syms(class_keys)),fill=list(n_class=0))
-    bulk = group_by(bulk, !!!syms(total_keys)) %>% mutate(total = sum(n_class))
+    bulk = group_by(bulk, !!!syms(total_keys)) %>% mutate(total = sum(.data$n_class))
 }
 
