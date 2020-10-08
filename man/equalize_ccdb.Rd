@@ -30,3 +30,31 @@ The cells in \code{cell_tbl}, and clusters in \code{cluster_tbl} can potentially
 \item \code{equalize_ccdb(x, contig = TRUE)} trims contigs that aren't \code{cell_tbl} or \code{cluster_tbl}.
 }
 }
+\section{Default equalization}{
+
+Modification to \code{contig_tbl} (with \code{$}) always equalizes contigs and clusters.
+Modification to \code{cell_tbl} equalizes only contigs.
+Modification to \code{cluster_tbl} equalizes contigs and clusters.
+}
+
+\examples{
+library(dplyr)
+tbl = tibble(clust_idx = gl(3, 2), cell_idx = rep(1:3, times = 2), contig_idx = 1:6)
+ccdb = ContigCellDB(tbl, contig_pk = c('cell_idx', 'contig_idx'),
+cell_pk = 'cell_idx', cluster_pk = 'clust_idx')
+# 3 cells
+ccdb
+ccdb$cell_tbl = bind_rows(ccdb$cell_tbl, tibble(cell_idx = 0))
+# 4 cells now
+ccdb
+# 3 cells again
+equalize_ccdb(ccdb)
+# remove all contigs from cell 1, and one contig from cell 2
+ccdb$contig_tbl = ccdb$contig_tbl[-c(1, 2, 4),]
+# no changes to cell_tbl yet
+ccdb
+# trim cell_tbl to 2 cells, keep all clusters
+equalize_ccdb(ccdb, cluster = FALSE)
+# trim both cells and clusters
+equalize_ccdb(ccdb, cluster = TRUE)
+}

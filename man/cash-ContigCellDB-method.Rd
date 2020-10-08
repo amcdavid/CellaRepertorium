@@ -4,7 +4,7 @@
 \alias{$,ContigCellDB-method}
 \alias{ContigCellDB-mutate}
 \alias{$<-,ContigCellDB-method}
-\title{Access public members of ContigCellDB object}
+\title{Access public members of ContigCellDB object.}
 \usage{
 \S4method{$}{ContigCellDB}(x, name)
 
@@ -21,7 +21,8 @@
 Update or return a slot of \code{\link[=ContigCellDB]{ContigCellDB()}}
 }
 \description{
-Access public members of ContigCellDB object
+Modification to members will trigger various forms of equalization.
+See \code{\link[=equalize_ccdb]{equalize_ccdb()}} for details.
 }
 \examples{
 data(ccdb_ex)
@@ -34,4 +35,7 @@ ccdb_ex$contig_pk = c("sample","barcode","contig_id") # 'pop' is technically red
 ccdb_ex
 ccdb_ex$contig_tbl = dplyr::filter(ccdb_ex$contig_tbl, pop == 'b6')
 ccdb_ex
+}
+\seealso{
+\code{\link[=equalize_ccdb]{equalize_ccdb()}}
 }
