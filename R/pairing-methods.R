@@ -1,39 +1,61 @@
-globalVariables(c('prev'))
-#' For each cell, return a single, canonical chain-cluster
+#' Rank contigs, per cell, by experiment-wide prevalence of `cluster_pk`, which is added as the `prevalence` field
 #'
-#' In single cell data, multiple chains (heavy-light or alpha-beta) are expected.  In some cases, there could be more than two (e.g. multiple alpha alleles for T cells).
-#' This picks a cluster id for each cell based on the overall prevalence of cluster ids over all cells in `tbl`.
-#' If order = 1 then the canonical chain-cluster will be the most prevalent, and if order = 2, it will be the 2nd most prevalent, and so on.  Ties are broken arbitrarily (possibly by lexicographic order of `cluster_idx`).
-#' @param tbl `data.frame` containing columns specified in `cell_identifiers`, `cluster_idx` and optionally `chain_identifiers`
-#' @param cell_identifiers `character` vector specifying columns in `tbl` that identify a cell
-#' @param cluster_idx `character` specifying the column in `tbl` that identifies a cluster
-#' @param order return the 1st, 2nd, 3rd, etc, most common chain-cluster
-#'
-#' @return `data.frame` with columns from `cell_identifiers` and a single `cluster_idx` for each cell
+#' @return `ContigCellDB` with modified `contig_tbl`
+#' @inheritParams canonicalize_cell
 #' @export
-canonicalize_by_prevalence = function(tbl, cell_identifiers = 'barcode', cluster_idx = 'cluster_idx', order = 1){
-    prevalence = tbl %>% group_by(!!sym(cluster_idx)) %>% summarize(prev = dplyr::n())
-    tbl_prevalence = left_join(tbl, prevalence, by = cluster_idx)
-    tbl_order = tbl_prevalence %>% group_by(!!!syms(cell_identifiers)) %>% summarize(!!cluster_idx := dplyr::nth(!!sym(cluster_idx), -order, prev))
-    ungroup(tbl_order)
+#' @examples
+#' data(ccdb_ex)
+#' ccdb_ex = cluster_germline(ccdb_ex)
+#' rank_prev = rank_prevalence_ccdb(ccdb_ex)
+#' rank_prev$contig_tbl
+#' rank_chain = rank_chain_ccdb(ccdb_ex)
+#' rank_chain$contig_tbl
+rank_prevalence_ccdb = function(ccdb, contig_filter_args = TRUE,
+                              tie_break_keys = c('umis', 'reads')){
+    ccdb$contig_tbl = ccdb$contig_tbl %>% group_by(!!!syms(ccdb$cluster_pk)) %>% mutate(prevalence = dplyr::n())
+    ranked_contigs = .rank_contigs_per_cell(ccdb, tie_break_keys = c('prevalence', tie_break_keys), rlang::enexpr(contig_filter_args))
+   ccdb$contig_tbl =  ranked_contigs
+   ccdb
 }
 
 
 
-# I believe this function is obsoleted by `canonicalize_cell``
-#' @param sort_factors `character` vector naming columns in `tbl` to sorted on, within  `cell_identifier`. Sorted by first element first, then ties broken by subsequent elements.  Sorted in decreasing order for each element.
-#' @param chain_levels an optional `character` vector providing the sort order of the `chain` column in `tbl`.  Set to length zero to disable.
-#' @describeIn canonicalize_by_prevalence return a canonical contig by chain type, with TRB/IGH returned first. By default, ties are broken by umis and reads.
-#' @export
-canonicalize_by_chain = function(tbl,  cell_identifiers = 'barcode', sort_factors = c('chain', 'umis', 'reads'), cluster_idx = 'cluster_idx', order = 1, chain_levels = c('IGL', 'IGK', 'TRA', 'TRB', 'IGH')){
-    #ochain = tbl[[sort_factors[1]]]
-    if(length(chain_levels) > 0){
-        if(!('chain' %in% names(tbl))) stop('`tbl` must contain a `chain` column to set `chain_levels`')
-        tbl = tbl %>% mutate(chain = factor(chain, levels = chain_levels, ordered = TRUE))
-    }
-    arranging = purrr::map(sort_factors, ~ rlang::quo(desc(!!sym(.x))))
-    tbl %>% group_by(!!!syms(cell_identifiers)) %>% dplyr::arrange(!!!arranging) %>% mutate(rank = seq_along(!!sym(sort_factors[[1]]))) %>% dplyr::filter(rank == order) %>% dplyr::select(-rank)
 
+#' @param chain_levels an optional `character` vector providing the sort order of the `chain` column in `tbl`.  If set to length zero, then the the ordering will be alphabetical
+#' @param chain_key `character` naming the field in `contig_tbl` to be sorted on.
+#' @describeIn rank_prevalence_ccdb return a canonical contig by chain type, with TRB/IGH returned first. By default, ties are broken by umis and reads.
+#' @export
+rank_chain_ccdb = function(ccdb,  contig_filter_args = TRUE,
+                           tie_break_keys = c('umis', 'reads'),
+                           chain_key = 'chain',
+                           contig_fields = tie_break_keys, chain_levels = c('IGL', 'IGK', 'TRA', 'TRB', 'IGH')){
+    check_contig_names(ccdb, chain_key)
+    if(length(chain_levels) > 0){
+        ccdb$contig_tbl[[chain_key]] = factor(ccdb$contig_tbl[[chain_key]],  levels = chain_levels, ordered = TRUE)
+    }
+    ranked_contigs = .rank_contigs_per_cell(ccdb, tie_break_keys = c(chain_key, tie_break_keys), rlang::enexpr(contig_filter_args))
+    ccdb$contig_tbl = ranked_contigs
+    ccdb
+}
+
+
+check_contig_names = function(ccdb, req_names) {
+  if (length(missing_contig <- setdiff(req_names, names(ccdb$contig_tbl))) > 0) stop('`contig_tbl` is missing fields, ', paste(missing_contig, collapse = ', '), '.')
+    return(TRUE)
+}
+
+.rank_contigs_per_cell <- function(ccdb, tie_break_keys, contig_filter_args) {
+    tbl = ccdb$contig_tbl
+    check_contig_names(ccdb, tie_break_keys)
+    # Filter with expressions in contig_filter_args
+    #filter_arg = rlang::enexpr(contig_filter_args)
+    ft = filter(.data = tbl, !!contig_filter_args)
+    # setup quosures to arrange the data
+    arranging = purrr::map(tie_break_keys, ~ rlang::quo(desc(!!sym(.x))))
+    # take first row of each cell
+    ft2 = ft %>% group_by(!!!syms(ccdb$cell_pk)) %>% dplyr::arrange(!!!arranging)
+    ranked_contigs = ft2 %>% dplyr::mutate(n_grp = dplyr::n(), grp_rank = seq_along(.data$n_grp))
+    ungroup(ranked_contigs)
 }
 
 #' Find a canonical contig to represent a cell
@@ -65,19 +87,9 @@ canonicalize_by_chain = function(tbl,  cell_identifiers = 'barcode', sort_factor
 canonicalize_cell = function(ccdb, contig_filter_args = TRUE,
                              tie_break_keys = c('umis', 'reads'),
                              contig_fields = tie_break_keys, order = 1, overwrite = TRUE){
-    tbl = ccdb$contig_tbl
-    req_contig_fields = unique(c(contig_fields, tie_break_keys))
-    if (length(missing_contig <- setdiff(req_contig_fields, names(tbl))) > 0) stop('`contig_tbl` is missing fields, ', paste(missing_contig, collapse = ', '), '.')
-
-    # Filter with expressions in contig_filter_args
-    filter_arg = rlang::enexpr(contig_filter_args)
-    ft = filter(.data = tbl, !!filter_arg)
-    # setup quosures to arrange the data
-    arranging = purrr::map(tie_break_keys, ~ rlang::quo(desc(!!sym(.x))))
-    # take first row of each cell
-    ft2 = ft %>% group_by(!!!syms(ccdb$cell_pk)) %>% dplyr::arrange(!!!arranging)
-    idx = ft2 %>% dplyr::transmute(ngrp = dplyr::n(), idx = seq_along(ngrp))
-    ft2 = ft2[idx$idx==order,,drop = FALSE]
+    check_contig_names(ccdb, contig_fields)
+    ranked_contigs = .rank_contigs_per_cell(ccdb, tie_break_keys, rlang::enexpr(contig_filter_args))
+    ft2 = ranked_contigs[ranked_contigs$grp_rank==order,,drop = FALSE]
     cell_tbl = ccdb$cell_tbl
     # join with cell tbl (so same number of cells)
     ccdb$cell_tbl = right_join_warn(ft2[unique(c(contig_fields, ccdb$cell_pk))], cell_tbl, by = ccdb$cell_pk, overwrite = overwrite)
@@ -103,31 +115,22 @@ canonicalize_cell = function(ccdb, contig_filter_args = TRUE,
 #' tend to occur along the diagonal when they are cross-tabulated.
 #' This facilitates plotting.
 #'
-#' @section Caveats and warnings:
-#'  The cell_idx -> cluster_idx map is generally one-to-many, and is resolved by
-#'  `canonicalize_fun`.  For `table_order>1`, few collisions are expected as
-#'  most cells will contain no more than 2 clusters.  Any collisions are resolved
-#'  by returning the most prevalent cluster, across samples.  When two clusters
-#'  are tied for most prevalent within a cell, the `cluster_idx` returned is arbitrary.
-#'  Therefore, when `table_order=1`, it is strongly recommended to subset the
-#'  `cluster_tbl` to just a single chain.
-#'
 #' @param ccdb `ContigCellDB`
+#' @param ranking_key field in `ccdb$contig_tbl` giving the ranking of each contig per cell.  Probably generated by a call to [rank_prevalence_ccdb()] or [rank_chain_ccdb()].
 #' @param min_expansion the minimal number of times a pairing needs to occur for
 #' it to be reported
 #' @param cluster_keys optional `character` naming additional columns in
 #' `ccdb$cluster_tbl` to be reported in the pairing
 #' @param table_order Integer larger than 1. What order of cluster_idx will be
-#' paired, eg, order = 2 means that the most common and second most common cluster_idx will be sought for each cell
-#' @param orphan_level Integer larger than 0 and less than or equal to `table_order`.  Given that at least `min_expansion` cells are found that have `table_order` chains identical, how many `cluster_idx` pairs will we match on to select other cells.  Example: `ophan_level=1` means that cells that share just a single chain with the
+#' paired, eg, order = 2 means that the first and second highest ranked contigs will be sought and paired in each cell
+#' @param orphan_level Integer in interval \[1, `table_order`\].  Given that at least `min_expansion` cells are found that have `table_order` chains identical, how many `cluster_idx` pairs will we match on to select other cells.  Example: `ophan_level=1` means that cells that share just a single chain with an expanded pair will be reported.
 #' @param cluster_whitelist a table of pairings or clusters that should always be reported.  Here the clusters must be named "cluster_idx.1", "cluster_idx.2" (if order-2 pairs are being selected) rather than with `ccdb$cluster_pk``
 #' @param cluster_blacklist a table of pairings or clusters that will never be reported.  Must be named as per `cluster_whitelist`.
-#' @param canonicalize_fun a function with signature `canonicalize_fun(ContigCellDB, order = i)` that for each cell, returns a single contig that depends on the `order`.  For instance \link{canonicalize_by_prevalence} or \link{canonicalize_by_chain}.
 #'
 #' @return list of tables.  The `cell_tbl` is keyed by the `cell_identifiers`, with fields "cluster_idx.1", "cluster_idx.2", etc, IDing the contigs present in each cell. "cluster_idx.1_fct" and "cluster_idx.2_fct" cast these fields to factors and are reordered to maximize the number of pairs along the diagonal. The `idx1_tbl` and `idx2_tbl` report information (passed in about the `cluster_idx` by `feature_tbl`.)  The `cluster_pair_tbl` reports all pairings found of contigs, and the number of times observed.
 #' @export
 #'
-#' @seealso [canonicalize_by_prevalence()], [canonicalize_by_chain()]
+#' @seealso [rank_prevalence_ccdb()]
 #' @importFrom tibble as_data_frame tibble
 #' @importFrom dplyr bind_rows left_join ungroup summarize anti_join
 #' @importFrom stringr str_length str_c
@@ -137,23 +140,25 @@ canonicalize_cell = function(ccdb, contig_filter_args = TRUE,
 #' tbl = tibble(clust_idx = gl(3, 2), cell_idx = rep(1:3, times = 2), contig_idx = 1:6)
 #' ccdb = ContigCellDB(tbl, contig_pk = c('cell_idx', 'contig_idx'),
 #' cell_pk = 'cell_idx', cluster_pk = 'clust_idx')
+#' # add `grp_rank` to ccdb$contig_tbl indicating how frequent a cluster is
+#' ccdb = rank_prevalence_ccdb(ccdb, tie_break_keys = character())
+#' # using `grp_rank` to determine pairing
 #' # no pairs found twice
-#' pt1 = pairing_tables(ccdb, canonicalize_by_prevalence)
+#' pt1 = pairing_tables(ccdb)
 #' # all pairs found, found once.
-#' pt2 = pairing_tables(ccdb, canonicalize_by_prevalence, min_expansion = 1)
+#' pt2 = pairing_tables(ccdb, min_expansion = 1)
 #' pt2$cell_tbl
 #' tbl2 = bind_rows(tbl, tbl %>% mutate(cell_idx = rep(4:6, times = 2)))
 #' ccdb2 = ContigCellDB(tbl2, contig_pk = c('cell_idx', 'contig_idx'), cell_pk = 'cell_idx',
-#' cluster_pk = 'clust_idx')
+#' cluster_pk = 'clust_idx') %>% rank_prevalence_ccdb(tie_break_keys = character())
 #' #all pairs found twice
-#' pt3 = pairing_tables(ccdb2, canonicalize_by_prevalence, min_expansion = 1)
+#' pt3 = pairing_tables(ccdb2, min_expansion = 1)
 #' pt3$cell_tbl
-#' # `canonicalize_by_chain` expects fields `umis`, `reads`
-#' # to break ties,  wrap the function to change this
 #' ccdb2$contig_tbl = ccdb2$contig_tbl %>%
 #'     mutate(umis = 1, reads = 1, chain = rep(c('TRA', 'TRB'), times = 6))
-#' pt4 = pairing_tables(ccdb2, canonicalize_by_chain, min_expansion = 1, table_order = 2)
-pairing_tables = function(ccdb,  canonicalize_fun = canonicalize_by_chain, table_order = 2, min_expansion = 2,  orphan_level = 1, cluster_keys = character(), cluster_whitelist = NULL, cluster_blacklist = NULL){
+#' ccdb2 = rank_chain_ccdb(ccdb2, tie_break_keys = character())
+#' pt4 = pairing_tables(ccdb2, min_expansion = 1, table_order = 2)
+pairing_tables = function(ccdb, ranking_key = 'grp_rank', table_order = 2, min_expansion = 2,  orphan_level = 1, cluster_keys = character(), cluster_whitelist = NULL, cluster_blacklist = NULL){
 
     if(orphan_level > table_order) stop('`ophan_level` must be less than or equal to `table_order`')
     if(table_order < 1) stop('Table order must be at least 1')
@@ -161,37 +166,33 @@ pairing_tables = function(ccdb,  canonicalize_fun = canonicalize_by_chain, table
     # get `table_order` most common clusters for each cell
     # forcibly rename cluster_idx -> "cluster_idx"
     contig_tbl = ccdb$contig_tbl
+    contig_tbl = contig_tbl[contig_tbl[[ranking_key]]<=table_order,]
+    table_order = max(contig_tbl[[ranking_key]])
     cell_identifiers = ccdb$cell_pk
     cluster_idx = ccdb$cluster_pk
     cell_tbl = ccdb$cell_tbl
-    bar_chain_tbls = purrr::map(seq_len(table_order),
-        function(i){
-                    canon_cell = canonicalize_fun(contig_tbl, cell_identifiers = cell_identifiers, cluster_idx = cluster_idx, order = i)
-                    canon_cell = canon_cell[union(cell_identifiers, cluster_idx)]
-                    dplyr::rename(canon_cell, !!paste0('cluster_idx.', i) := !!cluster_idx)
-        })
-    # for each cell, what clusters are present
-    oligo_cluster_pairs = purrr::reduce(bar_chain_tbls, left_join, by = cell_identifiers)
+    cell_contig_tab = tidyr::pivot_wider(contig_tbl[c(cell_identifiers, cluster_idx, ranking_key)], names_from = !!ranking_key, values_from = cluster_idx)
 
     # Set up cluster_ids for indexing into the pairing tables
-    cluster_ids = str_c('cluster_idx.', seq_len(table_order))
+    cluster_ids =  str_c('cluster_idx.', seq_len(table_order))
+    names(cell_contig_tab)[(ncol(cell_contig_tab)-table_order+1):ncol(cell_contig_tab)] = cluster_ids
     cluster_ids_to_select = cluster_ids[seq_len(orphan_level)]
 
     # In how many cells do each cluster pairing appear?
-    cluster_pair_tbl = oligo_cluster_pairs %>% group_by(!!!syms(cluster_ids)) %>% summarize(n_clone_pairs = dplyr::n())
+    cluster_pair_tbl = cell_contig_tab %>% group_by(!!!syms(cluster_ids)) %>% summarize(n_clone_pairs = dplyr::n())
     # which clusters are expanded,
-    expanded_cluster = dplyr::filter(cluster_pair_tbl, n_clone_pairs >= min_expansion)
+    expanded_cluster = dplyr::filter(cluster_pair_tbl, .data$n_clone_pairs >= min_expansion)
     # Must have both cluster_ids non NA (otherwise not a pairing of the required order)
     expanded_cluster = dplyr::filter_at(expanded_cluster, .vars = cluster_ids, .vars_predicate = dplyr::all_vars(!is.na(.)))
-    expanded_cluster = ungroup(expanded_cluster) %>% dplyr::select(!!!syms(cluster_ids_to_select), max_pairs = n_clone_pairs)
+    expanded_cluster = ungroup(expanded_cluster) %>% dplyr::select(!!!syms(cluster_ids_to_select), max_pairs = .data$n_clone_pairs)
     if(!is.null(cluster_whitelist)){
         expanded_cluster = bind_rows(expanded_cluster, cluster_whitelist)
     }
     if(!is.null(cluster_blacklist)) expanded_cluster = anti_join(expanded_cluster, cluster_blacklist)
 
     # Could have duplicated cluster_ids after binding to the whitelist or from considering orphans
-    expanded_cluster = expanded_cluster[!duplicated(expanded_cluster %>% dplyr::select(-max_pairs)),]
-    expanded_c1 = oligo_cluster_pairs %>% dplyr::inner_join(expanded_cluster, by = cluster_ids_to_select)
+    expanded_cluster = expanded_cluster[!duplicated(expanded_cluster %>% dplyr::select(-.data$max_pairs)),]
+    expanded_c1 = cell_contig_tab %>% dplyr::inner_join(expanded_cluster, by = cluster_ids_to_select)
     if(anyDuplicated(expanded_c1[cell_identifiers])) stop("Ruhoh, duplicated cell identifiers, this is a bug!")
 
     # cross-tab pairings in order to figure out how to order the cluster_idx to put most common pairing on diagonal
@@ -219,8 +220,8 @@ pairing_tables = function(ccdb,  canonicalize_fun = canonicalize_by_chain, table
 
 
     # also fix levels of this tbl
-    expanded_c1 = expanded_c1 %>% mutate(cluster_idx.1_fct = factor(cluster_idx.1, levels = levels(rowid[['cluster_idx.1_fct']])))
-    if(table_order>1) expanded_c1 = expanded_c1 %>% mutate(cluster_idx.2_fct = factor(cluster_idx.2, levels = levels(colid[['cluster_idx.2_fct']])))
+    expanded_c1 = expanded_c1 %>% mutate(cluster_idx.1_fct = factor(.data$cluster_idx.1, levels = levels(rowid[['cluster_idx.1_fct']])))
+    if(table_order>1) expanded_c1 = expanded_c1 %>% mutate(cluster_idx.2_fct = factor(.data$cluster_idx.2, levels = levels(colid[['cluster_idx.2_fct']])))
 
     if(!is.null(cell_tbl)){
         if(anyDuplicated(cell_tbl %>% select(!!!syms(cell_identifiers)))) stop('`cell_tbl` must not have duplicate `cell_identifiers`.')

@@ -195,6 +195,7 @@ Next, we can examine the pairing between $\alpha-\beta$ chains and see if any pa
 
 ```{r expanded_clones}
 aa80$cluster_pk = 'representative'
+aa80 = rank_prevalence_ccdb(aa80)
 pairing_list = pairing_tables(aa80, table_order = 2, orphan_level = 1, min_expansion = 3, cluster_keys = c('cdr3', 'representative', 'chain', 'v_gene', 'j_gene', 'avg_distance'))
 
 
@@ -216,7 +217,7 @@ pairs_plt
 
 ```{r}
 whitelist = oligo_clusters %>% dplyr::select(cluster_idx.1 = representative) %>% unique()
-pairing_list = pairing_tables(aa80, canonicalize_fun = canonicalize_by_prevalence, table_order = 2, orphan_level = 1, min_expansion = Inf, cluster_whitelist = whitelist,  cluster_keys = c('cdr3', 'representative', 'chain', 'v_gene', 'j_gene', 'avg_distance'))
+pairing_list = pairing_tables(aa80, table_order = 2, orphan_level = 1, min_expansion = Inf, cluster_whitelist = whitelist,  cluster_keys = c('cdr3', 'representative', 'chain', 'v_gene', 'j_gene', 'avg_distance'))
 <<plot_expanded>>
 ```
 
