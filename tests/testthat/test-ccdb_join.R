@@ -1,9 +1,9 @@
 context('ccdb_join')
-
+library(SingleCellExperiment)
 contig_tbl = tibble(contig_key = 1:5, cell_key = c(1, 1, 1, 2, 3))
 cdb = ContigCellDB(contig_tbl, 'contig_key', cell_pk = 'cell_key')
 
-coldata = data.frame(cell_key = c(1, 2, 3), feature = c(4, 9, 1))
+coldata = DataFrame(cell_key = c(1, 2, 3), feature = c(4, 9, 1))
 sce = SingleCellExperiment::SingleCellExperiment(colData = coldata)
 
 test_that('sce join',

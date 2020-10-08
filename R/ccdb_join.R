@@ -25,7 +25,7 @@ ccdb_join = function(template, ccdb, join_fun = dplyr::left_join, by = ccdb$cell
     else if(inherits(template, "data.frame") || inherits(template, "DataFrame")) {
         #check if all keys ccdb keys are in template
         if(!all(by %in% colnames(template))) stop('Not all ccdb keys present in template')
-        ccdb$cell_tbl = join_fun(template, as.data.frame(ccdb$cell_tbl), by = by)
+        ccdb$cell_tbl = join_fun(as.data.frame(template), ccdb$cell_tbl, by = by)
     }
     else stop('Template must inherit from `SingleCellExperiment` or `data.frame`')
 
