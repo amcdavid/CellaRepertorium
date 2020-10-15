@@ -40,6 +40,7 @@ Imports:
     purrr,
     Matrix,
     S4Vectors,
+    BiocGenerics,
     tidyr,
     forcats,
     progress,

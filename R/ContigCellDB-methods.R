@@ -220,10 +220,12 @@ setMethod('dimnames', signature = c(x = 'ContigCellDB'), function(x){
 })
 
 #' @rdname sub-sub-ContigCellDB-character-missing-method
+#' @importFrom BiocGenerics nrow NROW
 setMethod('nrow', signature = c(x = 'ContigCellDB'), function(x){
     nrow(x@cell_tbl)
 })
 
+#' @importFrom BiocGenerics ncol NCOL
 #' @rdname sub-sub-ContigCellDB-character-missing-method
 setMethod('ncol', signature = c(x = 'ContigCellDB'), function(x){
     ncol(x@cell_tbl)
