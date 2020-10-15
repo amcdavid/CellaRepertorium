@@ -30,7 +30,7 @@ test_that("Don't need to be sorted", {
 data(ccdb_ex)
 
 test_that("cdhit_ccdb do update", {
-  res = cdhit_ccdb(ccdb_ex, 'cdr3_nt', type = 'DNA', cluster_name = 'DNA97', identity = .965, min_length = 12, G = 1)
+  res = cdhit_ccdb(ccdb_ex, 'cdr3_nt', type = 'DNA', cluster_pk = 'DNA97', identity = .965, min_length = 12, G = 1)
   expect_is(res, 'ContigCellDB')
   expect_equal(res$cluster_pk, 'DNA97')
   expect_equal(ncol(ccdb_ex$contig_tbl)+1,ncol(res$contig_tbl))

@@ -61,7 +61,7 @@ sce = SingleCellExperiment(assay = list(counts = expression), colData = all_bc)
 ```{r}
 ccdb2 = ContigCellDB(ccdb_ex$contig_tbl, contig_pk = ccdb_ex$contig_pk, cell_tbl = colData(sce), cell_pk = ccdb_ex$cell_pk, equalize = FALSE)
 
-ccdb2 = cdhit_ccdb(ccdb2, 'cdr3', type = 'AA', cluster_name = 'aa80', identity = .8, min_length = 5)
+ccdb2 = cdhit_ccdb(ccdb2, 'cdr3', type = 'AA', cluster_pk = 'aa80', identity = .8, min_length = 5)
 ccdb2 = fine_clustering(ccdb2, sequence_key = 'cdr3', type = 'AA', keep_clustering_details = FALSE)
 
 ```

@@ -6,7 +6,7 @@ test_that("Cluster contigs by germline properties",{
   expect_is(cdb,'ContigCellDB')
   expect_gt(ncol(cdb$cluster_tbl),ncol(ccdb_ex$cluster_tbl))
   expect_equal(names(cdb$cluster_tbl),c('cluster_idx','v_gene','j_gene','chain'))
-  cdb1 <- cluster_germline(ccdb_ex,segment_keys = c('v_gene', 'j_gene'),cluster_name = 'clusterID')
+  cdb1 <- cluster_germline(ccdb_ex,segment_keys = c('v_gene', 'j_gene'),cluster_pk = 'clusterID')
   expect_gt(ncol(cdb$cluster_tbl),ncol(cdb1$cluster_tbl))
   expect_equal(names(cdb1$cluster_tbl)[1],'clusterID')
   expect_error(cluster_germline(ccdb_ex,segment_keys = c('v_gene', 'm_gene')))
@@ -15,7 +15,7 @@ test_that("Cluster contigs by germline properties",{
 ccdb_ex_small <- ccdb_ex
 ccdb_ex_small$cell_tbl <- ccdb_ex_small$cell_tbl[1:200,]
 ccdb_ex_small <- cdhit_ccdb(ccdb_ex_small,
-                           sequence_key = 'cdr3_nt', type = 'DNA', cluster_name = 'DNA97',
+                           sequence_key = 'cdr3_nt', type = 'DNA', cluster_pk = 'DNA97',
                            identity = .965, min_length = 12, G = 1)
 ccdb_ex_small_fine <- fine_clustering(ccdb_ex_small, sequence_key = 'cdr3_nt', type = 'DNA')
 

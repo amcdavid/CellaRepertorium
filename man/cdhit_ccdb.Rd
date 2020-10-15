@@ -8,7 +8,7 @@ cdhit_ccdb(
   ccdb,
   sequence_key,
   type = c("DNA", "AA"),
-  cluster_name = "cluster_idx",
+  cluster_pk = "cluster_idx",
   ...
 )
 }
@@ -19,7 +19,7 @@ cdhit_ccdb(
 
 \item{type}{one of 'DNA' or 'AA'}
 
-\item{cluster_name}{\code{character} specifying key, and name for the clustering.}
+\item{cluster_pk}{\code{character} specifying key, and name for the clustering.}
 
 \item{...}{
   Arguments passed on to \code{\link[=cdhit]{cdhit}}

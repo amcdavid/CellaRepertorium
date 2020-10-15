@@ -4,7 +4,7 @@ globalVariables('ngrp')
 #'
 #' @param ccdb [ContigCellDB()]
 #' @param segment_keys fields in `contig_tbl` that identify a cluster
-#' @param cluster_name name of cluster to be added to `cluster_tbl`
+#' @param cluster_pk name of cluster to be added to `cluster_tbl`
 #'
 #' @return [ContigCellDB()]
 #' @export
@@ -13,13 +13,13 @@ globalVariables('ngrp')
 #' data(ccdb_ex)
 #' ccdb_ex = cluster_germline(ccdb_ex)
 #' ccdb_ex$cluster_tbl
-cluster_germline = function(ccdb, segment_keys = c('v_gene', 'j_gene', 'chain'), cluster_name = 'cluster_idx'){
+cluster_germline = function(ccdb, segment_keys = c('v_gene', 'j_gene', 'chain'), cluster_pk = 'cluster_idx'){
     contig_tbl = ccdb$contig_tbl
     seg_types = contig_tbl %>% group_by(!!!syms(segment_keys)) %>% summarize() %>% ungroup()
-    seg_types[[cluster_name]] = seq_len(nrow(seg_types))
+    seg_types[[cluster_pk]] = seq_len(nrow(seg_types))
     cl_con_tbl = left_join_warn(seg_types, contig_tbl, by = segment_keys)
-    cluster_tbl = as_tibble(unique(cl_con_tbl[union(cluster_name, segment_keys)]))
-    replace_cluster_tbl(ccdb, cluster_tbl, cl_con_tbl, cluster_pk = cluster_name)
+    cluster_tbl = as_tibble(unique(cl_con_tbl[union(cluster_pk, segment_keys)]))
+    replace_cluster_tbl(ccdb, cluster_tbl, cl_con_tbl, cluster_pk = cluster_pk)
 }
 
 globalVariables(c('fc', 'd(medoid)', 'is_medoid', 'n_cluster'))

@@ -14,3 +14,4 @@ manuscript/
 .ignore
 R/immcantation-utils.R
 ^WORDLIST$
+^doc$
