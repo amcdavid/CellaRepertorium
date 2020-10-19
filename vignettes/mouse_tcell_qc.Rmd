@@ -13,8 +13,11 @@ knitr::opts_chunk$set(
   comment = "#>")
 ```
 
+This vignette shows an example of loading data from the CellRanger pipeline and doing some QC to pick barcodes.  If gene expression was also collected, it is better to do joint cell calling.  
+Some types of multiplets / debris can be better assessed with by using the gene expression data.  See
+`vignette('repertoire_and_expression')` for details of how to merge repertoire with a `SingleCellExperiment` object.
+
 ```{r setup}
-#load_all()
 library(CellaRepertorium)
 library(dplyr)
 library(ggplot2)
@@ -58,22 +61,26 @@ all_anno = samp_map %>% rowwise() %>% mutate(anno = list(read_csv(anno_file, col
   raw_consensus_id = col_character()
 ))))
 
-all_anno = all_anno %>% unnest() 
+all_anno = all_anno %>% unnest(cols = c(anno)) 
 ```
 
+(The column types typically don't need to be specified in such detail, but watch for issues in the `high_confidence`, `is_cell` and `full_length` columns which may be read as a character vs logical depending on your specific inputs.  Either is fine, but you will want to be consistent across files.)
+
 We read in several files of annotated "contigs" output from 10X genomics VDJ version 3.0.
+
+
 The pipeline for assembling reads into contigs, and mapping them to UMIs and cells is described in [the 10X genomics documentation](https://support.10xgenomics.com/single-cell-vdj/software/pipelines/latest/algorithms/overview), and its source code is available [here](https://github.com/10XGenomics/cellranger/tree/5f5a6293bbc067e1965e50f0277286914b96c908).
 
 ```{r}
 cell_tbl = unique(all_anno[c("barcode","pop","sample","is_cell")])
-cdb = ContigCellDB(all_anno,contig_pk = c('barcode','pop','sample','contig_id'),cell_tbl = cell_tbl, cell_pk = c('barcode','pop','sample'))
+cdb = ContigCellDB(all_anno, contig_pk = c('barcode','pop','sample','contig_id'), cell_tbl = cell_tbl, cell_pk = c('barcode','pop','sample'))
 ```
 
 Note that initially there are `r nrow(cdb$contig_tbl)` contigs.
 
 ```{r}
 cdb = mutate_cdb(cdb, celltype = guess_celltype(chain))
-cdb = filter_cdb(cdb,high_confidence)
+cdb = filter_cdb(cdb, high_confidence)
 ```
 
 After filtering for only high_confidence contigs there are `r nrow(cdb$contig_tbl)` contigs.
@@ -94,7 +101,9 @@ ggplot(T_ab_umi, aes(color = factor(is_cell), x = T_ab, group = interaction(is_c
 *  Comparing across multiple samples
 *  When a sample has been enriched for a particular cell type (eg with pre-sequencing flow cytometry).
 
-When we consider only high confidence UMIs that unambiguous map to T cells, most "non cells" have 1 or fewer, while most putative cells have >5.  However, we might want to adopt a different UMI-based cell filter, as was done below.  Is there a way to evaluate a sensitivity/specificity in distinguishing cells from debris, or T cells from other cell types?
+When we consider only high confidence UMIs that unambiguous map to T cells, most "non cells" have 1 or fewer, while most putative cells have >5.  However, we might want to adopt a different UMI-based cell filter, as was done below.  
+
+<!-- Is there a way to evaluate a sensitivity/specificity in distinguishing cells from debris, or T cells from other cell types? -->
 
 # Reads / UMIs
 
@@ -125,20 +134,8 @@ contigs_qc = semi_join(cdb$contig_tbl, good_bc %>% select(sample, pop, barcode))
 
 And take only high confidence, full length, productive $\alpha-\beta$ T cell contigs.
 
-# "Multi-chain" T cells
 
+# Colophone
 ```{r}
-
-n_productive = contigs_qc %>% group_by(sample, pop, barcode) %>% summarize(n_productive = n())
-
-ggplot(n_productive, aes(x = interaction(sample,pop), fill = factor(n_productive))) + geom_bar(position = position_stack()) + theme_minimal() + xlab("Replicate") + ylab("Number of cell barcodes")
-
+sessionInfo()
 ```
-
-Number of productive chains per replicate.
-
-# Questions
-
-1. Can/should elements of this script be included as package functionality (cell calling/filtering?)
-2. Can the QC be made more statistically principled?
-
