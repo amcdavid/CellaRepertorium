@@ -112,6 +112,10 @@ left_join_warn = function(x, y, by, overwrite = FALSE, join = left_join, ...){
     join(x  = x, y = y, by = by, suffix = c('', '.y'), ...)
 }
 
+has_fineclustering = function(ccdb){
+    ('is_medoid' %in% names(ccdb$contig_tbl))
+}
+
 #' Find a canonical contig to represent a cluster
 #'
 #' @param ccdb [ContigCellDB()]
@@ -141,8 +145,8 @@ tie_break_keys = character(), order = 1, representative = ccdb$cluster_pk[1], co
         message("Filtering `contig_tbl` by `is_medoid`, override by setting `contig_filter_args == TRUE`")
         contig_filter_args = quote(is_medoid)
     }
-    if(!('is_medoid' %in% names(ccdb$contig_tbl))){
-        stop('Run `fine_clustering` first.')
+    if(!has_fineclustering(ccdb)){
+        stop('Run `fine_clustering(ccdb)` first.')
     }
     req_contig_fields = unique(c(contig_fields, representative, tie_break_keys))
     if(length(missing_contig <- setdiff(req_contig_fields, names(ccdb$contig_tbl))) > 0) stop('`contig_tbl` is missing fields, ', paste(missing_contig, collapse = ', '), '.')
@@ -238,7 +242,6 @@ fine_cluster_seqs = function(seqs, type = 'AA', big_memory_brute = FALSE, method
     distance = sd[medoid,]
     list(cluster = hc, distance_mat = sd, distance = distance, medoid = medoid, max_dist = max(sd))
 }
-
 
 #' Calculate the entropy of a vector
 #'

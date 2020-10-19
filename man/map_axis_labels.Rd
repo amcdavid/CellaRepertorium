@@ -6,8 +6,8 @@
 \usage{
 map_axis_labels(
   plt,
-  label_data_x,
-  label_data_y,
+  label_data_x = NULL,
+  label_data_y = NULL,
   aes_label,
   scale = ggplot2::scale_color_hue(aesthetics = "axis_color")
 )
@@ -36,6 +36,6 @@ require(ggplot2)
 require(dplyr)
 plt = ggplot(mpg, aes(x = manufacturer, y = drv)) + geom_jitter()
 label_data = mpg \%>\% select(manufacturer) \%>\% unique() \%>\%
-mutate(euro = manufacturer \%in\% c('audi', 'volkswagen'), drv = NA_character_)
-map_axis_labels(plt, label_data, label_data, euro)
+mutate(euro = manufacturer \%in\% c('audi', 'volkswagen'))
+map_axis_labels(plt, label_data_x = label_data, aes_label = euro)
 }

@@ -1,11 +1,17 @@
 ---
-title: "Clustering repertoire via CDR3 sequences"
+title: "Clustering and differential usage of repertoire CDR3 sequences"
 output: BiocStyle::html_document
+author:
+- name: Andrew McDavid
+  affiliation: University of Rochester, Department of Biostatistics and Computational Biology
+  email: Andrew_McDavid@urmc.rochester.edu
 vignette: >
-  %\VignetteIndexEntry{Clustering repertoire via CDR3 sequences}
+  %\VignetteIndexEntry{Clustering and differential usage of repertoire CDR3 sequences}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+
+In this vignette we demonstrate clustering of 3rd complementary determining region sequence (CDR3) and V-J gene identity of mouse T cells,  ways to visualize and explore clusters that are expanded, pairing of alpha-beta clusters, tests of differential CDR3 usage, and permutation tests for overall clonal properties.
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
@@ -24,6 +30,7 @@ library(purrr)
 ```
 
 
+
 # Load filtered contig files
 
 We begin with a `data.frame` of concatenated contig files ('all_contig_annotations.csv'), output from the Cellranger VDJ pipeline.
@@ -34,52 +41,67 @@ MIN_CDR3_AA = 6
 
 
 cdb = ContigCellDB_10XVDJ(contigs_qc, contig_pk = c('barcode', 'pop', 'sample', 'contig_id'), cell_pk = c('barcode', 'pop', 'sample'))
+cdb
+```
 
+Initially we start with  `r nrow(cdb)` cells and `r nrow(cdb$contig_tbl)` contigs.  We keep contigs that are 
+
+* full - length 
+* productive
+* high-confidence
+* only from T cells
+* and with CDR3 sufficiently long.
+
+Then we add a descriptive readable name for each contig.
+
+```{r}
 cdb$contig_tbl = dplyr::filter(cdb$contig_tbl, full_length, productive == 'True', high_confidence, chain != 'Multi', str_length(cdr3) > MIN_CDR3_AA) %>% mutate( fancy_name = fancy_name_contigs(., str_c(pop, '_', sample)))
 
 ```
 
-`r nrow(cdb)` good chains (either TRA or TRB); each cell can appear more than once.
+After filtering, there are `r nrow(cdb)` cells and `r nrow(cdb$contig_tbl)` contigs.
 
 
-# Chain pairings
 
-```{r}
-paired_chain = enumerate_pairing(cdb, chain_recode_fun = 'guess')
+# Clustering contigs by sequence characteristics
 
-ggplot(paired_chain, aes(x = interaction(sample, pop), fill = pairing)) + geom_bar() + facet_wrap(~canonical, scale = 'free_x') + coord_flip() + theme_minimal()
-
-```
-
-
-# Cluster CDR3 protein sequences
-
+As a first step to define clonotypes, we will first find equivalence classes of CDR3 sequences with the program [CD-HIT](http://weizhongli-lab.org/cdhit_suite/cgi-bin/index.cgi?cmd=cd-hit). In this case, we use the translated amino acid residues, but often one might prefer to use the DNA sequences, by setting the `sequence_key` accordingly and `type = 'DNA'`. Additionally, a higher identity threshold might be appropriate  (see below).
 
 ```{r}
-aa80 = cdhit_ccdb(cdb, 'cdr3', type = 'AA', cluster_pk = 'aa80', identity = .8)
+aa80 = cdhit_ccdb(cdb, sequence_key = 'cdr3', type = 'AA', cluster_pk = 'aa80', 
+                  identity = .8, min_length = 5, G = 1)
 aa80 = fine_clustering(aa80, sequence_key = 'cdr3', type = 'AA', keep_clustering_details = TRUE)
-
-# This maybe should be a turned into a function 
-# Other plots should be considered:
-# That show how clusters are split between samples, chains, etc
-ggplot(aa80$cluster_tbl %>% filter(n_cluster>1) %>% gather(key, value, -aa80, -fc) , aes(x = value))+ facet_wrap(~key, scales = 'free') + geom_histogram() + scale_y_sqrt()
-
 ```
 
-We cluster the CDR3 translated amino acid residues with the program [CD-HIT](http://weizhongli-lab.org/cdhit_suite/cgi-bin/index.cgi?cmd=cd-hit).  A sequence is included in a cluster if it matches by 100% similarity and has the same CDR3 length.  Note that this can and should be relaxed -- especially in the beta chain we see "near clones" that only differ by a residue or two, seemingly in stylized places.
+This partitions sequences into sets with >80% mutual similarity in the amino acid sequence,  adds some additional information about the clustering, and returns it as a `ContigCellDB` object named `aa80`.  The primary key for the clusters is `r aa80$cluster_pk`.  The `min_length` can be set somewhat smaller, but there is a lower limit for the cdhit algorithm.  `G=1`, the default, specifies a global alignment.  This is almost always what is desired, but local alignment is available if `G=0`.
+
+```{r}
+head(aa80$cluster_tbl)
+head(aa80$contig_tbl) %>% select(contig_id, aa80, is_medoid, `d(medoid)`)
+```
+
+The `cluster_tbl`  lists the `r nrow(aa80$cluster_tbl)` 80% identity groups found, including the number of contigs in the cluster, and the average distance between elements in the group.
+In the `contig_tbl`, there are two columns specifying if the contig `is_medoid`, that is, is the most representative element of the set and the distance to the medoid element `d(medoid)`.
 
 
-# Cluster CDR3 DNA sequences
+```{r}
+cluster_plot(aa80)
+```
+
+
+
+## Cluster CDR3 DNA sequences
 
 ```{r, results = 'hide'}
 cdb = cdhit_ccdb(cdb, 'cdr3_nt', type = 'DNA', cluster_pk = 'DNA97', identity = .965, min_length = MIN_CDR3_AA*3-1, G = 1)
 cdb = fine_clustering(cdb, sequence_key = 'cdr3_nt', type = 'DNA')
-ggplot(cdb$cluster_tbl %>% filter(n_cluster>1) %>% gather(key, value, -DNA97) , aes(x = value))+ facet_wrap(~key, scales = 'free') + geom_histogram() + scale_y_sqrt()
+
+cluster_plot(cdb)
 ```
 
 We can also cluster by DNA identity.
 
-# Cluster by V-J identity
+## Cluster by V-J identity
 
 ```{r}
 germline_cluster = cluster_germline(cdb, segment_keys = c('v_gene', 'j_gene', 'chain'), cluster_pk = 'segment_idx')
@@ -102,8 +124,7 @@ Average Levenshtein distance of CDR3 within each pair.  This might be turned int
 
 
 
-
-# Oligo clusters
+## Expanded clusters
 
 Next, we will examine the clusters that are found in many contigs.  First we will get a canonical contig to represent each cluster.  This will be the medoid contig, by default.
 
@@ -131,7 +152,7 @@ knitr::kable(oligo_clusters %>% select(aa80:cdr3, chain:j_gene, avg_distance, n_
 
 ```
 
-Report some statistics about these expanded clusters.
+Report some statistics about these expanded clusters, such as how often they are found, how many subjects, etc.
 
 ```{r}
 oligo_plot = ggplot(oligo_contigs$contig_tbl, aes(x = representative, fill = chain)) + geom_bar() + coord_flip() + scale_fill_brewer(type = 'qual') + theme_minimal()
@@ -149,33 +170,40 @@ But come from multiple populations and samples.
 
 ## Some simple phylogenetic relationships
 
+By using the within-cluster distances, some rudamentory plots attempting to show phylogenetic associations are possible.  (These are most biologically appropriate for B cells that undergo somatic hypermutation.)  
+
 ```{r}
 library(ggdendro)
 
-# This should be turned into a function in the package somehow
-# But plot arguments will be super-variable
-# Maybe just return the `hc` object?
 dendro_plot = function(ccdb, idx, method = 'complete'){
     h = filter(ccdb$cluster_tbl, !!sym(ccdb$cluster_pk) == idx) %>% pull(fc) %>% .[[1]]
     quer = filter(ccdb$contig_tbl, !!sym(ccdb$cluster_pk) == idx)
     hc = hclust(as.dist(h$distance_mat), method = method) %>% dendro_data(type = "rectangle")
     hc$labels = cbind(hc$labels, quer)
    ggplot(hc$segments, aes(x=x, y=y)) + geom_segment(aes(xend=xend, yend=yend)) + 
-  theme_classic() + geom_text(data = hc$labels, aes(color = sample, label = fancy_name), size = 3, angle = 60) + scale_x_continuous(breaks = NULL) + ylab('AA Distance') + xlab('')
+  theme_classic() + geom_text(data = hc$labels, aes(color = sample, label = fancy_name), size = 3, angle = 60, hjust =0, vjust = 0) + scale_x_continuous(breaks = NULL) + ylab('AA Distance') + xlab('')
 }
 
-to_plot = filter(aa80$cluster_tbl, n_cluster >= MIN_OLIGO)
+to_plot = aa80$cluster_tbl %>% filter(min_rank(-n_cluster) == 1)
 
 map(to_plot$aa80, ~ dendro_plot(aa80, .))
 
 ```
 
+A full-blown generative model of clonal generation and selection would be recommended for any actual analysis, but these plots may suffice to get a quick idea of the phylogenetic structure.
+
 ## Formal testing for frequency differences
 
-```{r,  results = 'hide'}
-mm_out = cluster_test_by(aa80, fields = 'chain', 'cluster_tbl', ~ pop + (1|sample), filterset = cluster_filterset(white_list = oligo_clusters)) %>% left_join(oligo_clusters)
+We can test for differential usage of a clone, or cluster with `cluster_logistic_test` and `cluster_test_by`.  The latter splits the `cluster_tbl` by `field = 'chain'`, thereby adjusting the number of cell trials included in the "denominator" of the logistic regression. 
+The formula tests for differences between populations, including the sample as a random effect, and only tests clusters that are included in the `oligo_clusters` set.
 
-mm_out = mutate(mm_out, conf.low = estimate-1.96*std.error, conf.high = estimate + 1.96*std.error)
+
+```{r,  results = 'hide'}
+mm_out = cluster_test_by(aa80, fields = 'chain', tbl = 'cluster_tbl', formula = ~ pop + (1|sample), filterset = cluster_filterset(white_list = oligo_clusters)) %>%
+  left_join(oligo_clusters)
+
+mm_out = mutate(mm_out, conf.low = estimate-1.96*std.error, 
+                conf.high = estimate + 1.96*std.error)
 
 ```
 
@@ -186,9 +214,32 @@ ggplot(mm_outj, aes(x = representative, ymin = conf.low, ymax = conf.high, y = e
 ```
 
 
+We test if the binomial rate of clone expression differs between balbc and b6, for the selected clones.  None appear to be different.
 
+## Length of CDR3
 
-We test if the binomial rate of clone expression differs between CD31+/- or term, for each clone.
+```{r}
+aa80$contig_tbl = aa80$contig_tbl %>% mutate(cdr3_length = str_length(cdr3_nt))
+ggplot(aa80$contig_tbl, aes(fill = pop, x= cdr3_length)) +
+  geom_histogram(binwidth = 1, mapping = aes(y = ..density..)) + 
+  theme_minimal() + scale_fill_brewer(type = 'qual') + 
+  facet_grid(sample ~chain) + theme(strip.text.y = element_text(angle = 0)) + coord_cartesian(xlim = c(25, 55))
+
+```
+
+Some authors have noted that the length of the CDR3 region can be predictive of T cell differentiation. In our study, there doesn't appear to be a noticeable difference between BALB/c and C57BL/6J (b6) mice, but if we needed to make sure, an appropriate procedure would be to run a mixed model with a random `sample` effect (assumed to represent a biological replicate).
+
+```{r cdr3_len, fig.width = 3, fig.height = 3}
+cdr_len = aa80$contig_tbl %>% group_by(chain) %>% do(broom::tidy(lme4::lmer(cdr3_length ~ pop + (1|sample), data = .), conf.int = TRUE))
+ggplot(cdr_len %>% filter(term == 'popbalbc'), aes(x = interaction(chain, term), y = estimate, ymin = conf.low, ymax = conf.high)) + 
+  geom_pointrange() + theme_minimal() + coord_flip() + 
+  ylab('Length(CDR3 Nt)') + xlab('Term/Chain') + geom_hline(yintercept = 0, lty = 2)
+
+```
+
+We end up with a (harmless) convergence warning about a singular fit.  This is expected, because the `samples` aren't actually replicates -- they are just subsamples drawn for illustrative purposes.
+The Balbc mice  have .5 fewer nucleotides per contig, on average,  and this is not significant.
+
 
 # Clonal pairs
 
@@ -224,23 +275,78 @@ pairing_list = pairing_tables(aa80, table_order = 2, orphan_level = 1, min_expan
 
 By setting `min_expansion = Inf, cluster_whitelist = whitelist` we can examine any pairings for a set of cluster_idx, in this case the ones that were seen multiple times.  Interestingly (and unlike some human samples) the expanded clusters are  $\beta$-chain, and their $\alpha$ chains are sprinkled quite evenly across clusters.
 
-# Length of CDR3
+# Permutation tests
+
+Permutation tests allow tests of independence between cluster assignments and other cell-level covariates (such as the sample from which the cell was derived).  The cluster label is permuted to break the link between cell and cluster, and an arbitrary statistic of both cluster label, and cell covariate is evaluated.
 
 ```{r}
-aa80$contig_tbl = aa80$contig_tbl %>% mutate(cdr3_length = str_length(cdr3_nt))
-ggplot(aa80$contig_tbl, aes(fill = pop, x= cdr3_length)) + geom_histogram(binwidth = 1, mapping = aes(y = ..density..)) + theme_minimal() + scale_fill_brewer(type = 'qual') + facet_grid(sample ~chain) + theme(strip.text.y = element_text(angle = 0)) + coord_cartesian(xlim = c(25, 55))
+aa80_chain = split_cdb(aa80, 'chain') %>% lapply(canonicalize_cell, contig_fields = 'aa80')
 
+compare_expanded = function(cluster_idx, grp){
+  # cluster_idx contains the permuted cluster assignments
+  # grp the cell_covariate_keys.
+  # NB: this is always a data.frame even if it is just a single column
+  # cross tab by pop
+  tab = table(cluster_idx, grp[[1]])
+  # count number of times an aa80 class was expanded
+  expanded = colSums(tab>=2)
+  # compare difference
+  expanded['b6'] - expanded['balbc']
+}
 ```
 
-Plot the CDR3 length distribution for each sample and pop.  There doesn't appear to be a noticeable difference between BALB/c and C57BL/6J (b6) mice, but if we needed to make sure, an appropriate procedure would be to run a mixed model with a random `sample` effect (assumed to represent a biological replicate).
+The signature of the statistic should be of a vector `cluster_idx` and `data.frame`.
 
+```{r}
+set.seed(1234)
+perm1 = cluster_permute_test(aa80_chain$TRB, cell_covariate_keys = 'pop', cell_label_key = 'aa80', n_perm = 100, statistic = compare_expanded)
 
-```{r cdr3_len, fig.width = 3, fig.height = 3}
-cdr_len = aa80$contig_tbl %>% group_by(chain) %>% do(broom::tidy(lme4::lmer(cdr3_length ~ pop + (1|sample), data = .), conf.int = TRUE))
-ggplot(cdr_len %>% filter(group == 'fixed', term != '(Intercept)'), aes(x = interaction(chain, term), y = estimate, ymin = conf.low, ymax = conf.high)) + geom_pointrange() + theme_minimal() + coord_flip() + ylab('Length(CDR3 Nt)') + xlab('Term/Chain')
-
+perm1
 ```
 
-We end up with a (harmless) convergence warning about a singular fit.  This is expected, because the `samples` aren't actually replicates -- they are just subsamples drawn for illustrative purposes.
-The Balbc mice  have .5 fewer nucleotides per contig, on average,  and this is not significant.
+Although b6 mice had `r perm1$observed` more clones observed to be expanded (occuring >=2 times) than balbc, this is not signficant under a null model where cells were permuted between mouse types (populations), where b6 are expected to have about `r round(perm1$expected)` more expanded clones, just due to the additional number of cells sampled in b6 and the particular spectrum of clonal frequencies in this experiment:
 
+```{r}
+knitr::kable(table(pop = aa80_chain$TRB$pop))
+```
+
+Indeed if we resample in a way that fixes each group to have the same number of cells:
+```{r}
+rarify = aa80_chain$TRB$cell_tbl %>% group_by(pop) %>% do(slice_sample(., n = 377))
+
+aa80_chain$TRB$cell_tbl = semi_join(aa80_chain$TRB$cell_tbl, rarify)
+
+cluster_permute_test(aa80_chain$TRB, cell_covariate_keys = 'pop', cell_label_key = 'aa80', n_perm = 500, statistic = compare_expanded)
+```
+
+We see that this discrepacy between the number of expanded clones between subpopulations is  mostly explained by a greater number of cells sampled in b6, but also random variability plays a role.
+
+We can also test for oligoclonality, eg, how often is a beta chain expanded in a sample:
+
+```{r}
+count_expanded = function(cluster_idx, grp){
+  # clusters x sample contigency table
+  tab = table(cluster_idx, grp[[1]])
+  # number of cluster x samples that occured more than once
+  expanded = sum(tab>1)
+  expanded
+}
+
+perm3 = cluster_permute_test(aa80_chain$TRB,  cell_covariate_keys = 'sample', cell_label_key = 'aa80', n_perm = 500, statistic = count_expanded)
+perm3
+```
+
+`r perm3$observed` expanded clones were observed in each of the two populations vs `r round(perm3$expected)` expected, and this discrepancy would be significant at $p<$ `r ceiling(perm3$p.value*100)/100`.  This is indicating that there is underdispersion -- fewer clusters are expanded than expected, given the spectrum of clonal frequencies and the number of cells per sample.
+
+To further elucidate this, we can restrict the permutations to maintain certain margins of the table by specifying `cell_stratify_keys.`  This doesn't effect the observed values of the statistics, but will change the expected values (since these are now conditional expectations.)  Here we restrict the permutations within levels of `pop` (eg, only permuting within balbc, and within b6).
+
+```{r}
+cluster_permute_test(aa80_chain$TRB,   cell_covariate_keys = 'sample', cell_stratify_keys = 'pop', cell_label_key = 'aa80', n_perm = 500, statistic = count_expanded)
+```
+
+In the restricted permutations, the expected number of expanded clusters is even greater.  Both of these effects are due to the fact that the "sample" replicates, within each population actually are not biological replicates, which inflates the `cluster_idx` margin of the table.
+
+# Colophone
+```{r}
+sessionInfo()
+```
