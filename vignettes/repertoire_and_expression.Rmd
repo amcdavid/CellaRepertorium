@@ -24,8 +24,12 @@ library(stringr)
 library(purrr)
 ```
 
+It is possible to combine `ContigCellDB` objects with `SingleCellExperiment` objects that measure overlapping barcodes.  We choose to include the `ContigCellDB` object as a member of the `colData`.  In this way, it is possible to include different cellular "views" of the repertoire, such as the alpha chain and beta chain properties, as well as the paired clonotypes.
+
 
 # "Load" expression
+
+First we'll cook up some single cell expression data.
 
 ```{r}
 set.seed(1345)
@@ -41,7 +45,7 @@ extra = samples %>% rowwise() %>% mutate(extrabc = {
   extra_bc = floor(runif(1, 0, 100))
   list(tibble(barcode = paste0('barcode', seq_len(extra_bc))))
 }) 
-extra = extra %>% unnest()
+extra = extra %>% unnest(cols = c(extrabc))
 all_bc = bind_rows(extra, barcodes)
 
 ```
@@ -59,14 +63,14 @@ sce = SingleCellExperiment(assay = list(counts = expression), colData = all_bc)
 # Remake the ContigCellDB with empty cells
 
 ```{r}
-ccdb2 = ContigCellDB(ccdb_ex$contig_tbl, contig_pk = ccdb_ex$contig_pk, cell_tbl = colData(sce), cell_pk = ccdb_ex$cell_pk, equalize = FALSE)
+ccdb2 = ccdb_join(sce, ccdb_ex)
 
 ccdb2 = cdhit_ccdb(ccdb2, 'cdr3', type = 'AA', cluster_pk = 'aa80', identity = .8, min_length = 5)
 ccdb2 = fine_clustering(ccdb2, sequence_key = 'cdr3', type = 'AA', keep_clustering_details = FALSE)
 
 ```
 
-Key is to construct with `equalize = FALSE`, which will allow some cells to lack contigs.
+The `ccdb_join(template, ccdb)` function does a left join of the `template` onto the `cell_tbl` of the `ccdb`.   This will ensure that the `cell_tbl` is expanded and ordered properly to mesh with `sce` when we add it below.
 
 
 # Chain pairings
@@ -79,11 +83,13 @@ colData(sce)$beta =  canonicalize_cell(ccdb2, chain == 'TRB', contig_fields = c(
 colData(sce)$pairing = enumerate_pairing(ccdb2, chain_recode_fun = 'guess')
 ```
 
+We can add multiple views, represented as fields in the `colData(sce)` of the repertoire. 
+
 # Visualization of TCR features with Scater
 
 We can leverage Scater's ability to use "nested" data frames to visualize TCR features.
 
-```{r, out.height='500px', out.width = '500px'}
+```{r}
 library(scater)
 sce = logNormCounts(sce)
 sce = runPCA(sce)
@@ -99,3 +105,9 @@ plotReducedDim(only_paired, dimred = 'PCA', colour_by = I(only_paired$beta$j_gen
 ```
 
 Since the `ContigCellDB` is nested within the `SingleCellExperiment` it automatically gets subsetted appropriately when the parent object is subsetted.  Enough `data.frame`-like semantics have been implemented so that fields from the `cell_tbl` can be visualized.
+
+# Colophone
+
+```{r}
+sessionInfo()
+```
