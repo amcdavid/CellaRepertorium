@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CellaRepertorium</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
       </span>
     </div>
 
@@ -54,7 +54,10 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/cdr3_clustering.html">Clustering repertoire via CDR3 sequences</a>
+      <a href="../articles/cdr3_clustering.html">Clustering and differential usage of repertoire CDR3 sequences</a>
+    </li>
+    <li>
+      <a href="../articles/cr-overview.html">An Introduction to CellaRepertorium</a>
     </li>
     <li>
       <a href="../articles/mouse_tcell_qc.html">Quality control and Exploration of UMI-based repertoire data</a>
@@ -85,7 +88,8 @@
 
       
 
-      </header><div class="row">
+      </header><link href="repertoire_and_expression_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
+<script src="repertoire_and_expression_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Combining Repertoire with Expression with SingleCellExperiment</h1>
@@ -98,10 +102,33 @@
 
     
     
-<div class="sourceCode" id="cb1"><pre class="downlit">
+<div class="sourceCode"><pre class="downlit">
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/amcdavid/CellaRepertorium">CellaRepertorium</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">SingleCellExperiment</span><span class="op">)</span>
+<span class="co">#&gt; Warning: package 'SingleCellExperiment' was built under R version 4.0.3</span>
 <span class="co">#&gt; Loading required package: SummarizedExperiment</span>
+<span class="co">#&gt; Loading required package: MatrixGenerics</span>
+<span class="co">#&gt; Warning: package 'MatrixGenerics' was built under R version 4.0.3</span>
+<span class="co">#&gt; Loading required package: matrixStats</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Attaching package: 'MatrixGenerics'</span>
+<span class="co">#&gt; The following objects are masked from 'package:matrixStats':</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;     colAlls, colAnyNAs, colAnys, colAvgsPerRowSet, colCollapse,</span>
+<span class="co">#&gt;     colCounts, colCummaxs, colCummins, colCumprods, colCumsums,</span>
+<span class="co">#&gt;     colDiffs, colIQRDiffs, colIQRs, colLogSumExps, colMadDiffs,</span>
+<span class="co">#&gt;     colMads, colMaxs, colMeans2, colMedians, colMins, colOrderStats,</span>
+<span class="co">#&gt;     colProds, colQuantiles, colRanges, colRanks, colSdDiffs, colSds,</span>
+<span class="co">#&gt;     colSums2, colTabulates, colVarDiffs, colVars, colWeightedMads,</span>
+<span class="co">#&gt;     colWeightedMeans, colWeightedMedians, colWeightedSds,</span>
+<span class="co">#&gt;     colWeightedVars, rowAlls, rowAnyNAs, rowAnys, rowAvgsPerColSet,</span>
+<span class="co">#&gt;     rowCollapse, rowCounts, rowCummaxs, rowCummins, rowCumprods,</span>
+<span class="co">#&gt;     rowCumsums, rowDiffs, rowIQRDiffs, rowIQRs, rowLogSumExps,</span>
+<span class="co">#&gt;     rowMadDiffs, rowMads, rowMaxs, rowMeans2, rowMedians, rowMins,</span>
+<span class="co">#&gt;     rowOrderStats, rowProds, rowQuantiles, rowRanges, rowRanks,</span>
+<span class="co">#&gt;     rowSdDiffs, rowSds, rowSums2, rowTabulates, rowVarDiffs, rowVars,</span>
+<span class="co">#&gt;     rowWeightedMads, rowWeightedMeans, rowWeightedMedians,</span>
+<span class="co">#&gt;     rowWeightedSds, rowWeightedVars</span>
 <span class="co">#&gt; Loading required package: GenomicRanges</span>
 <span class="co">#&gt; Loading required package: stats4</span>
 <span class="co">#&gt; Loading required package: BiocGenerics</span>
@@ -138,33 +165,17 @@
 <span class="co">#&gt;     Vignettes contain introductory material; view with</span>
 <span class="co">#&gt;     'browseVignettes()'. To cite Bioconductor, see</span>
 <span class="co">#&gt;     'citation("Biobase")', and for packages 'citation("pkgname")'.</span>
-<span class="co">#&gt; Loading required package: DelayedArray</span>
-<span class="co">#&gt; Loading required package: Matrix</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Attaching package: 'Matrix'</span>
-<span class="co">#&gt; The following object is masked from 'package:S4Vectors':</span>
+<span class="co">#&gt; Attaching package: 'Biobase'</span>
+<span class="co">#&gt; The following object is masked from 'package:MatrixGenerics':</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt;     expand</span>
-<span class="co">#&gt; Loading required package: matrixStats</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Attaching package: 'matrixStats'</span>
-<span class="co">#&gt; The following objects are masked from 'package:Biobase':</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;     anyMissing, rowMedians</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Attaching package: 'DelayedArray'</span>
+<span class="co">#&gt;     rowMedians</span>
 <span class="co">#&gt; The following objects are masked from 'package:matrixStats':</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt;     colMaxs, colMins, colRanges, rowMaxs, rowMins, rowRanges</span>
-<span class="co">#&gt; The following objects are masked from 'package:base':</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;     aperm, apply, rowsum</span>
+<span class="co">#&gt;     anyMissing, rowMedians</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Attaching package: 'dplyr'</span>
-<span class="co">#&gt; The following object is masked from 'package:matrixStats':</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;     count</span>
 <span class="co">#&gt; The following object is masked from 'package:Biobase':</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;     combine</span>
@@ -183,6 +194,9 @@
 <span class="co">#&gt; The following objects are masked from 'package:BiocGenerics':</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;     combine, intersect, setdiff, union</span>
+<span class="co">#&gt; The following object is masked from 'package:matrixStats':</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;     count</span>
 <span class="co">#&gt; The following objects are masked from 'package:stats':</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;     filter, lag</span>
@@ -190,13 +204,10 @@
 <span class="co">#&gt; </span>
 <span class="co">#&gt;     intersect, setdiff, setequal, union</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://readr.tidyverse.org">readr</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://readr.tidyverse.org">readr</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org">tidyr</a></span><span class="op">)</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Attaching package: 'tidyr'</span>
-<span class="co">#&gt; The following objects are masked from 'package:Matrix':</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;     expand, pack, unpack</span>
 <span class="co">#&gt; The following object is masked from 'package:S4Vectors':</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;     expand</span>
@@ -204,19 +215,18 @@
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://purrr.tidyverse.org">purrr</a></span><span class="op">)</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Attaching package: 'purrr'</span>
-<span class="co">#&gt; The following object is masked from 'package:DelayedArray':</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;     simplify</span>
 <span class="co">#&gt; The following object is masked from 'package:GenomicRanges':</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;     reduce</span>
 <span class="co">#&gt; The following object is masked from 'package:IRanges':</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;     reduce</span></pre></div>
+<p>It is possible to combine <code>ContigCellDB</code> objects with <code>SingleCellExperiment</code> objects that measure overlapping barcodes. We choose to include the <code>ContigCellDB</code> object as a member of the <code>colData</code>. In this way, it is possible to include different cellular "views" of the repertoire, such as the alpha chain and beta chain properties, as well as the paired clonotypes.</p>
 <div id="load-expression" class="section level1">
 <h1 class="hasAnchor">
-<a href="#load-expression" class="anchor"></a>“Load” expression</h1>
-<div class="sourceCode" id="cb2"><pre class="downlit">
+<a href="#load-expression" class="anchor"></a>"Load" expression</h1>
+<p>First we'll cook up some single cell expression data.</p>
+<div class="sourceCode"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">1345</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">ccdb_ex</span><span class="op">)</span>
 <span class="va">barcodes</span> <span class="op">=</span> <span class="va">ccdb_ex</span><span class="op">$</span><span class="va">cell_tbl</span><span class="op">[</span><span class="va">ccdb_ex</span><span class="op">$</span><span class="va">cell_pk</span><span class="op">]</span>
@@ -230,12 +240,10 @@
   <span class="va">extra_bc</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">floor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">100</span><span class="op">)</span><span class="op">)</span>
   <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span>barcode <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">'barcode'</span>, <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_len</a></span><span class="op">(</span><span class="va">extra_bc</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 <span class="op">}</span><span class="op">)</span> 
-<span class="va">extra</span> <span class="op">=</span> <span class="va">extra</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; Warning: `cols` is now required when using unnest().</span>
-<span class="co">#&gt; Please use `cols = c(extrabc)`</span>
+<span class="va">extra</span> <span class="op">=</span> <span class="va">extra</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html">unnest</a></span><span class="op">(</span>cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">extrabc</span><span class="op">)</span><span class="op">)</span>
 <span class="va">all_bc</span> <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html">bind_rows</a></span><span class="op">(</span><span class="va">extra</span>, <span class="va">barcodes</span><span class="op">)</span></pre></div>
-<p>Simulate some “cells” and “genes” that nearly form a superset of the cells for which repertoire are available. This is generally true if no barcode filters have been applied to the expression data. In practice a few cells may have repertoire but not expression (or fail QC for expression). We will work with the intersection of these cells.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit">
+<p>Simulate some "cells" and "genes" that nearly form a superset of the cells for which repertoire are available. This is generally true if no barcode filters have been applied to the expression data. In practice a few cells may have repertoire but not expression (or fail QC for expression). We will work with the intersection of these cells.</p>
+<div class="sourceCode"><pre class="downlit">
 <span class="va">genes</span> <span class="op">=</span> <span class="fl">200</span>
 <span class="va">cells</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">all_bc</span><span class="op">)</span>
 <span class="va">array_size</span> <span class="op">=</span> <span class="va">genes</span><span class="op">*</span><span class="va">cells</span>
@@ -245,47 +253,118 @@
 <div id="remake-the-contigcelldb-with-empty-cells" class="section level1">
 <h1 class="hasAnchor">
 <a href="#remake-the-contigcelldb-with-empty-cells" class="anchor"></a>Remake the ContigCellDB with empty cells</h1>
-<div class="sourceCode" id="cb4"><pre class="downlit">
-<span class="va">ccdb2</span> <span class="op">=</span> <span class="fu"><a href="../reference/ContigCellDB.html">ContigCellDB</a></span><span class="op">(</span><span class="va">ccdb_ex</span><span class="op">$</span><span class="va">contig_tbl</span>, contig_pk <span class="op">=</span> <span class="va">ccdb_ex</span><span class="op">$</span><span class="va">contig_pk</span>, cell_tbl <span class="op">=</span> <span class="fu">colData</span><span class="op">(</span><span class="va">sce</span><span class="op">)</span>, cell_pk <span class="op">=</span> <span class="va">ccdb_ex</span><span class="op">$</span><span class="va">cell_pk</span>, equalize <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+<div class="sourceCode"><pre class="downlit">
+<span class="va">ccdb2</span> <span class="op">=</span> <span class="fu"><a href="../reference/ccdb_join.html">ccdb_join</a></span><span class="op">(</span><span class="va">sce</span>, <span class="va">ccdb_ex</span><span class="op">)</span>
 
-<span class="va">ccdb2</span> <span class="op">=</span> <span class="fu"><a href="../reference/cdhit_ccdb.html">cdhit_ccdb</a></span><span class="op">(</span><span class="va">ccdb2</span>, <span class="st">'cdr3'</span>, type <span class="op">=</span> <span class="st">'AA'</span>, cluster_name <span class="op">=</span> <span class="st">'aa80'</span>, identity <span class="op">=</span> <span class="fl">.8</span>, min_length <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>
+<span class="va">ccdb2</span> <span class="op">=</span> <span class="fu"><a href="../reference/cdhit_ccdb.html">cdhit_ccdb</a></span><span class="op">(</span><span class="va">ccdb2</span>, <span class="st">'cdr3'</span>, type <span class="op">=</span> <span class="st">'AA'</span>, cluster_pk <span class="op">=</span> <span class="st">'aa80'</span>, identity <span class="op">=</span> <span class="fl">.8</span>, min_length <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>
 <span class="va">ccdb2</span> <span class="op">=</span> <span class="fu"><a href="../reference/fine_clustering.html">fine_clustering</a></span><span class="op">(</span><span class="va">ccdb2</span>, sequence_key <span class="op">=</span> <span class="st">'cdr3'</span>, type <span class="op">=</span> <span class="st">'AA'</span>, keep_clustering_details <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
-<span class="co">#&gt; Calculating intradistances on 997 clusters.</span>
+<span class="co">#&gt; Calculating intradistances on 993 clusters.</span>
 <span class="co">#&gt; Summarizing</span></pre></div>
-<p>Key is to construct with <code>equalize = FALSE</code>, which will allow some cells to lack contigs.</p>
+<p>The <code><a href="../reference/ccdb_join.html">ccdb_join(template, ccdb)</a></code> function does a left join of the <code>template</code> onto the <code>cell_tbl</code> of the <code>ccdb</code>. This will ensure that the <code>cell_tbl</code> is expanded and ordered properly to mesh with <code>sce</code> when we add it below.</p>
 </div>
 <div id="chain-pairings" class="section level1">
 <h1 class="hasAnchor">
 <a href="#chain-pairings" class="anchor"></a>Chain pairings</h1>
-<div class="sourceCode" id="cb5"><pre class="downlit">
+<div class="sourceCode"><pre class="downlit">
 <span class="fu">colData</span><span class="op">(</span><span class="va">sce</span><span class="op">)</span><span class="op">$</span><span class="va">alpha</span> <span class="op">=</span>  <span class="fu"><a href="../reference/canonicalize_cell.html">canonicalize_cell</a></span><span class="op">(</span><span class="va">ccdb2</span>, <span class="va">chain</span> <span class="op">==</span> <span class="st">'TRA'</span>, contig_fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'chain'</span>, <span class="st">'v_gene'</span>,<span class="st">'d_gene'</span>, <span class="st">'j_gene'</span>, <span class="st">'aa80'</span><span class="op">)</span><span class="op">)</span>
 
 <span class="fu">colData</span><span class="op">(</span><span class="va">sce</span><span class="op">)</span><span class="op">$</span><span class="va">beta</span> <span class="op">=</span>  <span class="fu"><a href="../reference/canonicalize_cell.html">canonicalize_cell</a></span><span class="op">(</span><span class="va">ccdb2</span>, <span class="va">chain</span> <span class="op">==</span> <span class="st">'TRB'</span>, contig_fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'chain'</span>, <span class="st">'v_gene'</span>,<span class="st">'d_gene'</span>, <span class="st">'j_gene'</span>, <span class="st">'aa80'</span><span class="op">)</span><span class="op">)</span>
 
 <span class="fu">colData</span><span class="op">(</span><span class="va">sce</span><span class="op">)</span><span class="op">$</span><span class="va">pairing</span> <span class="op">=</span> <span class="fu"><a href="../reference/ig_chain_recode.html">enumerate_pairing</a></span><span class="op">(</span><span class="va">ccdb2</span>, chain_recode_fun <span class="op">=</span> <span class="st">'guess'</span><span class="op">)</span></pre></div>
+<p>We can add multiple views, represented as fields in the <code>colData(sce)</code> of the repertoire.</p>
 </div>
 <div id="visualization-of-tcr-features-with-scater" class="section level1">
 <h1 class="hasAnchor">
 <a href="#visualization-of-tcr-features-with-scater" class="anchor"></a>Visualization of TCR features with Scater</h1>
-<p>We can leverage Scater’s ability to use “nested” data frames to visualize TCR features.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit">
+<p>We can leverage Scater's ability to use "nested" data frames to visualize TCR features.</p>
+<div class="sourceCode"><pre class="downlit">
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://bioconductor.org/packages/scater/">scater</a></span><span class="op">)</span>
+<span class="co">#&gt; Warning: package 'scater' was built under R version 4.0.3</span>
 <span class="va">sce</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/scuttle/man/logNormCounts.html">logNormCounts</a></span><span class="op">(</span><span class="va">sce</span><span class="op">)</span>
 <span class="va">sce</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/scater/man/runPCA.html">runPCA</a></span><span class="op">(</span><span class="va">sce</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/scater/man/plotReducedDim.html">plotReducedDim</a></span><span class="op">(</span><span class="va">sce</span>, dimred <span class="op">=</span> <span class="st">'PCA'</span>, colour_by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span><span class="op">(</span><span class="va">sce</span><span class="op">$</span><span class="va">pairing</span><span class="op">$</span><span class="va">pairing</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/scater/man/plotReducedDim.html">plotReducedDim</a></span><span class="op">(</span><span class="va">sce</span>, dimred <span class="op">=</span> <span class="st">'PCA'</span>, colour_by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span><span class="op">(</span><span class="va">sce</span><span class="op">$</span><span class="va">pairing</span><span class="op">$</span><span class="va">pairing</span><span class="op">)</span>, point_alpha <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>
 <span class="co">#&gt; Warning: Removed 286 rows containing missing values (geom_point).</span></pre></div>
-<p><img src="repertoire_and_expression_files/figure-html/unnamed-chunk-6-1.png" width="500px" height="500px"></p>
-<p>Here we calculate the first two principal components (which aren’t very interesting because these are simulated data without any special structure), and then visualize if the TCR was paired or not.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit">
+<p><img src="repertoire_and_expression_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
+<p>Here we calculate the first two principal components (which aren't very interesting because these are simulated data without any special structure), and then visualize if the TCR was paired or not.</p>
+<div class="sourceCode"><pre class="downlit">
 <span class="va">only_paired</span> <span class="op">=</span> <span class="va">sce</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">sce</span><span class="op">$</span><span class="va">pairing</span><span class="op">$</span><span class="va">pairing</span> <span class="op">==</span> <span class="st">'paired'</span><span class="op">)</span><span class="op">]</span>
-<span class="fu"><a href="https://rdrr.io/pkg/scater/man/plotReducedDim.html">plotReducedDim</a></span><span class="op">(</span><span class="va">only_paired</span>, dimred <span class="op">=</span> <span class="st">'PCA'</span>, colour_by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span><span class="op">(</span><span class="va">only_paired</span><span class="op">$</span><span class="va">alpha</span><span class="op">$</span><span class="va">j_gene</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/scater/man/plotReducedDim.html">plotReducedDim</a></span><span class="op">(</span><span class="va">only_paired</span>, dimred <span class="op">=</span> <span class="st">'PCA'</span>, colour_by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span><span class="op">(</span><span class="va">only_paired</span><span class="op">$</span><span class="va">alpha</span><span class="op">$</span><span class="va">j_gene</span><span class="op">)</span>, point_alpha <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>
 <span class="co">#&gt; Warning: Removed 328 rows containing missing values (geom_point).</span></pre></div>
 <p><img src="repertoire_and_expression_files/figure-html/unnamed-chunk-7-1.png" width="500px" height="500px"></p>
-<div class="sourceCode" id="cb8"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/pkg/scater/man/plotReducedDim.html">plotReducedDim</a></span><span class="op">(</span><span class="va">only_paired</span>, dimred <span class="op">=</span> <span class="st">'PCA'</span>, colour_by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span><span class="op">(</span><span class="va">only_paired</span><span class="op">$</span><span class="va">beta</span><span class="op">$</span><span class="va">j_gene</span><span class="op">)</span><span class="op">)</span>
+<div class="sourceCode"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/pkg/scater/man/plotReducedDim.html">plotReducedDim</a></span><span class="op">(</span><span class="va">only_paired</span>, dimred <span class="op">=</span> <span class="st">'PCA'</span>, colour_by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span><span class="op">(</span><span class="va">only_paired</span><span class="op">$</span><span class="va">beta</span><span class="op">$</span><span class="va">j_gene</span><span class="op">)</span>, point_alpha <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>
 <span class="co">#&gt; Warning: Removed 250 rows containing missing values (geom_point).</span></pre></div>
 <p><img src="repertoire_and_expression_files/figure-html/unnamed-chunk-7-2.png" width="500px" height="500px"></p>
 <p>Since the <code>ContigCellDB</code> is nested within the <code>SingleCellExperiment</code> it automatically gets subsetted appropriately when the parent object is subsetted. Enough <code>data.frame</code>-like semantics have been implemented so that fields from the <code>cell_tbl</code> can be visualized.</p>
+</div>
+<div id="colophone" class="section level1">
+<h1 class="hasAnchor">
+<a href="#colophone" class="anchor"></a>Colophone</h1>
+<div class="sourceCode"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span><span class="op">(</span><span class="op">)</span>
+<span class="co">#&gt; R version 4.0.2 (2020-06-22)</span>
+<span class="co">#&gt; Platform: x86_64-apple-darwin17.0 (64-bit)</span>
+<span class="co">#&gt; Running under: macOS Mojave 10.14.6</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Matrix products: default</span>
+<span class="co">#&gt; BLAS:   /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRblas.dylib</span>
+<span class="co">#&gt; LAPACK: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRlapack.dylib</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; locale:</span>
+<span class="co">#&gt; [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; attached base packages:</span>
+<span class="co">#&gt; [1] parallel  stats4    stats     graphics  grDevices utils     datasets </span>
+<span class="co">#&gt; [8] methods   base     </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; other attached packages:</span>
+<span class="co">#&gt;  [1] scater_1.17.6               purrr_0.3.4                </span>
+<span class="co">#&gt;  [3] stringr_1.4.0               tidyr_1.1.2                </span>
+<span class="co">#&gt;  [5] readr_1.4.0                 ggplot2_3.3.2              </span>
+<span class="co">#&gt;  [7] dplyr_1.0.2                 SingleCellExperiment_1.11.9</span>
+<span class="co">#&gt;  [9] SummarizedExperiment_1.19.9 Biobase_2.49.1             </span>
+<span class="co">#&gt; [11] GenomicRanges_1.41.6        GenomeInfoDb_1.25.11       </span>
+<span class="co">#&gt; [13] IRanges_2.23.10             S4Vectors_0.27.14          </span>
+<span class="co">#&gt; [15] BiocGenerics_0.35.4         MatrixGenerics_1.1.8       </span>
+<span class="co">#&gt; [17] matrixStats_0.57.0          CellaRepertorium_1.1.0     </span>
+<span class="co">#&gt; [19] BiocStyle_2.17.1           </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; loaded via a namespace (and not attached):</span>
+<span class="co">#&gt;  [1] viridis_0.5.1             BiocSingular_1.5.2       </span>
+<span class="co">#&gt;  [3] viridisLite_0.3.0         DelayedMatrixStats_1.11.5</span>
+<span class="co">#&gt;  [5] scuttle_0.99.21           assertthat_0.2.1         </span>
+<span class="co">#&gt;  [7] BiocManager_1.30.10       vipor_0.4.5              </span>
+<span class="co">#&gt;  [9] GenomeInfoDbData_1.2.4    yaml_2.2.1               </span>
+<span class="co">#&gt; [11] pillar_1.4.6              backports_1.1.10         </span>
+<span class="co">#&gt; [13] lattice_0.20-41           glue_1.4.2               </span>
+<span class="co">#&gt; [15] beachmat_2.5.8            digest_0.6.26            </span>
+<span class="co">#&gt; [17] XVector_0.29.3            colorspace_1.4-1         </span>
+<span class="co">#&gt; [19] cowplot_1.1.0             htmltools_0.5.0          </span>
+<span class="co">#&gt; [21] Matrix_1.2-18             pkgconfig_2.0.3          </span>
+<span class="co">#&gt; [23] bookdown_0.21             zlibbioc_1.35.0          </span>
+<span class="co">#&gt; [25] scales_1.1.1              BiocParallel_1.23.3      </span>
+<span class="co">#&gt; [27] tibble_3.0.4              farver_2.0.3             </span>
+<span class="co">#&gt; [29] generics_0.0.2            ellipsis_0.3.1           </span>
+<span class="co">#&gt; [31] withr_2.3.0               magrittr_1.5             </span>
+<span class="co">#&gt; [33] crayon_1.3.4              memoise_1.1.0            </span>
+<span class="co">#&gt; [35] evaluate_0.14             fs_1.5.0                 </span>
+<span class="co">#&gt; [37] beeswarm_0.2.3            textshaping_0.1.2        </span>
+<span class="co">#&gt; [39] tools_4.0.2               hms_0.5.3                </span>
+<span class="co">#&gt; [41] lifecycle_0.2.0           munsell_0.5.0            </span>
+<span class="co">#&gt; [43] DelayedArray_0.15.16      irlba_2.3.3              </span>
+<span class="co">#&gt; [45] Biostrings_2.57.2         compiler_4.0.2           </span>
+<span class="co">#&gt; [47] pkgdown_1.6.1             rsvd_1.0.3               </span>
+<span class="co">#&gt; [49] systemfonts_0.3.2         rlang_0.4.8              </span>
+<span class="co">#&gt; [51] grid_4.0.2                RCurl_1.98-1.2           </span>
+<span class="co">#&gt; [53] BiocNeighbors_1.7.0       labeling_0.4.2           </span>
+<span class="co">#&gt; [55] bitops_1.0-6              rmarkdown_2.5            </span>
+<span class="co">#&gt; [57] gtable_0.3.0              R6_2.4.1                 </span>
+<span class="co">#&gt; [59] gridExtra_2.3             knitr_1.30               </span>
+<span class="co">#&gt; [61] rprojroot_1.3-2           ragg_0.4.0               </span>
+<span class="co">#&gt; [63] desc_1.2.0                ggbeeswarm_0.6.0         </span>
+<span class="co">#&gt; [65] stringi_1.5.3             Rcpp_1.0.5               </span>
+<span class="co">#&gt; [67] vctrs_0.3.4               tidyselect_1.1.0         </span>
+<span class="co">#&gt; [69] xfun_0.18                 sparseMatrixStats_1.1.11</span></pre></div>
 </div>
   </div>
 

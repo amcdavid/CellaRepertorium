@@ -40,7 +40,10 @@
 
 
 <meta property="og:title" content="Generate "pseudobulk" data from a ContigCellDB — generate_pseudobulk" />
-<meta property="og:description" content="Generate &quot;pseudobulk&quot; data from a ContigCellDB" />
+<meta property="og:description" content="Tabulate contigs with a unique combination of class_keys per total_keys.
+For instance, total_keys might be a sample identifier, and class_keys might
+be the V- and J- gene identities.  The idea is that this might mimic the data
+generated in a bulk experiment." />
 
 
 
@@ -72,7 +75,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CellaRepertorium</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
       </span>
     </div>
 
@@ -95,7 +98,10 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/cdr3_clustering.html">Clustering repertoire via CDR3 sequences</a>
+      <a href="../articles/cdr3_clustering.html">Clustering and differential usage of repertoire CDR3 sequences</a>
+    </li>
+    <li>
+      <a href="../articles/cr-overview.html">An Introduction to CellaRepertorium</a>
     </li>
     <li>
       <a href="../articles/mouse_tcell_qc.html">Quality control and Exploration of UMI-based repertoire data</a>
@@ -135,7 +141,10 @@
     </div>
 
     <div class="ref-description">
-    <p>Generate "pseudobulk" data from a <code>ContigCellDB</code></p>
+    <p>Tabulate contigs with a unique combination of <code>class_keys</code> per <code>total_keys</code>.
+For instance, <code>total_keys</code> might be a sample identifier, and <code>class_keys</code> might
+be the V- and J- gene identities.  The idea is that this might mimic the data
+generated in a bulk experiment.</p>
     </div>
 
     <pre class="usage"><span class='fu'>generate_pseudobulk</span><span class='op'>(</span><span class='va'>ccdb</span>, <span class='va'>class_keys</span>, <span class='va'>total_keys</span>, type <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"cell"</span>, <span class='st'>"umi"</span><span class='op'>)</span><span class='op'>)</span></pre>
@@ -153,7 +162,7 @@
     </tr>
     <tr>
       <th>total_keys</th>
-      <td><p><code>character</code> naming fields that also define a class, and moreover will be conditioned upon when calculating the total</p></td>
+      <td><p><code>character</code> naming fields to be conditioned upon when calculating the total.</p></td>
     </tr>
     <tr>
       <th>type</th>
@@ -164,7 +173,16 @@
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p><code>tibble</code></p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
+    <p>This function is currently rather 10x-specific, in that it is assumed that columns <code>barcode</code> and
+<code>umis</code> exist.</p>
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>ccdb_ex</span><span class='op'>)</span>
+<span class='va'>ccdb_ex</span> <span class='op'>=</span> <span class='fu'><a href='cluster_germline.html'>cluster_germline</a></span><span class='op'>(</span><span class='va'>ccdb_ex</span><span class='op'>)</span>
+<span class='va'>pseudo</span> <span class='op'>=</span> <span class='fu'>generate_pseudobulk</span><span class='op'>(</span><span class='va'>ccdb_ex</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'v_gene'</span>, <span class='st'>'j_gene'</span>, <span class='st'>'chain'</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'pop'</span>, <span class='st'>'sample'</span><span class='op'>)</span><span class='op'>)</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

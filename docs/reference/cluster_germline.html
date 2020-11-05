@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CellaRepertorium</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
       </span>
     </div>
 
@@ -95,7 +95,10 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/cdr3_clustering.html">Clustering repertoire via CDR3 sequences</a>
+      <a href="../articles/cdr3_clustering.html">Clustering and differential usage of repertoire CDR3 sequences</a>
+    </li>
+    <li>
+      <a href="../articles/cr-overview.html">An Introduction to CellaRepertorium</a>
     </li>
     <li>
       <a href="../articles/mouse_tcell_qc.html">Quality control and Exploration of UMI-based repertoire data</a>
@@ -141,7 +144,7 @@
     <pre class="usage"><span class='fu'>cluster_germline</span><span class='op'>(</span>
   <span class='va'>ccdb</span>,
   segment_keys <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"v_gene"</span>, <span class='st'>"j_gene"</span>, <span class='st'>"chain"</span><span class='op'>)</span>,
-  cluster_name <span class='op'>=</span> <span class='st'>"cluster_idx"</span>
+  cluster_pk <span class='op'>=</span> <span class='st'>"cluster_idx"</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -156,7 +159,7 @@
       <td><p>fields in <code>contig_tbl</code> that identify a cluster</p></td>
     </tr>
     <tr>
-      <th>cluster_name</th>
+      <th>cluster_pk</th>
       <td><p>name of cluster to be added to <code>cluster_tbl</code></p></td>
     </tr>
     </table>

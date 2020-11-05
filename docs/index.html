@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">CellaRepertorium</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
       </span>
     </div>
 
@@ -61,7 +61,10 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="articles/cdr3_clustering.html">Clustering repertoire via CDR3 sequences</a>
+      <a href="articles/cdr3_clustering.html">Clustering and differential usage of repertoire CDR3 sequences</a>
+    </li>
+    <li>
+      <a href="articles/cr-overview.html">An Introduction to CellaRepertorium</a>
     </li>
     <li>
       <a href="articles/mouse_tcell_qc.html">Quality control and Exploration of UMI-based repertoire data</a>
@@ -103,8 +106,8 @@
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
 <p>Upon acceptance in Bioconductor, install with</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">install.packages</span>(<span class="st">'BiocManager'</span>) <span class="co"># if you don't have it yet</span></a>
-<a class="sourceLine" id="cb1-2" data-line-number="2">BiocManager<span class="op">::</span><span class="kw">install</span>(<span class="st">'CellaRepertorium'</span>)</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode R"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">'BiocManager'</span>) <span class="co"># if you don't have it yet</span>
+BiocManager::<span class="kw">install</span>(<span class="st">'CellaRepertorium'</span>)</code></pre></div>
 <p>For the development version, install via <code><a href="https://devtools.r-lib.org//reference/remote-reexports.html">devtools::install_github('amcdavid/CellaRepertorium')</a></code>.</p>
 </div>
 <div id="data-requirements-and-package-structure" class="section level2">
@@ -159,6 +162,8 @@
     <div class="links">
 <h2>Links</h2>
 <ul class="list-unstyled">
+<li>Download from BIOC at <br><a href="https://www.bioconductor.org/packages/CellaRepertorium">https://​www.bioconductor.org/​packages/​CellaRepertorium</a>
+</li>
 <li>Browse source code at <br><a href="https://github.com/amcdavid/CellaRepertorium/">https://​github.com/​amcdavid/​CellaRepertorium/​</a>
 </li>
 <li>Report a bug at <br><a href="https://github.com/amcdavid/CellaRepertorium/issues">https://​github.com/​amcdavid/​CellaRepertorium/​issues</a>

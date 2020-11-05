@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Access public members of ContigCellDB object — $,ContigCellDB-method • CellaRepertorium</title>
+<title>Access public members of ContigCellDB object. — $,ContigCellDB-method • CellaRepertorium</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,9 @@
 
 
 
-<meta property="og:title" content="Access public members of ContigCellDB object — $,ContigCellDB-method" />
-<meta property="og:description" content="Access public members of ContigCellDB object" />
+<meta property="og:title" content="Access public members of ContigCellDB object. — $,ContigCellDB-method" />
+<meta property="og:description" content="Modification to members will trigger various forms of equalization.
+See equalize_ccdb() for details." />
 
 
 
@@ -72,7 +73,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">CellaRepertorium</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
       </span>
     </div>
 
@@ -95,7 +96,10 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/cdr3_clustering.html">Clustering repertoire via CDR3 sequences</a>
+      <a href="../articles/cdr3_clustering.html">Clustering and differential usage of repertoire CDR3 sequences</a>
+    </li>
+    <li>
+      <a href="../articles/cr-overview.html">An Introduction to CellaRepertorium</a>
     </li>
     <li>
       <a href="../articles/mouse_tcell_qc.html">Quality control and Exploration of UMI-based repertoire data</a>
@@ -129,13 +133,14 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Access public members of ContigCellDB object</h1>
+    <h1>Access public members of ContigCellDB object.</h1>
     <small class="dont-index">Source: <a href='https://github.com/amcdavid/CellaRepertorium/blob/master/R/ContigCellDB-methods.R'><code>R/ContigCellDB-methods.R</code></a></small>
     <div class="hidden name"><code>cash-ContigCellDB-method.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Access public members of ContigCellDB object</p>
+    <p>Modification to members will trigger various forms of equalization.
+See <code><a href='equalize_ccdb.html'>equalize_ccdb()</a></code> for details.</p>
     </div>
 
     <pre class="usage"># S4 method for ContigCellDB
@@ -164,6 +169,9 @@ $(x, name) &lt;- value</pre>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>Update or return a slot of <code><a href='ContigCellDB.html'>ContigCellDB()</a></code></p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p><code><a href='equalize_ccdb.html'>equalize_ccdb()</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>ccdb_ex</span><span class='op'>)</span>
