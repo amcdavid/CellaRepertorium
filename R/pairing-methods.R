@@ -244,15 +244,18 @@ pairing_tables = function(ccdb, ranking_key = 'grp_rank', table_order = 2, min_e
 #' @importFrom dplyr case_when
 #' @importFrom tibble tibble
 ig_chain_recode = function(tbl){
-    pairing = case_when(tbl$IGH>0 & (tbl$IGK>0 | tbl$IGL>0) ~ 'paired',
-                        tbl$IGH>0 ~ 'heavy',
-                        (tbl$IGK>0 | tbl$IGL>0) ~ 'light')
-    canonical = case_when(tbl$IGH<2 & (tbl$IGK==2 | tbl$IGL==2) ~ 'double-light',
-                          tbl$IGH<2 & ((tbl$IGK + tbl$IGL)>1) ~ 'multi-light',
-                          tbl$IGH<2 & (tbl$IGK + tbl$IGL)<2 ~ 'classical',
-                          tbl$IGH>1 ~ 'multi-heavy',
-                          TRUE ~ 'other')
-    dplyr::bind_cols(tbl, tibble(pairing, canonical))
+  pairing = case_when(tbl$IGH>0 & (tbl$IGK>0 | tbl$IGL>0) ~ 'paired',
+                      tbl$IGH>0 ~ 'heavy',
+                      (tbl$IGK>0 | tbl$IGL>0) ~ 'light',
+                      tbl$IGH==0 & tbl$IGK==0 & tbl$IGL ==0 ~ 'none')
+  canonical = case_when(tbl$IGH<2 & (tbl$IGK + tbl$IGL)<2 ~ 'classical',
+      tbl$IGH>2 & (tbl$IGK + tbl$IGL)<2 ~ 'multi-heavy',
+      tbl$IGH<2 & (tbl$IGK + tbl$IGL) == 2 ~ 'double-light',
+      tbl$IGH<2 & ((tbl$IGK + tbl$IGL)>2) ~ 'multi-light',
+      tbl$IGH == 2 & (tbl$IGK + tbl$IGL)<2 ~ 'double-heavy',
+      tbl$IGH == 0 & (tbl$IGK + tbl$IGL) == 0 ~ 'none',
+      TRUE ~ 'other')
+  dplyr::bind_cols(tbl, tibble(pairing, canonical))
 }
 
 #' @export
@@ -261,10 +264,12 @@ ig_chain_recode = function(tbl){
 tcr_chain_recode = function(tbl){
     pairing = case_when(tbl$TRA>0 & tbl$TRB>0 ~ 'paired',
                         tbl$TRB>0 ~ 'beta',
-                        tbl$TRA>0 ~ 'alpha')
+                        tbl$TRA>0 ~ 'alpha',
+                        tbl$TRA == 0 & tbl$TRB == 0 ~ 'none')
     canonical = case_when(tbl$TRB==2 ~ 'double-beta',
                           tbl$TRA==2  ~ 'double-alpha',
                           (tbl$TRB + tbl$TRA) > 2 ~ 'other',
+                          tbl$TRA == 0 & tbl$TRB == 0 ~ 'none',
                           TRUE ~ 'classical')
     dplyr::bind_cols(tbl, tibble(pairing, canonical))
 }
@@ -286,7 +291,7 @@ tcr_chain_recode = function(tbl){
 #' enumerate_pairing(ccdb_ex)
 #' enumerate_pairing(ccdb_ex, chain_recode_fun = 'guess')
 enumerate_pairing = function(ccdb, chain_key = 'chain', chain_recode_fun = NULL){
-    if(!is.null(chain_recode_fun) && chain_recode_fun == 'guess'){
+    if(!is.null(chain_recode_fun) && !is.function(chain_recode_fun) && chain_recode_fun == 'guess'){
         top_chain = names(sort(table(ccdb$contig_tbl[[chain_key]]), decreasing = TRUE))[1]
         if(top_chain %in% c('TRA', 'TRB')){
             chain_recode_fun = tcr_chain_recode
