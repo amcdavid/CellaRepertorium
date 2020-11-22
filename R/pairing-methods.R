@@ -274,6 +274,33 @@ tcr_chain_recode = function(tbl){
     dplyr::bind_cols(tbl, tibble(pairing, canonical))
 }
 
+
+
+#' Generate a 2d cross tab using arbitrary numbers of columns as factors
+#'
+#' As many rows as unique combs of x_fields
+#' As many columns as unique combs of y_fields
+#' No NA.
+#' @param tbl `data.frame`
+#' @param x_fields `character` fields in `tbl`
+#' @param y_fields `character` fields in `tbl`
+#'
+#' @return `tibble`
+#' @export
+#'
+#' @examples
+#' cross_tab_tbl(mtcars, c('cyl', 'gear'), 'carb')
+cross_tab_tbl = function(tbl, x_fields, y_fields){
+    x_key = unique(tbl[x_fields]) %>% mutate(x_key__ = factor(seq_len(nrow(.))))
+    y_key = unique(tbl[y_fields]) %>% mutate(y_key__ = factor(seq_len(nrow(.))))
+    tbl = left_join(tbl, x_key) %>% left_join(y_key)
+    cross_tb = unclass(table(tbl[['x_key__']], tbl[['y_key__']], exclude = NULL))
+    cross_tbl = as_tibble(cross_tb)
+    names(cross_tbl) = do.call(paste, c(y_key[y_fields], list(sep = '_')))
+    cross_tbl[['x_key__']] = factor(seq_len(nrow(cross_tbl)))
+    left_join(cross_tbl, x_key) %>% select(-x_key__)
+}
+
 #' Categorize the pairing present in a cell
 #'
 #' For each cell (defined by `ccdb$cell_pk`) count the number of each level of `chain_key` occurs, and cross tabulate.
@@ -304,9 +331,13 @@ enumerate_pairing = function(ccdb, chain_key = 'chain', chain_recode_fun = NULL)
     if(!is.function(chain_recode_fun)) stop("`chain_recode_fun` must be a function, NULL, or 'guess'")
 
     chain_keys = union(chain_key, ccdb$cell_pk)
-    chain_count = ccdb$contig_tbl %>% group_by(!!!syms(chain_keys)) %>% summarize(n_chains = dplyr::n()) %>% tidyr::spread(chain_key, 'n_chains', fill = 0)
-    chain_count = left_join_warn(ccdb$cell_tbl, chain_count, by = ccdb$cell_pk)
-    chain_type = ccdb$contig_tbl %>% group_by(!!!syms(ccdb$cell_pk)) %>% summarize(raw_chain_type = paste(sort(!!sym(chain_key)), collapse = '_'))
-    chain_summary = left_join(chain_count, chain_type, by = ccdb$cell_pk) %>% ungroup()
+    tbl = left_join_warn(ccdb$cell_tbl[ccdb$cell_pk], ccdb$contig_tbl, by = ccdb$cell_pk)
+    tbl[[chain_key]] = forcats::fct_explicit_na(tbl[[chain_key]], na_level = 'none')
+    chain_count = tbl %>% group_by(!!!syms(chain_keys)) %>% summarize(n_chains = dplyr::n())
+    chain_table = tidyr::spread(chain_count, chain_key, 'n_chains', fill = 0)
+    chain_table = chain_table[setdiff(names(chain_table), 'none')]
+    chain_type = tbl %>% group_by(!!!syms(ccdb$cell_pk)) %>% summarize(raw_chain_type = paste(sort(!!sym(chain_key)), collapse = '_'))
+    chain_summary = left_join(chain_table, chain_type, by = ccdb$cell_pk) %>% ungroup()
+    chain_summary = left_join_warn(ccdb$cell_tbl[ccdb$cell_pk], chain_summary, by = ccdb$cell_pk)
     chain_recode_fun(chain_summary)
 }
