@@ -24,6 +24,16 @@ test_that('Chain Pairings',
             expect_equal(sum(tbl$canonical == 'classical'),8)
           })
 
+test_that('Chain pairings with empty cells', {
+    template = data.frame(barcode = c(unique(barcode), 'A'))
+    cdb2 = ccdb_join(template, cdb)
+    tbl= enumerate_pairing(cdb2,chain_recode_fun = 'guess')
+    expect_is(tbl, 'data.frame')
+    expect_equal(nrow(tbl),nrow(template))
+    expect_equivalent(tbl[tbl$barcode=='A',], data.frame(barcode = "A", TRA = 0, TRB = 0, raw_chain_type = "none",
+                                                  pairing = "none", canonical = "none"))
+})
+
 context('Canonicalize cells')
 data("ccdb_ex")
 canon1 = canonicalize_cell(ccdb_ex, contig_filter_args = TRUE, contig_fields = 'umis')
