@@ -43,8 +43,8 @@ crosstab_by_celltype = function(ccdb) {
     cell_keys = union(ccdb$cell_pk, 'celltype')
     total_umi = ccdb$contig_tbl %>% group_by(!!!syms(cell_keys)) %>%
       summarize(total_umi = sum(.data$umis))
-    total_umi = tidyr::spread(total_umi, 'celltype', 'total_umi', fill = 0)
     total_umi = left_join_warn(ccdb$cell_tbl, total_umi, by = ccdb$cell_pk)
+    total_umi = tidyr::spread(total_umi, 'celltype', 'total_umi', fill = 0)
 
     return(total_umi)
 }
