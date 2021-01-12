@@ -12,6 +12,5 @@ manuscript/
 ^docs$
 ^pkgdown$
 .ignore
-R/immcantation-utils.R
 ^WORDLIST$
 ^doc$
