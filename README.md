@@ -1,6 +1,3 @@
-
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-
 # CellaRepertorium
 
 This package contains methods for clustering, pairing and testing single
@@ -9,10 +6,12 @@ solution](https://support.10xgenomics.com/single-cell-vdj).
 
 ## Installation
 
-Upon acceptance in Bioconductor, install with
+Install with
 
     install.packages('BiocManager') # if you don't have it yet
-    BiocManager::install('CellaRepertorium')
+    BiocManager::version() # Check that Bioconductor version >= 3.12 
+    BiocManager::valid() # And it's in a sane state.
+    BiocManager::install('CellaRepertorium') # install
 
 For the development version, install via
 `devtools::install_github('amcdavid/CellaRepertorium')`.
