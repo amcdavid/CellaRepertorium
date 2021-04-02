@@ -1,3 +1,12 @@
+.as.vector.tibble = function(x){
+    if(inherits(x, 'data.frame')){
+        if(ncol(x)>1) stop('Only supported for one column df')
+        x[[1]]
+    } else{
+        as.vector(x)
+    }
+}
+
 
 #' Calculate number of cluster-subject singletons for the purposes of permutation testing
 #'
@@ -10,7 +19,9 @@
 #' message("see example(cluster_permute_test)")
 #' @seealso [cluster_permute_test()]
 purity = function(cluster_idx, subject) {
-    n_label_cluster = dplyr::bind_cols(cluster_idx = cluster_idx, subject = subject) %>%
+    cluster_idx = .as.vector.tibble(cluster_idx)
+    subject = .as.vector.tibble(subject)
+    n_label_cluster = dplyr::tibble(cluster_idx = cluster_idx, subject = subject) %>%
         group_by(cluster_idx, subject) %>% summarize(n = dplyr::n()) %>% ungroup()
     #Average number of singleton clusters for each subject
     singletons = mean(n_label_cluster$n == 1)
