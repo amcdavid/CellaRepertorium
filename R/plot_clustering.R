@@ -14,11 +14,12 @@
 #' ccdb_germline_ex = fine_clustering(germline_cluster, sequence_key = 'cdr3_nt', type = 'DNA')
 #' plot_clustering(ccdb_germline_ex,cluster_factors = c('v_gene','j_gene'), statistic = 'pearson', type = 'network' ,ncluster = 50, chaintype = 'IGH')
 
+  
 plot_clustering = function(ccdb,cluster_factors,type = c('heatmap','network'),statistic = c('pearson','contigs'),ncluster,chaintype) {
-  
-if(!inherits(ccdb,  "ContigCellDB")) stop('ccdb must have class CellaRepertorium')
-  
-if(length(cluster_factors) != 2) stop('cluster_factors must specify exactly two columns from ccdb')
+
+if(!inherits(ccdb,  "ContigCellDB")) stop('ccdb must have class ContigCellDb')
+
+if(length(cluster_factors) != 2 | !is.character(cluster_factors)) stop('cluster_factors must be character vector that specifies exactly two columns from ccdb')
   
 if(!missing(ncluster)) {tmp = ccdb$cluster_tbl %>% filter(n_cluster > ncluster)} else {tmp = ccdb$cluster_tbl}
 
@@ -50,13 +51,17 @@ if (type == 'network') {
   
   graph = graph_from_data_frame(tmp,vertices = nodes)
 
-  plot = ggraph(graph,layout = 'circle') + geom_node_point() + geom_edge_fan(aes_string(colour = fillby)) + geom_node_label(aes(label = V(graph)$name), size = 2) + scale_edge_color_gradient2() + ggtitle(paste('Network Plot for factors', cluster_factors[1],'and',cluster_factors[2], 'using',statistic))
+  plot = ggraph(graph,layout = 'circle') + geom_node_point() + geom_edge_fan(aes_string(colour = fillby)) + geom_node_label(aes(label = V(graph)$name), size = 2) + ggtitle(paste('Network Plot for factors', cluster_factors[1],'and',cluster_factors[2], 'using',statistic))
+  
+  if(statistic == 'pearson') {plot = plot + scale_edge_color_gradient2()}
   
   return(plot) }
   
 else {
-  plot = ggplot(tmp) + aes_string(x = cluster_factors[1],y = cluster_factors[2],fill = fillby) + geom_tile() + scale_fill_gradient2()+ theme(axis.text.x = element_text(angle = 90)) +  ggtitle(paste('Heatmap for factors', cluster_factors[1],'and',cluster_factors[2], 'using',statistic))
+  plot = ggplot(tmp) + aes_string(x = cluster_factors[1],y = cluster_factors[2],fill = fillby) + geom_tile() + theme(axis.text.x = element_text(angle = 90)) +  ggtitle(paste('Heatmap for factors', cluster_factors[1],'and',cluster_factors[2], 'using',statistic))
+  
+  if (statistic == 'pearson') {plot = plot + scale_fill_gradient2()}
 
 return(plot) }
-
 }
+  
