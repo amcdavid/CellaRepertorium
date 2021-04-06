@@ -34,17 +34,17 @@ guess_celltype = function(chain) {
 #' total_umi = crosstab_by_celltype(ccdb_ex)
 #' nrow(total_umi)
 crosstab_by_celltype = function(ccdb) {
-    # add celltype column
     check_contig_names(ccdb, c('chain', 'umis'))
+    if('celltype__' %in% names(ccdb$cell_pk)) stop("Rename or remove `celltype__` from `cell_pk`.")
     ccdb$contig_tbl = ccdb$contig_tbl %>%
-      dplyr::mutate(celltype = guess_celltype(.data$chain))
+      dplyr::mutate(celltype__ = guess_celltype(.data$chain))
 
     # group by cell_keys
-    cell_keys = union(ccdb$cell_pk, 'celltype')
+    cell_keys = union(ccdb$cell_pk, 'celltype__')
     total_umi = ccdb$contig_tbl %>% group_by(!!!syms(cell_keys)) %>%
       summarize(total_umi = sum(.data$umis))
-    total_umi = left_join_warn(ccdb$cell_tbl, total_umi, by = ccdb$cell_pk)
-    total_umi = tidyr::spread(total_umi, 'celltype', 'total_umi', fill = 0)
+    total_umi = left_join_warn(total_umi, ccdb$cell_tbl, by = ccdb$cell_pk, join = right_join) #in case cell_tbl has celltype__ column not as PK
+    total_umi = tidyr::spread(total_umi, 'celltype__', 'total_umi', fill = 0)
 
     return(total_umi)
 }
