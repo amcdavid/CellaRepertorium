@@ -32,13 +32,17 @@ You may need to lower it below 5 for AAseq with identity less than .7.}
 something smaller is passed.}
     \item{\code{s}}{fraction of shorter sequence covered by alignment.}
     \item{\code{showProgress}}{show a status bar}
+    \item{\code{G}}{1 for global alignment, 0 for local. If doubt, pick global.}
   }}
 }
 \value{
 \code{\link[=ContigCellDB]{ContigCellDB()}}
 }
 \description{
-Use \code{\link[=cdhit]{cdhit()}} to cluster a \code{\link[=ContigCellDB]{ContigCellDB()}}
+See
+https://github.com/weizhongli/cdhit/wiki/3.-User's-Guide#CDHIT for details
+on other potential arguments to \code{...}.
+These will override any default values.
 }
 \examples{
 data(ccdb_ex)

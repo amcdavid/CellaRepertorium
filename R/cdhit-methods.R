@@ -26,6 +26,7 @@ globalVariables('cluster_idx')
 #' something smaller is passed.
 #' @param s fraction of shorter sequence covered by alignment.
 #' @param showProgress show a status bar
+#' @param G 1 for global alignment, 0 for local. If doubt, pick global.
 #' @param only_index if TRUE only return the integer cluster indices, otherwise
 #' return a tibble.
 #' @param ... other arguments that can be passed to cdhit, see
@@ -52,7 +53,7 @@ globalVariables('cluster_idx')
 #' cdhit(aaseq,identity = 1, G = 0, aL = .9, aS = .9,  only_index = TRUE)[1:10]
 #' # a tibble
 #' tbl = cdhit(aaseq, identity = 1, G = 0, aL = .9, aS = .9, only_index = FALSE)
-cdhit = function(seqs, identity = NULL, kmerSize = NULL, min_length = 6, s = 1,
+cdhit = function(seqs, identity = NULL, kmerSize = NULL, min_length = 6, s = 1, G = 1,
                  only_index = FALSE, showProgress = interactive(), ...) {
     if(any(width(seqs) < min_length)) stop("Some sequences shorter than `min_length`;
                                            remove these or decrease min_length")
@@ -78,6 +79,7 @@ cdhit = function(seqs, identity = NULL, kmerSize = NULL, min_length = 6, s = 1,
         kmerSize = 5
     }
     options$n = kmerSize
+    options$G = G
     options$c = identity
     options$l = min_length - 1
     options = c(uopts, options)
@@ -98,6 +100,10 @@ cdhit = function(seqs, identity = NULL, kmerSize = NULL, min_length = 6, s = 1,
 
 ##' Use [cdhit()] to cluster a [ContigCellDB()]
 ##'
+##'  See
+##' https://github.com/weizhongli/cdhit/wiki/3.-User's-Guide#CDHIT for details
+##' on other potential arguments to `...`.
+##' These will override any default values.
 ##' @param ccdb An object of class [ContigCellDB()]
 ##' @param sequence_key `character` naming the column in the `contig_tbl` containing the sequence to be clustered
 ##' @param type one of 'DNA' or 'AA'
