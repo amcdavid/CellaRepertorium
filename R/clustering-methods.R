@@ -112,6 +112,51 @@ left_join_warn = function(x, y, by, overwrite = FALSE, join = left_join, ...){
     join(x  = x, y = y, by = by, suffix = c('', '.y'), ...)
 }
 
+#' Cluster "And" intersection
+#'
+#' For each contig present in both `X` and `Y`,
+#' a new cluster is defined that combines cluster identities in both `X` and `Y`.
+#' In the resulting `ContigCellDB`, two contigs are in the same cluster if they are in the
+#' same cluster in `X` and the same cluster
+#'  in `Y`.  `X` and `Y` must have matching `contig_pk`.
+#'  The `contig_tbl` has fields from `X` for contigs present in both `X` and `Y`.
+#'  The  `cell_tbl` from `X` is carried forward unchanged, while the `cluster_tbl`
+#'   in the result contains the mapping between the ancestral clustering, and the derived.
+#' @param X `ContigCellDB`
+#' @param Y `ContigCellDB`
+#' @param new_pk optional `character` naming the new pk.
+#' @export
+#' @examples
+#' data(ccdb_ex)
+#' ccdb_germ = cluster_germline(ccdb_ex, cluster_pk = 'germline_idx')
+#' ccdb_cdr3 = cdhit_ccdb(ccdb_ex, 'cdr3_nt', type = 'DNA',
+#' cluster_name = 'DNA97', identity = .965, min_length = 12, G = 1)
+#' ccdb_cdr3 = cland(ccdb_cdr3, ccdb_germ)
+#'
+cland = function(X, Y, new_pk){
+    if(!inherits(X, 'ContigCellDB') || !inherits(Y, 'ContigCellDB') || !all(X$contig_pk == Y$contig_pk))
+        stop("`X` and `Y` must be `ContigCellDB` with common `contig_pk`.")
+
+    if(all(X$cluster_pk == Y$cluster_pk)){
+        oypk = Y$cluster_pk
+        nypk = str_c(oypk, '.y')
+        Y = replace_cluster_tbl(Y,
+                                dplyr::rename(Y$cluster_tbl, !!nypk := !!oypk),
+                                dplyr::rename(Y$contig_tbl, !!nypk := !!oypk),
+                                nypk, warn = FALSE)
+        message('Renaming `Y$cluster_pk`: ', oypk, ' -> ', nypk)
+    }
+    if(missing(new_pk)) new_pk = str_c(X$cluster_pk, '_and_', Y$cluster_pk)
+    contigs = left_join_warn(X$contig_tbl,
+                            Y$contig_tbl[c(Y$cluster_pk, Y$contig_pk)], join = dplyr::inner_join, by = X$contig_pk, overwrite = FALSE)
+    contigs[[new_pk]] = interaction(contigs[[X$cluster_pk]], contigs[[Y$cluster_pk]])
+    # I guess we have mostly been an integer, otherwise ?
+    contigs[[new_pk]] = as.numeric(as.character(factor(contigs[[new_pk]], labels = seq_along(unique(contigs[[new_pk]])))))
+    cluster_tblX = unique(contigs[c(new_pk, X$cluster_pk, Y$cluster_pk)]) %>% left_join_warn(X$cluster_tbl, by = X$cluster_pk, overwrite =  TRUE) %>% left_join_warn(Y$cluster_tbl, by = Y$cluster_pk, overwrite = TRUE)
+    replace_cluster_tbl(X, cluster_tblX, contigs, new_pk, warn = FALSE)
+}
+
+
 has_fineclustering = function(ccdb){
     ('is_medoid' %in% names(ccdb$contig_tbl))
 }
