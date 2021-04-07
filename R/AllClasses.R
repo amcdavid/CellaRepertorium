@@ -35,6 +35,7 @@ valid_ContigCellDB = function(object){
                        but were missing from `contig_tbl`",
                        paste(missing_fields, collapse = ', ')))
     }
+    if(length(object$cluster_pk) > 1) return("Only scalar `cluster_pk` supported at the moment.")
     return(TRUE)
 }
 
