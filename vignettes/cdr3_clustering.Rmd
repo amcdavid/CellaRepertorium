@@ -111,16 +111,16 @@ We can cluster by any other feature of the contigs. Here we cluster each contig 
 
 ```{r}
 germline_cluster = fine_clustering(germline_cluster, sequence_key = 'cdr3_nt', type = 'DNA')
-ggplot(germline_cluster$cluster_tbl %>% filter(chain == 'TRB'), aes(x = v_gene, y = j_gene, fill = n_cluster)) + geom_tile() + theme(axis.text.x = element_text(angle = 90))
+filter_cdb(germline_cluster, chain == 'TRB') %>% plot_cluster_factors(factors = c('v_gene','j_gene'), statistic = 'contigs', type = 'heatmap')
 ```
 
-Number of pairs
+Number of pairs.  The pearson residual (showing the difference from expected counts given marginals) is probably more informative, set `statistic = 'residual'` for this.
 
 ```{r}
 ggplot(germline_cluster$cluster_tbl %>% filter(chain == 'TRB'), aes(x = v_gene, y = j_gene, fill = avg_distance)) + geom_tile() + theme(axis.text.x = element_text(angle = 90))
 ```
 
-Average Levenshtein distance of CDR3 within each pair.  This might be turned into a z-score by fitting a weighted linear model with sum-to-zero contrasts and returning the pearson residuals.  This could determine if a pairing has an unexpected small, or large, within cluster distance.
+Average Levenshtein distance of CDR3 within each pair.  This might be turned into a z-score by fitting a weighted linear model with sum-to-zero contrasts and returning the studentized residuals.  This could determine if a pairing has an unexpected small, or large, within cluster distance.
 
 
 
