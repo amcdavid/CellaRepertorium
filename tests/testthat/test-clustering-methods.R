@@ -12,6 +12,7 @@ test_that("Cluster contigs by germline properties",{
   expect_error(cluster_germline(ccdb_ex,segment_keys = c('v_gene', 'm_gene')))
 })
 
+
 ccdb_ex_small <- ccdb_ex
 ccdb_ex_small$cell_tbl <- ccdb_ex_small$cell_tbl[1:200,]
 ccdb_ex_small <- cdhit_ccdb(ccdb_ex_small,
@@ -50,4 +51,25 @@ test_that("Find a canonical contig to represent a cluster",{
   cdb_canonicalize <- canonicalize_cluster(cdb_fine,contig_fields = 'seq', representative = 'seq')
   expect_is(cdb_canonicalize$cluster_tbl$representative, 'factor')
  expect_equal(as.character(cdb_canonicalize$cluster_tbl$representative), dplyr::filter(cdb_fine$contig_tbl, is_medoid) %>% dplyr::pull(seq))
+})
+
+test_that("cland preserves contigs / cells", {
+  cdb1 = cluster_germline(ccdb_ex, 'v_gene', cluster_pk = 'v_idx')
+  cdb2 = cluster_germline(ccdb_ex, segment_keys = c('j_gene'), cluster_pk = 'j_idx')
+  cdb3 = cland(cdb1, cdb2, new_pk = 'new')
+  inames = intersect(names(cdb1$contig_tbl), names(cdb3$contig_tbl))
+  expect_mapequal(cdb1$contig_tbl[inames], cdb3$contig_tbl[inames])
+  #expect_mapequal(cdb1$contig_tbl, cdb3$contig_tbl)
+
+  expect_equal(cdb1$cell_tbl, cdb3$cell_tbl)
+  cdb4 = cluster_germline(ccdb_ex, segment_keys = c('v_gene', 'j_gene'), cluster_pk = 'cluster_idx3')
+  j = hushWarning(left_join_warn(cdb4$contig_tbl, cdb3$contig_tbl, by = cdb3$contig_pk, overwrite = TRUE), 'Overwriting')
+  ncomb = j %>% dplyr::group_by(new) %>% dplyr::summarize(ncomb = dplyr::n_distinct(cluster_idx3))
+  expect_setequal(ncomb$ncomb, 1)
+})
+
+test_that("cland renames and is self-consistent", {
+  cdb1 = cluster_germline(ccdb_ex, 'v_gene')
+   hushWarning(expect_message(cdb2<- cland(cdb1, cdb1, new_pk = 'new'), 'Renaming'), 'Overwriting')
+   expect_equal(cdb1$cluster_tbl$cluster_idx, cdb2$cluster_tbl$cluster_idx)
 })

@@ -36,7 +36,8 @@ generate and plot cross-tabs of the number of contigs, or its pearson residual.
 \examples{
 library(ggraph)
 data(ccdb_ex)
-ccdb_germline_ex = cluster_germline(ccdb_ex, segment_keys = c('v_gene', 'j_gene', 'chain'), cluster_pk = 'segment_idx')
+ccdb_germline_ex = cluster_germline(ccdb_ex, segment_keys = c('v_gene', 'j_gene', 'chain'),
+cluster_pk = 'segment_idx')
 ccdb_germline_ex = fine_clustering(ccdb_germline_ex, sequence_key = 'cdr3_nt', type = 'DNA')
 plot_cluster_factors(ccdb_germline_ex,factors = c('v_gene','j_gene'),
 statistic = 'pearson', type = 'network' ,ncluster = 10, chaintype = 'TRB')
