@@ -16,6 +16,9 @@ Authors@R:
       family = 'VonKaenel',
       role = 'aut'
       ),
+      person(given = 'Aaron',
+      family = 'Wagner',
+      role = 'aut'),
       person(given = 'Thomas Lin',
              family = 'Pedersen', 
              role = 'ctb'))
