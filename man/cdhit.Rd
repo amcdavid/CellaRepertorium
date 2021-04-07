@@ -10,6 +10,7 @@ cdhit(
   kmerSize = NULL,
   min_length = 6,
   s = 1,
+  G = 1,
   only_index = FALSE,
   showProgress = interactive(),
   ...
@@ -28,6 +29,8 @@ You may need to lower it below 5 for AAseq with identity less than .7.}
 something smaller is passed.}
 
 \item{s}{fraction of shorter sequence covered by alignment.}
+
+\item{G}{1 for global alignment, 0 for local. If doubt, pick global.}
 
 \item{only_index}{if TRUE only return the integer cluster indices, otherwise
 return a tibble.}
