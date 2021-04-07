@@ -153,7 +153,9 @@ cland = function(X, Y, new_pk){
     # I guess we have mostly been an integer, otherwise ?
     contigs[[new_pk]] = as.numeric(as.character(factor(contigs[[new_pk]], labels = seq_along(unique(contigs[[new_pk]])))))
     cluster_tblX = unique(contigs[c(new_pk, X$cluster_pk, Y$cluster_pk)]) %>% left_join_warn(X$cluster_tbl, by = X$cluster_pk, overwrite =  TRUE) %>% left_join_warn(Y$cluster_tbl, by = Y$cluster_pk, overwrite = TRUE)
-    replace_cluster_tbl(X, cluster_tblX, contigs, new_pk, warn = FALSE)
+    cdb = replace_cluster_tbl(X, cluster_tblX, contigs, new_pk, warn = FALSE)
+    if (has_fineclustering(cdb)) warning("Rerun `fine_clustering` to update results.")
+    cdb
 }
 
 
