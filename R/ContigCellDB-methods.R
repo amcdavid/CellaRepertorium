@@ -321,8 +321,8 @@ equalize_ccdb = function(x, cell = TRUE, contig = TRUE, cluster = TRUE, sort = F
     x
 }
 
-replace_cluster_tbl = function(ccdb, cluster_tbl, contig_tbl, cluster_pk){
-    if(nrow(ccdb$cluster_tbl)>0 && !missing(cluster_pk)){
+replace_cluster_tbl = function(ccdb, cluster_tbl, contig_tbl, cluster_pk, warn = TRUE){
+    if(nrow(ccdb$cluster_tbl)>0 && !missing(cluster_pk) && warn){
         warning("Replacing `cluster_tbl` with ", paste(ccdb$cluster_pk, sep = ', '), '.')
     }
     if(!missing(cluster_pk)) ccdb@cluster_pk = cluster_pk
