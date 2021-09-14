@@ -44,7 +44,7 @@ purity = function(cluster_idx, subject) {
 #' @param sanity_check_strata `logical`, should `cell_stratify_keys` be checked for sanity?
 #' @param ... passed to \code{statistic}
 #' @inheritParams .cluster_permute_test
-#' @return a list containing the observed value of the statistic, its expectation (under independence), a p-value, and the Monte Carlo standard error (of the expected value).
+#' @return a list containing the observed value of the statistic, the permuted values of the statistic, its expectation (under independence), a p-value, and the Monte Carlo standard error (of the expected value).
 #' @seealso [purity()]
 #' @export
 #'
@@ -98,7 +98,7 @@ cluster_permute_test = function(ccdb, cell_covariate_keys,
 #' @param alternative `character` naming the direction `statistic` should be fall under the alternative hypothesis
 #' @param n_perm number of permutations to run
 #' @param ... passed along to `statistic`
-#' @return a list containing the observed value of the statistic, its expectation (under independence), a p-value, and the Monte Carlo standard error (of the expected value).
+#' @return a list containing the observed value of the statistic, the permuted values of the statistic, its expectation (under independence), a p-value, and the Monte Carlo standard error (of the expected value).
 .cluster_permute_test = function(labels, covariates, strata, statistic, n_perm, alternative,  ...){
     permp = rep(NA, n_perm)
     alternative = match.arg(alternative[1], c("two.sided", "less", "greater"), several.ok = FALSE)
@@ -123,5 +123,5 @@ cluster_permute_test = function(ccdb, cell_covariate_keys,
         p_bound = if(alternative == 'less') mean(observed < permp) else mean(observed > permp)
     }
     list(observed = observed, expected = mean(permp),
-         p.value = max(1/n_perm, p_bound), mc.se = sd(permp)/sqrt(n_perm))
+         p.value = max(1/n_perm, p_bound), mc.se = sd(permp)/sqrt(n_perm),statistics = permp)
 }
