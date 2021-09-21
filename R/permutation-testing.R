@@ -18,6 +18,7 @@
 #' @examples
 #' message("see example(cluster_permute_test)")
 #' @seealso [cluster_permute_test()]
+#' 
 purity = function(cluster_idx, subject) {
     cluster_idx = .as.vector.tibble(cluster_idx)
     subject = .as.vector.tibble(subject)
@@ -124,4 +125,23 @@ cluster_permute_test = function(ccdb, cell_covariate_keys,
     }
     list(observed = observed, expected = mean(permp),
          p.value = max(1/n_perm, p_bound), mc.se = sd(permp)/sqrt(n_perm),statistics = permp)
+}
+
+#' Plot of histogram of permuted test statistics and observed test statistic
+#' 
+#' @param perm_test \code{list} that has been returned from running \code{cluster_permute_test()}
+#' @return A ggplot2 visualization of permutation test statistics
+#' @examples
+#' # See cluster_permute_test to set up \code{ccdb_test}
+#' clust_test = cluster_permute_test(ccdb_test, 'subject', 'cluster_idx',
+#' statistic = purity, n_perm  = 50)
+#' 
+#' plot_permute_test(perm_test = clust_test)
+#' 
+plot_permute_test = function(perm_test, title = 'Permuted and observed test statistics') {
+    check_plot_infra()
+    browser()
+    if(!('statistics' %in% attributes(perm_test)$names && 'observed' %in% attributes(perm_test)$names)) {stop('run cluster_permute_test(cdb) first')}
+    plt = ggplot(data = data.frame(perm_test), aes(x = .data$statistics)) + geom_histogram(fill="#69b3a2", color="#e9ecef", alpha=0.9) + geom_vline(xintercept = perm_test$observed, col = 'red') + ggtitle(title)
+    return(plt)
 }
