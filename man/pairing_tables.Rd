@@ -56,6 +56,12 @@ The \code{cluster_idx.1_fct} and \code{cluster_idx.2_fct} fields in \code{cell_t
 tend to occur along the diagonal when they are cross-tabulated.
 This facilitates plotting.
 }
+\section{Caveats}{
+
+A cluster can appear in both cluster_idx.1 and cluster_idx.2, etc, depending on the
+specific selection of clusters per cell.
+}
+
 \examples{
 library(dplyr)
 tbl = tibble(clust_idx = gl(3, 2), cell_idx = rep(1:3, times = 2), contig_idx = 1:6)
