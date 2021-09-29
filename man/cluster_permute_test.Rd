@@ -2,6 +2,7 @@
 % Please edit documentation in R/permutation-testing.R
 \name{cluster_permute_test}
 \alias{cluster_permute_test}
+\alias{plot_permute_test}
 \title{Tests for independence between labels and covariates using permutation of cells}
 \usage{
 cluster_permute_test(
@@ -15,6 +16,8 @@ cluster_permute_test(
   sanity_check_strata = TRUE,
   ...
 )
+
+plot_permute_test(perm_test)
 }
 \arguments{
 \item{ccdb}{\code{ContigCellDB}}
@@ -36,15 +39,24 @@ Must be disjoint from  \code{cell_covariate_keys}.}
 \item{sanity_check_strata}{\code{logical}, should \code{cell_stratify_keys} be checked for sanity?}
 
 \item{...}{passed to \code{statistic}}
+
+\item{perm_test}{\code{PermuteTest} output from \code{cluster_permute_test()}}
 }
 \value{
 a list containing the observed value of the statistic, the permuted values of the statistic, its expectation (under independence), a p-value, and the Monte Carlo standard error (of the expected value).
+
+A ggplot2 plot
 }
 \description{
 This tests a statistic for association between labels (for instance, cluster/clonal ID) and covariates (for instance, subject or treatment) by permuting the link between the two.
 Each observation represents a cell.
 \code{statistic} is any function of \code{labels}
 }
+\section{Functions}{
+\itemize{
+\item \code{plot_permute_test}: Plot a histogram of permuted vs observed test statistic
+}}
+
 \examples{
 library(dplyr)
 # covariate should name one or more columns in `cell_tbl`
@@ -56,9 +68,10 @@ ccdb_test = ContigCellDB(contig_tbl = contig_tbl, contig_pk = 'contig_pk',
 cell_pk = c('contig_pk', 'subject', 'cluster_idx'), cluster_pk = 'cluster_idx')
 ccdb_test$cell_tbl
 
-cluster_permute_test(ccdb_test, 'subject', 'cluster_idx',
+clust_test = cluster_permute_test(ccdb_test, 'subject', 'cluster_idx',
 statistic = purity, n_perm  = 50)
-
+library(ggplot2)
+plot_permute_test(perm_test = clust_test)
 }
 \seealso{
 \code{\link[=purity]{purity()}}
