@@ -170,7 +170,7 @@ pairs = function (n, names) {
                                  observed, contrast = 'identity'))
     }
     contrasts_out = list()
-    for(j in seq_len(len_stat)){
+    for(j in seq_along(contrasts)){
       contrasts_out[[j]] = permute_tail_probs(as.vector(permp %*% as.matrix(contrasts[[j]])), 
                                               as.vector(crossprod(observed, contrasts[[j]])), contrast = contrasts[[j]])
     }
@@ -208,7 +208,7 @@ plot_permute_test = function(perm_test) {
   }
     plt = ggplot2::ggplot(data = stat_df, ggplot2::aes(x = .data$statistics)) + 
         ggplot2::geom_histogram(fill="#69b3a2", color="#e9ecef", alpha=0.9) +
-        ggplot2::geom_vline(xintercept = perm_test$observed, col = 'red') +
+        ggplot2::geom_vline(ggplot2::aes(xintercept = .data$observed), col = 'red') +
         ggplot2::ggtitle("Permuted and observed test statistics")
     if(inherits(perm_test, 'PermuteTestList')){
       plt = plt + ggplot2::facet_wrap(~.data$contrast)
