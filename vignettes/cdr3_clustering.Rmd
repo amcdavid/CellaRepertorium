@@ -346,6 +346,50 @@ cluster_permute_test(aa80_chain$TRB,   cell_covariate_keys = 'sample', cell_stra
 
 In the restricted permutations, the expected number of expanded clusters is even greater.  Both of these effects are due to the fact that the "sample" replicates, within each population actually are not biological replicates, which inflates the `cluster_idx` margin of the table.
 
+## Sequences of permutation tests across cell subpopulations
+
+In many cases, we want test a sequence of contrasts of `cell_covariate_keys` variables vs the `cell_label_key`. For instance, `cell_covariate_keys` might include the cell subpopulation derived from gene expression taken from a cell, and we want to compare the levels of clonal expansion between subpopulations.  Suppose we have four such subpopulation `ident`s:
+
+```{r}
+ident = gl(length = length(aa80_chain$TRB$cell_tbl$pop), n = 4, k = 1)
+head(ident)
+aa80_chain$TRB$cell_tbl$ident = ident
+```
+
+We can compare all pairs: 2 vs 1, 3 vs 1, 4 vs 1, 3 vs 2, 4 vs 2, 4 vs 3, and in fact this is the default action.  If `contrasts` (a matrix or list of vectors) is specified, we can perform other sets of comparisons, like 1 vs the average in all other `ident`:
+```{r}
+contrast_vec = c(1, -1/3, -1/3, -1/3)
+```
+
+The key is that the `statistic` should return a vector, as this now does:
+
+```{r}
+compare_expanded_vec = function(cluster_idx, grp){
+  tab = table(cluster_idx, grp[[1]])
+  # count number of times an aa80 class was expanded
+  expanded = colSums(tab>=2)
+  expanded
+}
+```
+
+
+```{r perm-pairwise}
+perm4 = cluster_permute_test(aa80_chain$TRB, cell_covariate_keys = 'ident', cell_stratify_keys = 'sample', 
+                             cell_label_key = 'aa80', n_perm = 100, statistic = compare_expanded_vec)
+
+plot_permute_test(perm4)
+```
+
+The default of all pairwise comparisons.
+
+```{r perm-avg}
+perm5 = cluster_permute_test(aa80_chain$TRB, cell_covariate_keys = 'ident', cell_stratify_keys = 'sample', 
+                             cell_label_key = 'aa80', n_perm = 100, statistic = compare_expanded_vec, contrasts = contrast_vec)
+
+plot_permute_test(perm5)
+```
+
+
 # Colophone
 ```{r}
 sessionInfo()
