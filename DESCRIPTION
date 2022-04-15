@@ -48,7 +48,8 @@ Imports:
     forcats,
     progress,
     stats,
-    utils
+    utils,
+    generics
 Suggests: 
     testthat,
     readr,
