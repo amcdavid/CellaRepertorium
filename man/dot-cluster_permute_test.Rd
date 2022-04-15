@@ -9,6 +9,7 @@
   covariates,
   strata,
   statistic,
+  contrasts,
   n_perm,
   alternative,
   ...
@@ -21,7 +22,11 @@
 
 \item{strata}{\code{factor}}
 
-\item{statistic}{function of label (vector) and covariate (data.frame). Must return a scalar}
+\item{statistic}{function of label (vector) and covariate (data.frame).
+If this returns a vector, then by default each level will be compared against each other, pairwise, but see the next section.}
+
+\item{contrasts}{an optional list of numeric vectors.
+Each will be dotted with the statistic, or optionally a matrix provided in which case each \strong{row} would be tested one-by-one.}
 
 \item{n_perm}{number of permutations to run}
 

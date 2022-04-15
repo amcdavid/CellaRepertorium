@@ -2,6 +2,7 @@
 % Please edit documentation in R/permutation-testing.R
 \name{cluster_permute_test}
 \alias{cluster_permute_test}
+\alias{tidy.PermuteTestList}
 \alias{plot_permute_test}
 \title{Tests for independence between labels and covariates using permutation of cells}
 \usage{
@@ -11,11 +12,14 @@ cluster_permute_test(
   cell_label_key = ccdb$cluster_pk,
   cell_stratify_keys,
   statistic,
+  contrasts = NULL,
   n_perm,
   alternative = c("two.sided", "less", "greater"),
   sanity_check_strata = TRUE,
   ...
 )
+
+tidy.PermuteTestList(x, ...)
 
 plot_permute_test(perm_test)
 }
@@ -30,7 +34,11 @@ plot_permute_test(perm_test)
 This means that the test will occur conditional on these covariates.
 Must be disjoint from  \code{cell_covariate_keys}.}
 
-\item{statistic}{function of label (vector) and covariate (data.frame). Must return a scalar}
+\item{statistic}{function of label (vector) and covariate (data.frame).
+If this returns a vector, then by default each level will be compared against each other, pairwise, but see the next section.}
+
+\item{contrasts}{an optional list of numeric vectors.
+Each will be dotted with the statistic, or optionally a matrix provided in which case each \strong{row} would be tested one-by-one.}
 
 \item{n_perm}{number of permutations to run}
 
@@ -39,6 +47,8 @@ Must be disjoint from  \code{cell_covariate_keys}.}
 \item{sanity_check_strata}{\code{logical}, should \code{cell_stratify_keys} be checked for sanity?}
 
 \item{...}{passed to \code{statistic}}
+
+\item{x}{\code{PermuteTestList}}
 
 \item{perm_test}{\code{PermuteTest} output from \code{cluster_permute_test()}}
 }
@@ -54,6 +64,8 @@ Each observation represents a cell.
 }
 \section{Functions}{
 \itemize{
+\item \code{tidy.PermuteTestList}: return a permutations run using a sequence of contrasts as a \code{tibble}
+
 \item \code{plot_permute_test}: Plot a histogram of permuted vs observed test statistic
 }}
 
