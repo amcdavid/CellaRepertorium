@@ -2,8 +2,6 @@
 % Please edit documentation in R/permutation-testing.R
 \name{cluster_permute_test}
 \alias{cluster_permute_test}
-\alias{tidy.PermuteTestList}
-\alias{plot_permute_test}
 \title{Tests for independence between labels and covariates using permutation of cells}
 \usage{
 cluster_permute_test(
@@ -18,10 +16,6 @@ cluster_permute_test(
   sanity_check_strata = TRUE,
   ...
 )
-
-tidy.PermuteTestList(x, ...)
-
-plot_permute_test(perm_test)
 }
 \arguments{
 \item{ccdb}{\code{ContigCellDB}}
@@ -47,28 +41,15 @@ Each will be dotted with the statistic, or optionally a matrix provided in which
 \item{sanity_check_strata}{\code{logical}, should \code{cell_stratify_keys} be checked for sanity?}
 
 \item{...}{passed to \code{statistic}}
-
-\item{x}{\code{PermuteTestList}}
-
-\item{perm_test}{\code{PermuteTest} output from \code{cluster_permute_test()}}
 }
 \value{
 a list containing the observed value of the statistic, the permuted values of the statistic, its expectation (under independence), a p-value, and the Monte Carlo standard error (of the expected value).
-
-A ggplot2 plot
 }
 \description{
 This tests a statistic for association between labels (for instance, cluster/clonal ID) and covariates (for instance, subject or treatment) by permuting the link between the two.
 Each observation represents a cell.
 \code{statistic} is any function of \code{labels}
 }
-\section{Functions}{
-\itemize{
-\item \code{tidy.PermuteTestList}: return a permutations run using a sequence of contrasts as a \code{tibble}
-
-\item \code{plot_permute_test}: Plot a histogram of permuted vs observed test statistic
-}}
-
 \examples{
 library(dplyr)
 # covariate should name one or more columns in `cell_tbl`
@@ -84,6 +65,7 @@ clust_test = cluster_permute_test(ccdb_test, 'subject', 'cluster_idx',
 statistic = purity, n_perm  = 50)
 library(ggplot2)
 plot_permute_test(perm_test = clust_test)
+tidy.PermuteTest(clust_test)
 }
 \seealso{
 \code{\link[=purity]{purity()}}
