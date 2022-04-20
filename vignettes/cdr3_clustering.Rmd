@@ -389,6 +389,11 @@ perm5 = cluster_permute_test(aa80_chain$TRB, cell_covariate_keys = 'ident', cell
 plot_permute_test(perm5)
 ```
 
+```{r}
+tidy.PermuteTestList(perm5)
+```
+
+There is also a `tidy` method.
 
 # Colophone
 ```{r}

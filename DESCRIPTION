@@ -79,3 +79,22 @@ BugReports: https://github.com/amcdavid/CellaRepertorium/issues
 Roxygen: list(markdown = TRUE)
 biocViews: RNASeq, Transcriptomics, SingleCell, TargetedResequencing, 
     Technology, ImmunoOncology, Clustering
+Collate: 
+    'AllClasses.R'
+    'ContigCellDB-methods.R'
+    'RcppExports.R'
+    'auxiliary.R'
+    'ccdb_join.R'
+    'cdhit-methods.R'
+    'cluster-testing.R'
+    'clustering-methods.R'
+    'data.R'
+    'ggplot2-utils.R'
+    'pairing-methods.R'
+    'reexports.R'
+    'permutation-testing.R'
+    'plot_clustering.R'
+    'plotting.R'
+    'pseudo-bulk.R'
+    'utilty.R'
+    'vdjcellranger-methods.R'

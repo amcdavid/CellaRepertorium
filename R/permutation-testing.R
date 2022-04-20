@@ -63,6 +63,7 @@ purity = function(cluster_idx, subject) {
 #' statistic = purity, n_perm  = 50)
 #' library(ggplot2)
 #' plot_permute_test(perm_test = clust_test)
+#' tidy.PermuteTest(clust_test)
 cluster_permute_test = function(ccdb, cell_covariate_keys,
                                 cell_label_key = ccdb$cluster_pk,
                                 cell_stratify_keys, statistic,
@@ -178,22 +179,10 @@ pairs = function (n, names) {
     return(contrasts_out)
 }
 
-#' @param x `PermuteTestList`
-#' @importFrom generics tidy
-#' @describeIn cluster_permute_test return a permutations run using a sequence of contrasts as a `tibble`
-#' @export
-tidy.PermuteTestList = function(x, ...){
-  scalar_vars = c('observed', 'expected', 'p.value', 'mc.se')
-  purrr::map_dfr(x, function(y){
-    tbl = as_tibble(y['statistics'])
-    tbl[scalar_vars] = y[scalar_vars]
-    tbl = mutate(tbl, contrast = str_c(y[['contrast']], collapse = ', '))
-  })
-}
 
-#' @param perm_test \code{PermuteTest} output from \code{cluster_permute_test()}
-#' @return A ggplot2 plot
-#' @describeIn cluster_permute_test Plot a histogram of permuted vs observed test statistic
+#' Plot a histogram of permuted vs observed test statistic
+#' @param perm_test \code{PermuteTest} or `PermuteTestList` output from \code{cluster_permute_test()}
+#' @seealso cluster_permute_test
 #' @export
 plot_permute_test = function(perm_test) {
     check_plot_infra()
@@ -214,4 +203,32 @@ plot_permute_test = function(perm_test) {
       plt = plt + ggplot2::facet_wrap(~.data$contrast)
     }
     return(plt)
+}
+
+#' @importFrom generics tidy
+#' @param x \code{PermuteTestList}
+#' @export
+#' @export tidy.PermuteTestList
+#' @describeIn plot_permute_test return permutations run using a sequence of contrasts as a `tibble`
+tidy.PermuteTestList = function(x, ...){
+  rlang::check_dots_empty()
+  scalar_vars = c('observed', 'expected', 'p.value', 'mc.se')
+  purrr::map_dfr(x, function(y){
+    tbl = as_tibble(y['statistics'])
+    tbl[scalar_vars] = y[scalar_vars]
+    tbl = mutate(tbl, contrast = str_c(y[['contrast']], collapse = ', '))
+  })
+}
+
+#' @export
+#' @export tidy.PermuteTest
+#' @describeIn plot_permute_test return permutations as a `tibble`
+#' @param ... ignored
+#' @include reexports.R
+tidy.PermuteTest = function(x, ...){
+  rlang::check_dots_empty()
+  scalar_vars = c('observed', 'expected', 'p.value', 'mc.se')
+  tbl = as_tibble(x['statistics'])
+  tbl[scalar_vars] = x[scalar_vars]
+  tbl
 }
