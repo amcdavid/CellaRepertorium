@@ -2,7 +2,7 @@ Type: Package
 Package: CellaRepertorium
 Title: Data structures, clustering and testing for single 
     cell immune receptor repertoires (scRNAseq RepSeq/AIRR-seq)
-Version: 1.6.0
+Version: 1.7.0
 Authors@R: 
     c(person(given = "Andrew",
              family = "McDavid",
