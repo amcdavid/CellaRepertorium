@@ -1,10 +1,10 @@
-pandoc: 1.19.1
-pkgdown: 1.6.1
+pandoc: 2.17.1.1
+pkgdown: 2.0.2
 pkgdown_sha: ~
 articles:
   cdr3_clustering: cdr3_clustering.html
   cr-overview: cr-overview.html
   mouse_tcell_qc: mouse_tcell_qc.html
   repertoire_and_expression: repertoire_and_expression.html
-last_built: 2020-10-29T21:17Z
+last_built: 2022-05-10T15:33Z
 
