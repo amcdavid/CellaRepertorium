@@ -252,3 +252,24 @@ tidy.PermuteTest = function(x, ...){
   tbl[scalar_vars] = x[scalar_vars]
   tbl
 }
+
+format_PermuteTest = function(x){
+  sprintf("contrast %s. observed = %0.3g, expected = %0.3g, p.value = %0.3g.", x$contrast_name %||% 'None', x$observed, x$expected, x$p.value)
+}
+
+#' @describeIn plot_permute_test pretty-print
+#' @export
+print.PermuteTest = function(x, ...){
+  cat("A single ", class(x), ":\n", sep = '')
+  cat(format_PermuteTest(x))
+}
+
+#' @describeIn plot_permute_test pretty-print
+#' @export
+#' @param max maximum number of components to print
+print.PermuteTestList = function(x, max = 3, ...){
+  cat("A ", class(x), " of length ", length(x), ".\n", sep = '')
+  cat("First few contrasts:\n")
+  lapply(head(x, n=max),  function(y) cat(format_PermuteTest(y), "\n"))
+}
+
