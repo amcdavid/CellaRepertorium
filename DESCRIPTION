@@ -49,7 +49,8 @@ Imports:
     progress,
     stats,
     utils,
-    generics
+    generics,
+    glue
 Suggests: 
     testthat,
     readr,

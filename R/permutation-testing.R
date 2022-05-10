@@ -129,6 +129,7 @@ contrast.pairs = function (n, names) {
 #' @param n_perm number of permutations to run
 #' @param ... passed along to `statistic`
 #' @return a list containing the observed value of the statistic, the permuted values of the statistic, its expectation (under independence), a p-value, and the Monte Carlo standard error (of the expected value).
+#' @importFrom rlang %||%
 .cluster_permute_test = function(labels, covariates, strata, statistic, contrasts, n_perm, alternative,  ...){
     cl = match.call()
     observed = statistic(labels, covariates, ...)
@@ -149,7 +150,7 @@ contrast.pairs = function (n, names) {
     
     # finally back to a list 
     # (this seemed like the easiest way to check that a user-provided list has correct shape..?)
-    contrast_names = rownames(contrasts)
+    contrast_names = rownames(contrasts) %||% seq_len(nrow(contrasts))
     contrasts = split(contrasts, gl(nrow(contrasts), 1, length(contrasts)))
     names(contrasts) = contrast_names
     
