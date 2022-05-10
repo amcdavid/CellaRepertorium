@@ -89,16 +89,30 @@ cluster_permute_test = function(ccdb, cell_covariate_keys,
     .cluster_permute_test(label, covariates, strata, statistic, contrasts, n_perm, alternative, ...)
 }
 
-pairs = function (n, names) {
+
+contrast.mean = function(n, names = NULL){
+  if(!is.null(names) && missing(n)) n = length(names)
+  m = matrix(-1/(n-1), nrow = n, ncol = n)
+  diag(m) = 1
+  if(!is.null(names)){
+    colnames(m) = rownames(m) = names
+  }
+  return(m)
+}
+
+contrast.pairs = function (n, names) {
   m = matrix(0, nrow = n*(n-1)/2, ncol = n)
   ii = 1
+  rn = character(length = nrow(m))
   for(i in seq_len(n - 1)){
     for(j in seq(from = i + 1, to = n)){
       m[ii, c(i,j)] = c(1, -1)
+      rn[ii] = glue::glue("{names[i]} vs {names[j]}")
       ii = ii + 1
     }
   }
   colnames(m) = names
+  rownames(m) = rn
   m
 }
 
@@ -123,7 +137,7 @@ pairs = function (n, names) {
     
     # Wrangle contrasts
     # empty
-    if(is.null(contrasts)) contrasts = pairs(len_stat, names = names(observed))
+    if(is.null(contrasts)) contrasts =  contrast.pairs(len_stat, names = names(observed))
     # list -> matrix
     if(is.list(contrasts)) contrasts = do.call(rbind, contrasts)
     # coerce numeric non-matrices
@@ -135,7 +149,9 @@ pairs = function (n, names) {
     
     # finally back to a list 
     # (this seemed like the easiest way to check that a user-provided list has correct shape..?)
+    contrast_names = rownames(contrasts)
     contrasts = split(contrasts, gl(nrow(contrasts), 1, length(contrasts)))
+    names(contrasts) = contrast_names
     
     alternative = match.arg(alternative[1], c("two.sided", "less", "greater"), several.ok = FALSE)
     pb = progress::progress_bar$new(total = n_perm)
@@ -152,7 +168,7 @@ pairs = function (n, names) {
         permp[i,] = statistic(ci, covariates, ...)
     }
     
-    permute_tail_probs = function(x, obs, contrast) {
+    permute_tail_probs = function(x, obs, contrast, contrast_name) {
       if(alternative == 'two.sided'){
         p_bound = min(mean(obs < x), mean(obs > x))*2
       } else{
@@ -161,19 +177,22 @@ pairs = function (n, names) {
       out = list(observed = obs, expected = mean(x),
                  p.value = max(1/n_perm, p_bound), 
                  mc.se = sd(x)/sqrt(n_perm),statistics = x,
-                 call = cl, contrast = contrast)
+                 call = cl, contrast = contrast,
+                 contrast_name = contrast_name)
       class(out) = 'PermuteTest'
       return(out)
     }
     
     if(len_stat == 1 && length(contrasts) == 0){
       return(permute_tail_probs(as.vector(permp), 
-                                 observed, contrast = 'identity'))
+                                 observed, contrast = 'identity', contrast_name = 'identity'))
     }
     contrasts_out = list()
     for(j in seq_along(contrasts)){
       contrasts_out[[j]] = permute_tail_probs(as.vector(permp %*% as.matrix(contrasts[[j]])), 
-                                              as.vector(crossprod(observed, contrasts[[j]])), contrast = contrasts[[j]])
+                                              as.vector(crossprod(observed, contrasts[[j]])), 
+                                              contrast_name = names(contrasts)[j],
+                                              contrast = contrasts[[j]])
     }
     class(contrasts_out) = 'PermuteTestList'
     return(contrasts_out)
@@ -200,7 +219,7 @@ plot_permute_test = function(perm_test) {
         ggplot2::geom_vline(ggplot2::aes(xintercept = .data$observed), col = 'red') +
         ggplot2::ggtitle("Permuted and observed test statistics")
     if(inherits(perm_test, 'PermuteTestList')){
-      plt = plt + ggplot2::facet_wrap(~.data$contrast)
+      plt = plt + ggplot2::facet_wrap(~.data$contrast_name)
     }
     return(plt)
 }
@@ -212,7 +231,7 @@ plot_permute_test = function(perm_test) {
 #' @describeIn plot_permute_test return permutations run using a sequence of contrasts as a `tibble`
 tidy.PermuteTestList = function(x, ...){
   rlang::check_dots_empty()
-  scalar_vars = c('observed', 'expected', 'p.value', 'mc.se')
+  scalar_vars = c('observed', 'expected', 'p.value', 'mc.se', 'contrast_name')
   purrr::map_dfr(x, function(y){
     tbl = as_tibble(y['statistics'])
     tbl[scalar_vars] = y[scalar_vars]
