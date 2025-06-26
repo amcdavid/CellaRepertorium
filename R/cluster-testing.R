@@ -108,7 +108,7 @@ cluster_logistic_test = function(formula, ccdb, filterset = cluster_filterset(),
     }
     if(is_mixed){
         if(!requireNamespace('lme4')) stop("Please install lme4.")
-        if(packageVersion('broom') >= 0.7 && !requireNamespace('broom.mixed')){
+        if(packageVersion('broom') >= "0.7" && !requireNamespace('broom.mixed')){
             stop('install broom.mixed')
         }
     }

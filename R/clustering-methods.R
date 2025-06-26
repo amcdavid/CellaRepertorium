@@ -234,10 +234,11 @@ tie_break_keys = character(), order = 1, representative = ccdb$cluster_pk[1], co
 #' @param cluster_fun `character`, one of "hclust" or "none", determining if distance matrices should also be clustered with `hclust`
 #' @param cluster_method character passed to `hclust`
 #'
-#' @seealso [hclust()], [Biostrings::stringDist()]
+#' @seealso [hclust()], [pwalign::stringDist()]
 #' @return `list`
 #' @export
 #' @import Biostrings
+#' @import pwalign
 #' @examples
 #' fasta_path = system.file('extdata', 'demo.fasta', package='CellaRepertorium')
 #' aaseq = Biostrings::readAAStringSet(fasta_path)[1:100]
@@ -268,13 +269,13 @@ fine_cluster_seqs = function(seqs, type = 'AA', big_memory_brute = FALSE, method
             data(list = substitution_matrix, envir = e, package = 'Biostrings')
             substitution_matrix = e[[substitution_matrix]]
         }
-        sd = as.matrix(Biostrings::stringDist(ss, method = method, substitutionMatrix = substitution_matrix))
+        sd = as.matrix(pwalign::stringDist(ss, method = method, substitutionMatrix = substitution_matrix))
         # alignment score along diagonal
-        pw = Biostrings::pairwiseAlignment(ss, ss, substitutionMatrix = substitution_matrix, scoreOnly = TRUE)
+        pw = pwalign::pairwiseAlignment(ss, ss, substitutionMatrix = substitution_matrix, scoreOnly = TRUE)
         diag(sd) = pw
         sd  = if(length(ss)>1) (diag(sd) - sd) else matrix(0, nrow = 1, ncol = 1)
     } else{ #levenshtein
-        sd = as.matrix(Biostrings::stringDist(ss, method = 'levenshtein'))
+        sd = as.matrix(pwalign::stringDist(ss, method = 'levenshtein'))
         #if(length(ss)>1) sd = sd/max(sd)*median(Biostrings::nchar(ss))
     }
 

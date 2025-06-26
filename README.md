@@ -15,10 +15,8 @@ Install with
     install.packages('BiocManager') # if you don't have it yet
     BiocManager::version() # Check that Bioconductor version >= 3.12 
     BiocManager::valid() # And it's in a sane state.
-    BiocManager::install('CellaRepertorium') # install
+    BiocManager::install('amcdavid/CellaRepertorium') # install
 
-For the development version, install via
-`devtools::install_github('amcdavid/CellaRepertorium')`.
 
 ## Data requirements and package structure
 
